@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-reciperecognizerapp-dev-150149-authRole",
+      "UnauthRoleArn": "arn:aws:iam::919713100330:role/amplify-reciperecognizerapp-dev-150149-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::919713100330:role/amplify-reciperecognizerapp-dev-150149-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-reciperecognizerapp-dev-150149-deployment",
+      "UnauthRoleName": "amplify-reciperecognizerapp-dev-150149-unauthRole",
+      "StackName": "amplify-reciperecognizerapp-dev-150149",
+      "StackId": "arn:aws:cloudformation:eu-central-1:919713100330:stack/amplify-reciperecognizerapp-dev-150149/23ca63e0-f06d-11eb-aa68-02294d97e808",
+      "AmplifyAppId": "d2n4e7jy0jdc89"
+    },
+    "categories": {
+      "auth": {
+        "reciperecognizerapp8ebd3806": {}
+      }
+    }
+  }
+}

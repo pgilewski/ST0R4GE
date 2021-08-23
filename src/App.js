@@ -1,24 +1,35 @@
-import logo from './logo.svg';
 import './App.css';
+import {
+  BrowserRouter as Router
+} from "react-router-dom";
+
+import Navbar from './components/Navbar'
+import Routes from './routes/Routes'
+
+import { AuthProvider } from './context/authContext';
+import { useEffect } from 'react';
+import { Hub } from 'aws-amplify';
+
 
 function App() {
+
+
+
+  const user = localStorage.getItem('user');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider user={user}>
+      <Router>
+        <div className="App justify-items-center">
+          
+          <Navbar />
+
+          <Routes/>
+
+        </div>
+      </Router>
+    </AuthProvider>
+
   );
 }
 
