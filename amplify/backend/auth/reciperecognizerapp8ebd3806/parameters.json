@@ -1,6 +1,6 @@
 {
     "identityPoolName": "reciperecognizerapp8ebd3806_identitypool_8ebd3806",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "recipe8ebd3806",
     "userPoolName": "reciperecognizerapp8ebd3806_userpool_8ebd3806",
     "autoVerifiedAttributes": [
@@ -20,6 +20,7 @@
     "requiredAttributes": [
         "email"
     ],
+    "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [

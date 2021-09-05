@@ -1,9 +1,9 @@
 import Profile from '../components/Profile';
 import Upload from '../components/Upload';
 import Home from '../components/Home';
-import Recipes from '../components/Recipes';
-import Register from '../components/Register'
-
+import Recognize from '../components/Recognize';
+import Register from '../components/Register';
+import Login from '../components/Login';
 import {
     Switch,
     Route,
@@ -39,11 +39,14 @@ const Routes = () => {
         <ProtectedRoute path="/upload">
           <Upload />
         </ProtectedRoute>
-        <ProtectedRoute path="/recipes">
-          <Recipes />
-        </ProtectedRoute>
+        <Route path="/recognize">
+          <Recognize />
+        </Route>
         <Route path="/register">
           <Register />
+        </Route>
+        <Route path="/login">
+          <Login />
         </Route>
         <Route path="/profile">
           <Profile />

@@ -7,8 +7,6 @@ import Navbar from './components/Navbar'
 import Routes from './routes/Routes'
 
 import { AuthProvider } from './context/authContext';
-import { useEffect } from 'react';
-import { Hub } from 'aws-amplify';
 
 
 function App() {
@@ -20,12 +18,11 @@ function App() {
   return (
     <AuthProvider user={user}>
       <Router>
-        <div className="App justify-items-center">
-          
+        <div className="App justify-items-center h-screen w-screen bg-gray-300">
           <Navbar />
-
-          <Routes/>
-
+          <div className="flex justify-center ">
+            <Routes/>
+          </div>
         </div>
       </Router>
     </AuthProvider>

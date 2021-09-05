@@ -1,8 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react'
+import {  useEffect } from 'react'
 import { Auth, Hub } from 'aws-amplify';
 import { useAuthContext } from '../context/authContext'
 import { useHistory } from 'react-router-dom';
+
+
 
 const useAuth = () => {
 
@@ -19,10 +21,10 @@ const useAuth = () => {
 
 
   useEffect(() => {
-    checkUser();
     setAuthListener();
   }, []);
 
+  // bug fix: po niektórych logowaniach nie udpatuje się użytkownik
   async function setAuthListener() {
     Hub.listen('auth', (data) => {
       switch (data.payload.event) {
@@ -61,14 +63,22 @@ const useAuth = () => {
   }, [ currentUser ]) */
 
  
+  const history = useHistory();
 
   const signIn = async (formState) => {
-    const {username, password} = formState  
+
+    const {username, password} = formState
     try {
-        await Auth.signIn({
+        const user = await Auth.signIn({
           username,   
           password,
         });
+        console.log("zalogowano")
+        if(user) {
+          history.push("/profile");
+        }
+        setCurrentUser(user.attributes.email)
+        localStorage.setItem('user', user.attributes.email)
         /* setState({ user: user, isSignedIn: true, error: null }); */
 
     } catch (err) {

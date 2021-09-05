@@ -1,3 +1,4 @@
+
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
@@ -71,6 +72,10 @@ Parameters:
   requiredAttributes:
     Type: CommaDelimitedList
       
+        
+  aliasAttributes:
+    Type: CommaDelimitedList
+      
   
   userpoolClientGenerateSecret:
     Type: String
@@ -133,10 +138,6 @@ Parameters:
     Type: String
   
             
-  hostedUIProviderCreds:
-    Type: String
-  
-            
   oAuthMetadata:
     Type: String
   
@@ -145,7 +146,6 @@ Parameters:
   userPoolGroupList:
     Type: CommaDelimitedList
       
-            
   serviceName:
     Type: String
   
@@ -158,6 +158,10 @@ Parameters:
   dependsOn:
     Type: CommaDelimitedList
       
+  hostedUIProviderCreds:
+    Type: String
+  
+            
 Conditions:
   ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
   
@@ -219,7 +223,10 @@ Resources:
       
       
       
-      AutoVerifiedAttributes: !Ref autoVerifiedAttributes
+      AutoVerifiedAttributes:
+      
+        - email
+      
       
       
       EmailVerificationMessage: !Ref emailVerificationMessage
@@ -234,6 +241,7 @@ Resources:
           RequireUppercase: false
       
       UsernameAttributes: !Ref usernameAttributes
+      
       
       MfaConfiguration: !Ref mfaConfiguration
       SmsVerificationMessage: !Ref smsVerificationMessage
@@ -312,7 +320,7 @@ Resources:
             - '};'
       Handler: index.handler
       Runtime: nodejs12.x
-      Timeout: '300'
+      Timeout: 300
       Role: !GetAtt
         - UserPoolClientRole
         - Arn
@@ -438,7 +446,7 @@ Resources:
 
       Handler: index.handler
       Runtime: nodejs12.x
-      Timeout: '300'
+      Timeout: 300
       Role: !GetAtt
         - UserPoolClientRole
         - Arn
@@ -590,7 +598,7 @@ Resources:
 
       Handler: index.handler
       Runtime: nodejs12.x
-      Timeout: '300'
+      Timeout: 300
       Role: !GetAtt
         - UserPoolClientRole
         - Arn
@@ -689,7 +697,7 @@ Resources:
 
       Handler: index.handler
       Runtime: nodejs12.x
-      Timeout: '300'
+      Timeout: 300
       Role: !GetAtt
         - UserPoolClientRole
         - Arn
