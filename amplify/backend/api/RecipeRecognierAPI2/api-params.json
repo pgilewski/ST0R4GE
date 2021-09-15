@@ -1,0 +1,39 @@
+{
+  "paths": [
+    {
+      "name": "/search",
+      "lambdaFunction": "VisualSearchLambda",
+      "privacy": {
+        "private": true,
+        "auth": [
+          "/POST",
+          "/GET"
+        ]
+      },
+      "policyResourceName": "/search"
+    }
+  ],
+  "resourceName": "RecipeRecognierAPI2",
+  "apiName": "RecipeRecognierAPI2",
+  "functionArns": [
+    {
+      "lambdaFunction": "VisualSearchLambda"
+    }
+  ],
+  "privacy": {
+    "auth": 1,
+    "unauth": 0,
+    "authRoleName": "amplify-reciperecognizerapp-dev-150149-authRole",
+    "unAuthRoleName": "amplify-reciperecognizerapp-dev-150149-unauthRole"
+  },
+  "dependsOn": [
+    {
+      "category": "function",
+      "resourceName": "VisualSearchLambda",
+      "attributes": [
+        "Name",
+        "Arn"
+      ]
+    }
+  ]
+}

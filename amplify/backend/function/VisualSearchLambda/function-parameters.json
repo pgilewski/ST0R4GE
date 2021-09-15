@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "auth": {
+      "reciperecognizerapp8ebd3806": [
+        "create"
+      ]
+    },
+    "storage": {
+      "s3StorageReciperecognizer": [
+        "create"
+      ]
+    }
+  },
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "visualSearchEndpointUrl",
+      "environmentVariableName": "VISUAL_SEARCH_ENDPOINT_URL"
+    }
+  ]
+}

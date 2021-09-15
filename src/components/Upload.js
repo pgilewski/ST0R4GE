@@ -1,12 +1,8 @@
-import { useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {useDropzone} from 'react-dropzone'
 
 function Upload () {
 
-    useEffect( () => {
-        console.log('upload');
-    }, [])
-   
     const onDrop = useCallback(acceptedFiles => {
       console.log(acceptedFiles)
     }, [])
@@ -20,7 +16,7 @@ function Upload () {
     ));
 
     return (
-      <div className="bg-white dark:bg-gray-800 w-full">
+      <div className="full-height-no-navbar dark:bg-gray-800 w-full ">
         <div {...getRootProps({className: 'dropzone'})} className="py-12 mx-auto bg-white dark:bg-gray-800 max-w-lg ">
         {/* no duplicate props allowed */}
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">

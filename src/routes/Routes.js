@@ -1,4 +1,5 @@
-import Profile from '../components/Profile';
+import React from 'react';
+import UserInfo from '../components/UserInfo';
 import Upload from '../components/Upload';
 import Home from '../components/Home';
 import Recognize from '../components/Recognize';
@@ -11,6 +12,8 @@ import {
   } from "react-router-dom";
 
 import { useAuthContext } from '../context/authContext'
+import Dashboard from '../components/Dashboard';
+import Gallery from '../components/Gallery';
 
 const ProtectedRoute = ({ children, ...rest }) => {
     const { currentUser } = useAuthContext();
@@ -49,7 +52,13 @@ const Routes = () => {
           <Login />
         </Route>
         <Route path="/profile">
-          <Profile />
+          <UserInfo />
+        </Route>
+        <Route path="/dashboard">
+          <Dashboard />
+        </Route>
+        <Route path="/gallery">
+          <Gallery />
         </Route>
         <Route path="/">
           <Home />

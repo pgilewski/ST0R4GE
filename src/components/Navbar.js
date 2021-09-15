@@ -1,6 +1,7 @@
 import { useAuthContext } from '../context/authContext'
 import { useToggle } from "../hooks/useToggle";
 import useAuth from '../hooks/useAuth';
+import React from 'react';
 
 import {
     Link
@@ -37,18 +38,18 @@ export default function Navbar () {
                     </Link>
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-4">
-{/*                             <Link to="/" className="font-sen text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-md font-medium" >
+{/*                             <Link to="/" className=" text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" >
                                 Home
                             </Link> */}
                             {/* text-gray-800 dark:text-white  */}
-                            <Link to="/upload" className=" font-sen text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-md font-medium">
+                            <Link to="/upload" className="  text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium">
                                 Upload
                             </Link>
-                            <Link to="/" className="font-sen text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-md font-medium" href="/#">
-                                Post
+                            <Link to="/gallery" className=" text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
+                                Gallery
                             </Link>
-                            <Link to="/" className="font-sen text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-md font-medium" href="/#">
-                                Chat
+                            <Link to="/dashboard" className=" text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
+                                Dashboard
                             </Link>
                         </div>
                     </div>
@@ -58,7 +59,7 @@ export default function Navbar () {
                         <div className="ml-3 relative">
                             <div className="relative inline-block text-left">
                                 <div>
-                                    <button onClick={setProfileNavVisibility} type="button" className="flex items-center justify-center w-full rounded-md  px-4 py-2 text-md font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500" id="options-menu">
+                                    <button onClick={setProfileNavVisibility} type="button" className="flex items-center justify-center w-full rounded-md  px-4 py-2 text-lg font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500" id="options-menu">
                                       <ProfileIcon className="h-6 w-6"/>
                                     </button>
                                 </div>
@@ -69,14 +70,14 @@ export default function Navbar () {
                                     {
                                       currentUser ?
                                       <div>
-                                        <Link to="/profile" className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
+                                        <Link to="/profile" className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
                                           <span className="flex flex-col">
                                               <span>
                                                   Profile
                                               </span>
                                           </span>
                                         </Link>
-                                        <div onClick={() => signOut()} className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
+                                        <div onClick={() => signOut()} className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
                                           <span className="flex flex-col">
                                               <span>
                                                   Sign Out
@@ -85,14 +86,14 @@ export default function Navbar () {
                                         </div>
                                       </div> :
                                       <div> 
-                                        <Link to="/login" className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
+                                        <Link to="/login" className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
                                             <span className="flex flex-col">
                                                 <span>
                                                   Login
                                                 </span>
                                             </span>
                                         </Link>
-                                        <Link to="/register" href="#" className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
+                                        <Link to="/register" className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
                                             <span className="flex flex-col">
                                                 <span>
                                                   Create acc
@@ -111,7 +112,7 @@ export default function Navbar () {
                     </div>
                 </div>
                 <div className="-mr-2 flex md:hidden">
-                    <button onClick={setNavbarVisibility} className="text-gray-800 dark:text-white hover:font-sen text-gray-800 uppercaseinline-flex items-center justify-center p-2 rounded-md focus:outline-none">
+                    <button onClick={setNavbarVisibility} className="text-gray-800 dark:text-white hover: uppercaseinline-flex items-center justify-center p-2 rounded-md focus:outline-none">
                       {navbarVisibility ? <ArrowDownIcon className="h-6 w-6"/> : <ArrowUpIcon className="h-6 w-6"/>}
                       
                     </button>
@@ -121,18 +122,15 @@ export default function Navbar () {
         {navbarVisibility ?
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a className="font-sen text-gray-800 uppercas dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium" href="/#">
-                    Home
-                </a>
-                <a className="text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium" href="/#">
+                <Link to="/upload" className="  block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium">
+                    Upload
+                </Link>
+                <Link to="/gallery" className=" block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
                     Gallery
-                </a>
-                <a className="font-sen text-gray-800 uppercas dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium" href="/#">
-                    Content
-                </a>
-                <a className="font-sen text-gray-800 uppercas dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium" href="/#">
-                    Contact
-                </a>
+                </Link>
+                <Link to="/dashboard" className=" block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
+                    Dashboard
+                </Link>
             </div>
           </div> : 
           null

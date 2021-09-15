@@ -19,6 +19,10 @@
         "S3Triggerd2bdc1eb": {
           "deploymentBucketName": "amplify-reciperecognizerapp-dev-150149-deployment",
           "s3Key": "amplify-builds/S3Triggerd2bdc1eb-3055647237467369674e-build.zip"
+        },
+        "VisualSearchLambda": {
+          "deploymentBucketName": "amplify-reciperecognizerapp-dev-150149-deployment",
+          "s3Key": "amplify-builds/VisualSearchLambda-644e6543706852575569-build.zip"
         }
       }
     }

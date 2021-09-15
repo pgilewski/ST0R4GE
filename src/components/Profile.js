@@ -1,19 +1,9 @@
+import React from 'react'
 
-import Login from './Login';
-import { useAuthContext } from '../context/authContext'
-import UserInfo from './UserInfo';
-import Container from './Container';
-function Profile (props) {
-
-    const { currentUser } = useAuthContext();
-
+export default function Profile() {
     return (
-      <div>
-        <Container>
-          {currentUser ? <UserInfo user={currentUser} /> : <Login />}
-        </Container>
-      </div>
+        <div>
+                 
+        </div>
     )
-} 
-
-export default Profile;
+}

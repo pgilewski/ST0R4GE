@@ -1,42 +1,53 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import { Storage } from 'aws-amplify';
 
-function SingleUpload () {
-    /* const fileInput = useRef(); */
 
-    const onSubmit = async event => {
+function SingleUpload() {
+	/* const fileInput = useRef(); */
+
+	/*     const onSubmit = async event => {
         event.preventDefault();
-
         try {
             const result = await Storage.put(file.name, file, {
                 contentType: 'image/png', 
                 level: 'private' 
               });
-            console.log(result)
+            console.log('Uploaded: ', result)
         } catch (error) {
             console.log('Error uploading file: ', error);
         }
 
     } 
+ */
 
-    const onChange = event => {
-        setFile(event.target.files[0]);
-    }
-    const [file, setFile] = useState('')
-    
+	const onSubmit = async (event) => {
+		event.preventDefault();
+		try {
+            console.log(file)
+			await Storage.put(file.name, file, {
+                contentType: 'image/jpg',
+                level: 'private'
+            }).then((d) => {console.log(d)})
+            
+		} catch (error) {
+			console.log('Error uploading file: ', error);
+		}
+	};
+	const onChange = (event) => {
+		setFile(event.target.files[0]);
+	};
 
-    useEffect( () => {
-        console.log('recipes');
-    }, [])
-    
-    return (
-      <div className="" >
-          <form onSubmit={onSubmit}>
-            <input className="" type='file'/*  ref={fileInput} */ onChange={onChange} />
-            <button type='submit'>Upload</button>
-          </form>
-      </div>
-    )
-} 
+	const [ file, setFile ] = useState('');
+
+	return (
+		<div className="">
+			<form onSubmit={onSubmit}>
+				<input className="" type="file" onChange={onChange} />
+				<button type="submit">Upload</button>
+			</form>
+		</div>
+	);
+}
 
 export default SingleUpload;
