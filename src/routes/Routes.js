@@ -5,6 +5,7 @@ import Home from '../components/Home';
 import Recognize from '../components/Recognize';
 import Register from '../components/Register';
 import Login from '../components/Login';
+
 import {
     Switch,
     Route,
@@ -14,6 +15,7 @@ import {
 import { useAuthContext } from '../context/authContext'
 import Dashboard from '../components/Dashboard';
 import Gallery from '../components/Gallery';
+import Public from '../components/Public';
 
 const ProtectedRoute = ({ children, ...rest }) => {
     const { currentUser } = useAuthContext();
@@ -37,6 +39,8 @@ const ProtectedRoute = ({ children, ...rest }) => {
 }
 
 const Routes = () => {
+    const { currentUser } = useAuthContext();
+
     return (
         <Switch>
         <ProtectedRoute path="/upload">
@@ -52,14 +56,18 @@ const Routes = () => {
           <Login />
         </Route>
         <Route path="/profile">
-          <UserInfo />
+          <UserInfo user={currentUser}/>
         </Route>
-        <Route path="/dashboard">
+        <ProtectedRoute path="/dashboard">
           <Dashboard />
-        </Route>
-        <Route path="/gallery">
+        </ProtectedRoute>
+        <ProtectedRoute path="/gallery">
           <Gallery />
-        </Route>
+        </ProtectedRoute>
+            {/* add eslint file */}
+            <Route path="/public">
+                <Public />
+            </Route>
         <Route path="/">
           <Home />
         </Route>

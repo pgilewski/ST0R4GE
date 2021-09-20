@@ -3,9 +3,9 @@ import useAuth from '../hooks/useAuth';
 import avatar from '../assets/images/me.png';
 import Container from './Container';
 
-const UserInfo = (props) => {
+const UserInfo = (user) => {
 	const { signOut } = useAuth();
-	const [ profileState ] = useState(props);
+	const [ profileInfo ] = useState(user);
 
 	return (
 		<Container>
@@ -106,7 +106,7 @@ const UserInfo = (props) => {
 					</div>
 					<hr className="border-gray-800" />
 				</div>
-				<p>Jesteś zalogowany jako: {profileState.user}</p>
+				<p>Jesteś zalogowany jako: {profileInfo.user}</p>
 				<button
 					className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
 					onClick={() => {

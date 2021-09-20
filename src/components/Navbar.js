@@ -42,7 +42,7 @@ export default function Navbar () {
                                 Home
                             </Link> */}
                             {/* text-gray-800 dark:text-white  */}
-                            <Link to="/upload" className="  text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium">
+                           {currentUser ? <div><Link to="/upload" className="  text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium">
                                 Upload
                             </Link>
                             <Link to="/gallery" className=" text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
@@ -50,7 +50,7 @@ export default function Navbar () {
                             </Link>
                             <Link to="/dashboard" className=" text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
                                 Dashboard
-                            </Link>
+                            </Link></div> : null}
                         </div>
                     </div>
                 </div>
@@ -85,18 +85,18 @@ export default function Navbar () {
                                           </span>
                                         </div>
                                       </div> :
-                                      <div> 
+                                      <div>
+                                          <Link to="/register" className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
+                                            <span className="flex flex-col">
+                                                <span>
+                                                  Create acc
+                                                </span>
+                                            </span>
+                                          </Link>
                                         <Link to="/login" className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
                                             <span className="flex flex-col">
                                                 <span>
                                                   Login
-                                                </span>
-                                            </span>
-                                        </Link>
-                                        <Link to="/register" className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
-                                            <span className="flex flex-col">
-                                                <span>
-                                                  Create acc
                                                 </span>
                                             </span>
                                         </Link>
@@ -113,7 +113,7 @@ export default function Navbar () {
                 </div>
                 <div className="-mr-2 flex md:hidden">
                     <button onClick={setNavbarVisibility} className="text-gray-800 dark:text-white hover: uppercaseinline-flex items-center justify-center p-2 rounded-md focus:outline-none">
-                      {navbarVisibility ? <ArrowDownIcon className="h-6 w-6"/> : <ArrowUpIcon className="h-6 w-6"/>}
+                      {navbarVisibility ? <ArrowUpIcon className="h-6 w-6"/> :  <ArrowDownIcon className="h-6 w-6"/>}
                       
                     </button>
                 </div>
@@ -122,14 +122,21 @@ export default function Navbar () {
         {navbarVisibility ?
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <Link to="/upload" className="  block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium">
-                    Upload
-                </Link>
-                <Link to="/gallery" className=" block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
-                    Gallery
-                </Link>
-                <Link to="/dashboard" className=" block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
-                    Dashboard
+                {currentUser ?
+                    <div>
+                        <Link to="/upload" className="  block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium">
+                            Upload
+                        </Link>
+                        <Link to="/gallery" className=" block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
+                            Gallery
+                        </Link>
+                        <Link to="/dashboard" className=" block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
+                            Dashboard
+                        </Link>
+                    </div> : null
+                }
+                <Link to="/public" className=" block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" href="/#">
+                    public
                 </Link>
             </div>
           </div> : 

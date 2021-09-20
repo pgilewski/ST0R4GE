@@ -33,7 +33,6 @@ const useAuth = () => {
             break;
         case 'signOut':
             checkUser();
-            console.log("wylogowane")
             break;
         default:
             break;
@@ -51,7 +50,6 @@ const useAuth = () => {
         localStorage.setItem('user', user.attributes.email)
         /* history.push('/') */
     } catch (err) {
-        console.log(err)
         setCurrentUser(null)
         localStorage.removeItem('user')
     }
@@ -91,8 +89,10 @@ const useAuth = () => {
   const signInSocial =  ({provider}) => {
      Auth.federatedSignIn({ provider }).then((user) => {console.log(user)})
   }
-  const signOut = async () => { 
-    await Auth.signOut()
+  const signOut = async () => {
+      setCurrentUser(null)
+      localStorage.removeItem('user')
+      await Auth.signOut();
   }
 
   return {

@@ -9,11 +9,8 @@ import Routes from './routes/Routes'
 
 import { AuthProvider } from './context/authContext';
 
-
 function App() {
-
-
-
+  
   const user = localStorage.getItem('user');
 
   return (
