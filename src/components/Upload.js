@@ -1,52 +1,159 @@
-import React, { useCallback } from 'react';
-import {useDropzone} from 'react-dropzone'
+import React, { useCallback, useState, useEffect } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Storage } from 'aws-amplify';
+import { Link } from 'react-router-dom';
+import LoadingSpinner from './LoadingSpinner';
 
-function Upload () {
+function Upload() {
+    const [ files, setFiles ] = useState([]);
+    const [ loading, setLoading ] = useState('start');
 
-    const onDrop = useCallback(acceptedFiles => {
-      console.log(acceptedFiles)
-    }, [])
+    useEffect(
+        () => () => {
+            files.forEach((file) => URL.revokeObjectURL(file.preview));
+        },
+        [ files ]
+    );
 
-    const {acceptedFiles, getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
-    
-    const files = acceptedFiles.map(file => (
-      <li key={file.path}>
-        {file.path} - {file.size} bytes
-      </li>
-    ));
+    const onDrop = useCallback((acceptedFiles) => {
+        setFiles(
+            acceptedFiles.map((file) =>
+                Object.assign(file, {
+                    preview: URL.createObjectURL(file)
+                })
+            )
+        );
+        console.log(acceptedFiles);
+    }, []);
 
-    return (
-      <div className="full-height-no-navbar dark:bg-gray-800 w-full ">
-        <div {...getRootProps({className: 'dropzone'})} className="py-12 mx-auto bg-white dark:bg-gray-800 max-w-lg ">
-        {/* no duplicate props allowed */}
-          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div className={isDragActive ? 'border-indigo-500 flex flex-col items-center py-12 px-6 rounded-md border-2 border-dashed' : 'border-gray-400 flex flex-col items-center py-12 px-6 rounded-md border-2 border-dashed'}
-                >
-              <svg
-                  className="w-12 h-12 text-gray-500"
-                  aria-hidden="true" fill="none" stroke="currentColor"
-                  viewBox="0 0 48 48">
-                <path
-                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                    strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"/>
-              </svg>
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-              <p className="text-xl text-gray-700">Drop files to upload</p>
+    const onSubmit = async (event) => {
+        event.preventDefault();
+        setLoading('loading');
+        for (const [ index, file ] of files.entries()) {
+            try {
+                await Storage.put(file.name, file, {
+                    contentType: 'image/jpg',
+                    level: 'private'
+                }).then((d) => {
+                    console.log(d);
+                });
+            } catch (error) {
+                console.log('Error uploading file: ', error);
+            }
+            if (index === files.length - 1) {
+                try {
+                    await Storage.put(file.name, file, {
+                        contentType: 'image/jpg',
+                        level: 'private'
+                    }).then(() => {
+                        setLoading('result');
+                    });
+                } catch (error) {
+                    console.log('Error uploading file: ', error);
+                }
+            }
+        }
+    };
+    const preview = files.map((file) => {
+        return <img src={file.preview} alt={file.name} className="w-2/3 md:w-full" key={file.name} />;
+    });
 
-              <p className="mb-2 text-gray-700">or</p>
+    const renderResult = (props) => {
+        console.log(props);
+        if (loading === 'result') {
+            return (
+                <div>
+                    <h1>Uploaded {props} files.</h1>
+                    <Link to="/gallery">
+                        <button
+                            type="button"
+                            className="mb-4 mt-6 py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+                        >
+                            Go to Gallery
+                        </button>
+                    </Link>
+                </div>
+            );
+        } else if (loading === 'loading') {
+            console.log('loading teraz');
+            return (
+                <div>
+                    <LoadingSpinner />
+                </div>
+            );
+        }
+    };
 
-              <label className="bg-white px-4 h-9 inline-flex items-center rounded border border-gray-300 shadow-sm text-sm font-medium text-gray-700 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                Select files
-                <input {...getInputProps()} />
-              </label>
+    const renderUpload = () => {
+        return (
+            <div>
+                <div className="pt-12 mx-auto bg-white dark:bg-gray-800 max-w-lg ">
+                    <div className="grid md:grid-cols-3 md:gap-4 ">
+                        <div {...getRootProps({ className: 'dropzone' })} className="col-span-3 ">
+                            <input {...getInputProps()} />
 
-              <p className="text-xs text-gray-600 mt-4">Maximum upload file size: 512MB.</p>
+                            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 mb-12">
+                                <div
+                                    className={
+                                        isDragActive ? (
+                                            'border-indigo-500 flex flex-col items-center py-12 px-6 rounded-md border-2 border-dashed'
+                                        ) : (
+                                            'border-gray-400 flex flex-col items-center py-12 px-6 rounded-md border-2 border-dashed'
+                                        )
+                                    }
+                                >
+                                    <svg
+                                        className="w-12 h-12 text-gray-500"
+                                        aria-hidden="true"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 48 48"
+                                    >
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                        />
+                                    </svg>
+
+                                    <p className="text-xl text-gray-700">Drop files to upload</p>
+
+                                    <p className="mb-2 text-gray-700">or</p>
+
+                                    <label className="bg-white cursor-pointer px-4 h-9 inline-flex items-center rounded border border-gray-300 shadow-sm text-sm font-medium text-gray-700 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                        Select files
+                                    </label>
+
+                                    <p className="text-xs text-gray-600 mt-4">Maximum upload file size: 512MB.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-span-3 justify-items-center grid md:grid-cols-3 gap-4">{preview}</div>
+                    </div>
+                </div>
+                {files.length > 0 ? (
+                    <div className="">
+                        {' '}
+                        <button
+                            type="button"
+                            onClick={onSubmit}
+                            className="mt-6 py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+                        >
+                            Upload {files.length} pictures
+                        </button>
+                    </div>
+                ) : null}
             </div>
-            {files}
-          </div>
+        );
+    };
+    return (
+        <div className="full-height-no-navbar dark:bg-gray-800 w-full ">
+            {loading === 'start' ? renderUpload() : renderResult(files.length)}
         </div>
-      </div>
-    )
-} 
+    );
+}
 
 export default Upload;

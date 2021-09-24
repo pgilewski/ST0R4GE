@@ -64,7 +64,7 @@ export default function Navbar () {
                                     </button>
                                 </div>
                                 {profileNavVisibility ? 
-                                <div className="origin-top-right absolute right-0 mt-3 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
+                                <div className="z-10 origin-top-right absolute right-0 mt-3 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
                                   <div className="py-1 " role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
 
                                     {

@@ -14,55 +14,10 @@
       "dependsOn": [
         {
           "category": "function",
-          "resourceName": "S3Triggerd2bdc1eb",
           "attributes": [
             "Name",
             "Arn",
             "LambdaExecutionRole"
-          ]
-        }
-      ]
-    }
-  },
-  "function": {
-    "S3Triggerd2bdc1eb": {
-      "service": "Lambda",
-      "providerPlugin": "awscloudformation",
-      "build": true
-    },
-    "VisualSearchLambda": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": [
-        {
-          "category": "auth",
-          "resourceName": "reciperecognizerapp8ebd3806",
-          "attributes": [
-            "UserPoolId"
-          ]
-        },
-        {
-          "category": "storage",
-          "resourceName": "s3StorageReciperecognizer",
-          "attributes": [
-            "BucketName"
-          ]
-        }
-      ]
-    }
-  },
-  "api": {
-    "RecipeRecognierAPI2": {
-      "service": "API Gateway",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [
-        {
-          "category": "function",
-          "resourceName": "VisualSearchLambda",
-          "attributes": [
-            "Name",
-            "Arn"
           ]
         }
       ]

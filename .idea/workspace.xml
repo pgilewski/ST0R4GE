@@ -5,13 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02710a57-7bc3-4a6f-b682-09543288845d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/Public.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/LoadingSpinner.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/api/RecipeRecognierAPI2/RecipeRecognierAPI2-cloudformation-template.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/api/RecipeRecognierAPI2/api-params.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/api/RecipeRecognierAPI2/parameters.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/backend-config.json" beforeDir="false" afterPath="$PROJECT_DIR$/amplify/backend/backend-config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/S3Triggerd2bdc1eb/S3Triggerd2bdc1eb-cloudformation-template.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/S3Triggerd2bdc1eb/amplify.state" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/S3Triggerd2bdc1eb/src/event.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/S3Triggerd2bdc1eb/src/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/S3Triggerd2bdc1eb/src/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/S3Triggerd2bdc1eb/src/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/VisualSearchLambda/VisualSearchLambda-cloudformation-template.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/VisualSearchLambda/amplify.state" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/VisualSearchLambda/function-parameters.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/VisualSearchLambda/parameters.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/VisualSearchLambda/src/event.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/VisualSearchLambda/src/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/VisualSearchLambda/src/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/backend/function/VisualSearchLambda/src/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/amplify/team-provider-info.json" beforeDir="false" afterPath="$PROJECT_DIR$/amplify/team-provider-info.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Container.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Container.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Gallery.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Gallery.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Navbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Upload.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Upload.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/UserInfo.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserInfo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useAuth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useAuth.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/Routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/Routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +60,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/components" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -65,6 +87,8 @@
       <workItem from="1631731940060" duration="376000" />
       <workItem from="1631732318646" duration="808000" />
       <workItem from="1631740486026" duration="2301000" />
+      <workItem from="1632162484249" duration="4538000" />
+      <workItem from="1632502301144" duration="4515000" />
     </task>
     <servers />
   </component>
@@ -76,7 +100,24 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
