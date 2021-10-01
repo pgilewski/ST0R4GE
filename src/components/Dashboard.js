@@ -1,6 +1,13 @@
 import React from 'react';
+import { listPictures } from '../graphql/queries';
+import { Auth, API, graphqlOperation } from 'aws-amplify';
+import { listProfiles } from '../graphql/queries';
 
 export default function Dashboard() {
+	const listPictures = async () => {
+		const response = await API.graphql(graphqlOperation(listProfiles))
+		return response.listProfiles.items
+	}
 	return (
 		<div className="full-height-no-navbar">
 			<section className="text-gray-600 body-font">

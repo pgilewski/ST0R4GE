@@ -1,12 +1,18 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Storage } from 'aws-amplify';
+import { Auth, Storage, API, graphqlOperation } from 'aws-amplify';
+import Predictions from '@aws-amplify/predictions'
+import awsmobile from '../aws-exports';
+import { createPicture } from '../graphql/mutations';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
 
 function Upload() {
     const [ files, setFiles ] = useState([]);
     const [ loading, setLoading ] = useState('start');
+
+
+
 
     useEffect(
         () => () => {
@@ -23,45 +29,80 @@ function Upload() {
                 })
             )
         );
-        console.log(acceptedFiles);
     }, []);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
+    const filterLabels = (labels) => {
+        const filteredLabels = labels.filter((label) => {
+            if(label.metadata.confidence > 80) return label
+        }).map((label) => {
+            return label.name
+        })
+
+        console.log(filteredLabels)
+        return filteredLabels
+    }
+
+    const addImageToDB = async (image) => {
+        try {
+            await API.graphql(graphqlOperation(createPicture, {input:image}));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
     const onSubmit = async (event) => {
         event.preventDefault();
         setLoading('loading');
+
+        const creds = await Auth.currentCredentials()
+
         for (const [ index, file ] of files.entries()) {
             try {
                 await Storage.put(file.name, file, {
                     contentType: 'image/jpg',
                     level: 'private'
-                }).then((d) => {
-                    console.log(d);
-                });
+                })
             } catch (error) {
                 console.log('Error uploading file: ', error);
             }
-            if (index === files.length - 1) {
-                try {
-                    await Storage.put(file.name, file, {
-                        contentType: 'image/jpg',
-                        level: 'private'
-                    }).then(() => {
-                        setLoading('result');
-                    });
-                } catch (error) {
-                    console.log('Error uploading file: ', error);
+
+            Predictions.identify({
+                labels: {
+                    source: {
+                        file,
+                    },
+                    type: "LABELS"
                 }
+            }).then( response => {
+                // create cred.identityID context and name both in Photos table and in aws the same way
+                let { labels } = response
+                let picture = {
+                    id: `private/${creds.identityId}/${file.name}`,
+                    labels: filterLabels(labels),
+                    file: {
+                        bucket: awsmobile.aws_user_files_s3_bucket,
+                        region: awsmobile.aws_user_files_s3_bucket_region,
+                        key: `private/${creds.identityId}/${file.name}`
+                    }
+                }
+                addImageToDB(picture).catch((e) => {console.log("e: " + e)})
+            })
+
+
+            if (index === files.length - 1) {
+                setLoading('result');
+
             }
         }
+
     };
     const preview = files.map((file) => {
         return <img src={file.preview} alt={file.name} className="w-2/3 md:w-full" key={file.name} />;
     });
 
     const renderResult = (props) => {
-        console.log(props);
         if (loading === 'result') {
             return (
                 <div>
@@ -77,7 +118,6 @@ function Upload() {
                 </div>
             );
         } else if (loading === 'loading') {
-            console.log('loading teraz');
             return (
                 <div>
                     <LoadingSpinner />
@@ -134,13 +174,21 @@ function Upload() {
                         <div className="col-span-3 justify-items-center grid md:grid-cols-3 gap-4">{preview}</div>
                     </div>
                 </div>
+{/*                <select className="px-4 mt-2 py-2 border rounded-md">
+                    <option>memy</option>
+                    <option>folder_2</option>
+                    <option>aesthetics</option>
+                    <option>-------------</option>
+                    <option>new directory</option>
+                </select>*/}
+
                 {files.length > 0 ? (
                     <div className="">
                         {' '}
                         <button
                             type="button"
                             onClick={onSubmit}
-                            className="mt-6 py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+                            className="mt-4 py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
                         >
                             Upload {files.length} pictures
                         </button>
@@ -155,5 +203,4 @@ function Upload() {
         </div>
     );
 }
-
 export default Upload;

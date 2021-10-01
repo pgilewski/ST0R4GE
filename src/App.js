@@ -12,7 +12,7 @@ import { AuthProvider } from './context/authContext';
 function App() {
   
   const user = localStorage.getItem('user');
-
+  console.log(user)
   return (
     <AuthProvider user={user}>
       <Router>

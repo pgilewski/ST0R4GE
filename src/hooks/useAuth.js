@@ -7,24 +7,13 @@ import { useHistory } from 'react-router-dom';
 
 
 const useAuth = () => {
-
-/*   const initialState = {
-    user: {},
-    isSignedIn: false,
-    error: null
-  }
-
-  const [state, setState] = useState(initialState) */
-
-
-  const { setCurrentUser } = useAuthContext();
-
+    
+  const { currentUser, setCurrentUser } = useAuthContext();
 
   useEffect(() => {
     setAuthListener();
   }, []);
 
-  // bug fix: po niektórych logowaniach nie udpatuje się użytkownik
   async function setAuthListener() {
     Hub.listen('auth', (data) => {
       switch (data.payload.event) {
@@ -45,10 +34,14 @@ const useAuth = () => {
   const checkUser = async () => {
     try {
         const user = await Auth.currentAuthenticatedUser()
-        /* setState({ user, isSignedIn: true }) */
-        setCurrentUser(user.attributes.email)
-        localStorage.setItem('user', user.attributes.email)
-        /* history.push('/') */
+        const creds = await Auth.currentCredentials()
+        const profile = {
+            username: user.username,
+            identityId: creds.identityId,
+            email: user.attributes.email,
+        }
+        setCurrentUser(profile)
+        localStorage.setItem('user', profile)
     } catch (err) {
         setCurrentUser(null)
         localStorage.removeItem('user')
@@ -71,23 +64,20 @@ const useAuth = () => {
           username,   
           password,
         });
-        console.log("zalogowano")
+
+        checkUser();
+
         if(user) {
           history.push("/profile");
         }
-        setCurrentUser(user.attributes.email)
-        localStorage.setItem('user', user.attributes.email)
-        /* setState({ user: user, isSignedIn: true, error: null }); */
 
     } catch (err) {
-        /* setState({ isSignedIn: false, error: error.message});  */
         console.log(err)
       }
   }
 
-  //to do: save user to localstorage
-  const signInSocial =  ({provider}) => {
-     Auth.federatedSignIn({ provider }).then((user) => {console.log(user)})
+  const signInSocial = async ({provider}) => {
+      await Auth.federatedSignIn({ provider }).then((user) => {console.log("user", user)})
   }
   const signOut = async () => {
       setCurrentUser(null)

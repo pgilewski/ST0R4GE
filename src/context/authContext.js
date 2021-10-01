@@ -4,7 +4,6 @@ const AuthContext = createContext(null)
 
 //wrapper for the provieder
 export const AuthProvider = ({ user, children }) => {
-
     const [currentUser, setCurrentUser] = useState(user);
 
     return (

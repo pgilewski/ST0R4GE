@@ -16,6 +16,7 @@ import { useAuthContext } from '../context/authContext'
 import Dashboard from '../components/Dashboard';
 import Gallery from '../components/Gallery';
 import Public from '../components/Public';
+import Profile from '../components/Profile';
 
 const ProtectedRoute = ({ children, ...rest }) => {
     const { currentUser } = useAuthContext();
@@ -39,8 +40,8 @@ const ProtectedRoute = ({ children, ...rest }) => {
 }
 
 const Routes = () => {
-    const { currentUser } = useAuthContext();
 
+    const { currentUser } = useAuthContext();
     return (
         <Switch>
         <ProtectedRoute path="/upload">

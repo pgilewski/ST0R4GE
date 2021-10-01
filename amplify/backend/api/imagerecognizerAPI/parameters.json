@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "imagerecognizerAPI",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authreciperecognizerapp8ebd3806",
+      "Outputs.UserPoolId"
+    ]
+  }
+}
