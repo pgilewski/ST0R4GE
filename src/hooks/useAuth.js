@@ -79,6 +79,8 @@ const useAuth = () => {
   const signInSocial = async ({provider}) => {
       await Auth.federatedSignIn({ provider }).then((user) => {console.log("user", user)})
   }
+
+
   const signOut = async () => {
       setCurrentUser(null)
       localStorage.removeItem('user')
