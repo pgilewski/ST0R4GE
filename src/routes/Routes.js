@@ -1,7 +1,6 @@
 import React from 'react';
 import Upload from '../components/Upload';
 import Home from '../components/Home';
-import Recognize from '../components/Recognize';
 import Register from '../components/Register';
 import Login from '../components/Login';
 
@@ -46,9 +45,6 @@ const Routes = () => {
         <ProtectedRoute path="/upload">
           <Upload />
         </ProtectedRoute>
-        <Route path="/recognize">
-          <Recognize />
-        </Route>
         <Route path="/register">
           <Register />
         </Route>

@@ -189,7 +189,7 @@ export default function Gallery() {
 						setPictures(
 							(prevPictures) => [ ...prevPictures, {
 								url,
-								labels: labels.data.getPicture.labels
+								labels: labels ? labels.data.getPicture.labels : null
 							} ]
 						);
 					}

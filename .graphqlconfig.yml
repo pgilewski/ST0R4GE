@@ -1,6 +1,6 @@
 projects:
-  imagerecognizerAPI:
-    schemaPath: amplify/backend/api/imagerecognizerAPI/build/schema.graphql
+  amplifydemo:
+    schemaPath: src/graphql/schema.json
     includes:
       - src/graphql/**/*.js
     excludes:

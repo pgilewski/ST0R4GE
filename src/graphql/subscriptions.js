@@ -70,7 +70,10 @@ export const onCreateProfile = /* GraphQL */ `
         key
       }
       bio
-      socials
+      socials {
+        name
+        url
+      }
       createdAt
       updatedAt
       owner
@@ -95,7 +98,10 @@ export const onUpdateProfile = /* GraphQL */ `
         key
       }
       bio
-      socials
+      socials {
+        name
+        url
+      }
       createdAt
       updatedAt
       owner
@@ -120,7 +126,10 @@ export const onDeleteProfile = /* GraphQL */ `
         key
       }
       bio
-      socials
+      socials {
+        name
+        url
+      }
       createdAt
       updatedAt
       owner

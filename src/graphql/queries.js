@@ -60,7 +60,10 @@ export const getProfile = /* GraphQL */ `
         key
       }
       bio
-      socials
+      socials {
+        name
+        url
+      }
       createdAt
       updatedAt
       owner
@@ -90,7 +93,10 @@ export const listProfiles = /* GraphQL */ `
           key
         }
         bio
-        socials
+        socials {
+          name
+          url
+        }
         createdAt
         updatedAt
         owner
