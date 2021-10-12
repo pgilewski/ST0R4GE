@@ -1,5 +1,4 @@
 import React from 'react';
-import UserInfo from '../components/UserInfo';
 import Upload from '../components/Upload';
 import Home from '../components/Home';
 import Recognize from '../components/Recognize';
@@ -57,7 +56,7 @@ const Routes = () => {
           <Login />
         </Route>
         <Route path="/profile">
-          <UserInfo user={currentUser}/>
+          <Profile user={currentUser}/>
         </Route>
         <ProtectedRoute path="/dashboard">
           <Dashboard />
