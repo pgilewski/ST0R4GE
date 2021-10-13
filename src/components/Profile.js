@@ -24,19 +24,15 @@ const Profile = (props) => {
 
     const getProfileFromDB = async () => {
         const cognitoUser = await Auth.currentAuthenticatedUser()
-        const creds = await Auth.currentCredentials()
 
         const profile = {
             id: cognitoUser.username,
-            email: cognitoUser.attributes.email,
-            identityId: creds.identityId,
         }
 
         await API.graphql(graphqlOperation(getProfile, {id: profile.id})).then((d) => {
 
             if (d.data.getProfile) {
                 setProfileInfo(d.data.getProfile)
-                console.log(profileInfo)
             } else {
                 addProfileToDB(profile)
             }
@@ -57,12 +53,9 @@ const Profile = (props) => {
 
 
         await API.graphql(graphqlOperation(updateProfile, {input: profile})).then((d) => {
-            console.log(profileInfo)
-            console.log(d)
             setProfileInfo(d.data.updateProfile);
 
         })
-        console.log("dsds", profileInfo)
         setEditMode(false)
 
         }
@@ -81,7 +74,6 @@ const Profile = (props) => {
 
     const addSocial = (e) => {
         setSocialFormList(() => ([...socialFormList, socialForm]))
-        console.log(socialFormList)
 
     }
 
@@ -92,7 +84,6 @@ const Profile = (props) => {
                 <div>
                     {
                         profileInfo.socials.map((social, i) => {
-                            console.log(social)
                             return (
                                 <div key={i}>
 									<span
@@ -145,7 +136,6 @@ const Profile = (props) => {
     function onChange(e) {
         e.persist()
         setFormState(() => ({...formState, [e.target.name]: e.target.value }))
-        console.log(formState)
     }
 
     return (

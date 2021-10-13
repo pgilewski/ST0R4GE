@@ -53,7 +53,7 @@ export function GalleryNavbar ({setLabel}) {
 	
 	function capitalize(input) {
 		const CapitalizedWords = [];
-		//jezeli inoput nie jest pusty I jeżeli nie kończy się spacjś
+		//jezeli inoput nie jest pusty I jeżeli nie kończy się spacja
 		if (input !== '' && input.charAt(input.length -1) !== ' '){
 			const words = input.split(' ');
 			words.forEach(word => {
@@ -69,7 +69,6 @@ export function GalleryNavbar ({setLabel}) {
 		}else{
 			//jeżeli jest pusty
 		}
-		console.log(CapitalizedWords.join(' '))
 		return CapitalizedWords.join(' ');
 	}
 
@@ -84,15 +83,15 @@ export function GalleryNavbar ({setLabel}) {
 								<div className="ml-10 flex items-baseline space-x-4">
 {/*									<a className="text-gray-800 dark:text-white  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
 									   href="">
-										private
+										folder1
 									</a>
 									<a className="text-gray-300  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
 									   href="">
-										aesthetics
+										folder2
 									</a>
 									<a className="text-gray-300  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
 									   href="">
-										wyjazd
+										folder3
 									</a>*/}
 								</div>
 							</div>

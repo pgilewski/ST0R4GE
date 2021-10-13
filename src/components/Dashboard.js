@@ -4,7 +4,7 @@ import { listPictures, listProfiles } from '../graphql/queries';
 
 export default function Dashboard() {
 
-	const [ dashboardState, setDashboardState ] = useState()
+	const [ dashboardState, setDashboardState ] = useState({files: null, profiles: null})
 
 	const getFileCount = async () => {
 		const response = await API.graphql(graphqlOperation(listPictures))

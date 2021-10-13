@@ -28,10 +28,9 @@ export default function Register() {
 				username,
 				password
 			});
-			console.log(user)
 
 		} catch (error) {
-			console.log(error.message);
+			console.error(error.message);
 		}
 	};
 
