@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 
 const useAuth = () => {
     
-  const { currentUser, setCurrentUser } = useAuthContext();
+  const { setCurrentUser } = useAuthContext();
 
   useEffect(() => {
     setAuthListener();
@@ -72,12 +72,12 @@ const useAuth = () => {
         }
 
     } catch (err) {
-        console.log(err)
+        console.error(err)
       }
   }
 
   const signInSocial = async ({provider}) => {
-      await Auth.federatedSignIn({ provider }).then((user) => {console.log("user", user)})
+      await Auth.federatedSignIn({ provider })
   }
 
 

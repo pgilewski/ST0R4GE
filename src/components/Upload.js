@@ -40,7 +40,6 @@ function Upload() {
             return label.name
         })
 
-        console.log(filteredLabels)
         return filteredLabels
     }
 
@@ -65,7 +64,7 @@ function Upload() {
                     level: 'private'
                 })
             } catch (error) {
-                console.log('Error uploading file: ', error);
+                console.error('Error uploading file: ', error);
             }
 
             Predictions.identify({
@@ -76,7 +75,6 @@ function Upload() {
                     type: "LABELS"
                 }
             }).then( response => {
-                // create cred.identityID context and name both in Photos table and in aws the same way
                 let { labels } = response
                 let picture = {
                     id: `private/${creds.identityId}/${file.name}`,
@@ -87,7 +85,7 @@ function Upload() {
                         key: `private/${creds.identityId}/${file.name}`
                     }
                 }
-                addImageToDB(picture).catch((e) => {console.log("e: " + e)})
+                addImageToDB(picture).catch((e) => {console.error(e)})
             }).then(() => {
                 if (index === files.length - 1) {
                     setLoading('result');
