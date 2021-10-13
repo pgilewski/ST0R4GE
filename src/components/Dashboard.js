@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
-/* import { API, graphqlOperation } from 'aws-amplify';
-import { listPictures, listProfiles } from '../graphql/queries'; */
-import picture from '../assets/images/dashboard.png'
+import { API, graphqlOperation } from 'aws-amplify';
+import { listPictures, listProfiles } from '../graphql/queries';
+import picture from '../assets/images/dashboard.png';
 export default function Dashboard() {
-	return( 
-		<div className="full-height-no-navbar flex justify-center align-middle items-center">
-			<img src={picture} className="md:mx-8"/>
+	return (
+		<div className="full-height-no-navbar flex justify-center align-top items-center text-center">
+			<div className="">
+				<h2 className="title-font font-medium text-5xl sm:text-4xl l:text-6xl xl:text-7xl  text-gray-900 tracking-wider">
+					COMING SOON
+				</h2>
+				<img src={picture} className="mx-16 md:mx-8 sm:mx-4 w-full" />
+			</div>
 		</div>
-	)
+	);
 }
 /* 
 export default function Dashboard() {
@@ -29,10 +34,12 @@ export default function Dashboard() {
 			profiles: response.listProfiles.items.length
 		})
 	}
+
 	useEffect(() => {
 		getFileCount();
 		getProfileCount();
 	})
+	
 	return (
 		<div className="full-height-no-navbar">
 			<section className="text-gray-600 body-font">
