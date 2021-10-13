@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { API, graphqlOperation } from 'aws-amplify';
-import { listPictures, listProfiles } from '../graphql/queries';
+/* import { API, graphqlOperation } from 'aws-amplify';
+import { listPictures, listProfiles } from '../graphql/queries'; */
 import picture from '../assets/images/dashboard.png'
 export default function Dashboard() {
 	return( 
@@ -39,19 +39,19 @@ export default function Dashboard() {
 				<div className="container px-5 py-24 mx-auto">
 					<div className="flex flex-wrap -m-4 text-center">
 						<div className="p-6 sm:w-1/4 w-1/2">
-							<h2 className="title-font font-medium sm:text-4xl text-3xl text-gray-900">{dashboardState.files ? dashboardState.files : null}</h2>
+							<h2 className="title-font font-medium sm:text-4xl text-3xl text-gray-900">{dashboardState.files ==! null? dashboardState.files : null}</h2>
 							<p className="leading-relaxed">Files</p>
 						</div>
 						<div className="p-6 sm:w-1/4 w-1/2">
-							<h2 className="title-font font-medium sm:text-4xl text-3xl text-gray-900">.</h2>
-							<p className="leading-relaxed">...</p>
+							<h2 className="title-font font-medium sm:text-4xl text-3xl text-gray-900">&nbsp;</h2>
+							<p className="leading-relaxed">&nbsp;</p>
 						</div>
 						<div className="p-6 sm:w-1/4 w-1/2">
-							<h2 className="title-font font-medium sm:text-4xl text-3xl text-gray-900">.</h2>
-							<p className="leading-relaxed">...</p>
+							<h2 className="title-font font-medium sm:text-4xl text-3xl text-gray-900">&nbsp;</h2>
+							<p className="leading-relaxed">&nbsp;</p>
 						</div>
 						<div className="p-6 sm:w-1/4 w-1/2">
-							<h2 className="title-font font-medium sm:text-4xl text-3xl text-gray-900">{dashboardState.profiles ? dashboardState.profiles : null }</h2>
+							<h2 className="title-font font-medium sm:text-4xl text-3xl text-gray-900">{dashboardState.profiles ==! null ? dashboardState.profiles : null }</h2>
 							<p className="leading-relaxed">All users</p>
 						</div>
 					</div>
