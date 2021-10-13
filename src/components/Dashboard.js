@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { API, graphqlOperation } from 'aws-amplify';
 import { listPictures, listProfiles } from '../graphql/queries';
-
+import picture from '../assets/images/dashboard.png'
+export default function Dashboard() {
+	return( 
+		<div className="full-height-no-navbar flex justify-center align-middle items-center">
+			<img src={picture} className="md:mx-8"/>
+		</div>
+	)
+}
+/* 
 export default function Dashboard() {
 
 	const [ dashboardState, setDashboardState ] = useState({files: null, profiles: null})
@@ -52,3 +60,4 @@ export default function Dashboard() {
 		</div>
 	);
 }
+ */

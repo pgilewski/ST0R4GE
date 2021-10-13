@@ -55,7 +55,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium" >Store images on S3</span>
+									<span className="title-font font-medium" >Store images in AWS cloud.</span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -72,7 +72,8 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Create directories [upcoming]</span>
+									<span className="title-font font-medium">Use of Rekognition</span>
+
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -89,7 +90,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Usage of AWS Rekognition</span>
+									<span className="title-font font-medium">Tag photos</span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -106,7 +107,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Automatic photo tagging</span>
+									<span className="title-font font-medium">Responsive</span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -123,7 +124,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Create public links</span>
+									<span className="title-font font-medium ">Create directories <div className="text-indigo-400"> [upcoming] </div> </span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -140,7 +141,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Friendly interface</span>
+									<span className="title-font font-medium">Share photos <div className="text-indigo-400">[upcoming]</div></span>
 								</div>
 							</div>
 						</div>

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import avatar from '../assets/images/me.png';
+import avatar from '../assets/images/avatar-placeholder.jpg';
 import Container from './Container';
 import {useToggle} from "../hooks/useToggle";
 import {Auth, API, graphqlOperation} from 'aws-amplify';
