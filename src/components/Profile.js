@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import useAuth from '../hooks/useAuth';
 import avatar from '../assets/images/me.png';
 import Container from './Container';
 import {useToggle} from "../hooks/useToggle";
@@ -8,7 +7,6 @@ import {getProfile} from '../graphql/queries';
 import {createProfile, updateProfile} from '../graphql/mutations';
 
 const Profile = (props) => {
-    const {user} = props
 
     const initialState = {
         id: null,
@@ -71,7 +69,7 @@ const Profile = (props) => {
 
     useEffect(() => {
         getProfileFromDB();
-    }, [])
+    })
 
     const [socialForm , setSocialForm] = useState();
     const [socialFormList , setSocialFormList] = useState([]);
@@ -89,7 +87,7 @@ const Profile = (props) => {
 
     const renderSocials = () => {
 
-        if (profileInfo.socials ==! null) {
+        if (profileInfo.socials ===! null) {
             return (
                 <div>
                     {
@@ -119,7 +117,7 @@ const Profile = (props) => {
             )
         } else {
             return (editMode ? <div className="flex mt-2">
-{/*                <div className="flex ">
+                <div className="flex ">
                     <input onChange={onChangeSocial}
                            type="text"
                            name="social"
@@ -136,7 +134,7 @@ const Profile = (props) => {
                     onClick={addSocial}
                     className="ml-1 px-2 rounded border hover:bg-gray-100 appearance-none border-gray-300 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent">
                     Add social
-                </button>*/}
+                </button>
             </div> : null)
         }
     }
@@ -210,28 +208,6 @@ const Profile = (props) => {
 
                             </div>
 
-                            <div className="pt-3 flex flex-col justify-start items-start w-full ">
-
-
-                                {/*								<div className="relative text-left ">
-									<label htmlFor="name-with-label" className="text-gray-700 ml-2">
-										User
-									</label>
-									<input type="text" id="name-with-label"
-										   className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-										   name="email" placeholder=""/>
-								</div>*/}
-
-                                {/*								<div className=" relative opacity-50 pointer-events-none text-left">
-									<label htmlFor="disabled-email" className="text-gray-700 ml-2">
-										Email
-									</label>
-									<input type="text" id="disabled-email" disabled=""
-										   className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-										   name="email" placeholder={name.email} disabled/>
-								</div>*/}
-
-                            </div>
                         </div>
                         <div className="text-left">
                              {profileInfo.createdAt ? "Created at: " + profileInfo.createdAt.split("T")[0] : null}

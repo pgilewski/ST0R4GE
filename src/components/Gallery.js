@@ -60,7 +60,7 @@ export function GalleryNavbar ({setLabel}) {
 				CapitalizedWords.push(word[0].toUpperCase() + word.slice(1, word.length));
 			});
 			//jezeli kończy się spacją
-		} else if (input.charAt(input.length -1) == ' ') {
+		} else if (input.charAt(input.length -1) === ' ') {
 			const words = input.split(' ');
 			words.pop()
 			words.forEach(word => {
@@ -143,7 +143,7 @@ export function RenderImages ({ pictures, label }) {
 		pictures.map((picture, i) => {
 			const { labels, url } = picture
 
-			if (label == '' | labels.find(a => a.includes(label)) !== undefined){
+			if (label === '' | labels.find(a => a.includes(label)) !== undefined){
 				return(
 					<div key={i} className="lg:w-1/3 sm:w-1/2 p-4">
 						<div className="flex relative">

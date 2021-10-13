@@ -9,7 +9,6 @@ export default function Register() {
 		username: '',
 		password: '',
 		email: '',
-		errorMsg: ''
 	};
 
 	const [ formState, updateFormState ] = useState(initialFormState);
@@ -19,9 +18,8 @@ export default function Register() {
 		updateFormState(() => ({ ...formState, [e.target.name]: e.target.value }));
 	}
 
-	const [ errorMessage, setErrorMessage ] = useState('');
 
-	const { checkUser, signInSocial } = useAuth()
+	const { signInSocial } = useAuth()
 
 	const signUp = async (formState) => {
 		const { username, password } = formState;

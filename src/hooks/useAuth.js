@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 
 const useAuth = () => {
     
-  const { currentUser, setCurrentUser } = useAuthContext();
+  const { setCurrentUser } = useAuthContext();
 
   useEffect(() => {
     setAuthListener();
