@@ -88,13 +88,11 @@ function Upload() {
                     }
                 }
                 addImageToDB(picture).catch((e) => {console.log("e: " + e)})
+            }).then(() => {
+                if (index === files.length - 1) {
+                    setLoading('result');
+                }
             })
-
-
-            if (index === files.length - 1) {
-                setLoading('result');
-
-            }
         }
 
     };

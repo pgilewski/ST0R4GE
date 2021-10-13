@@ -15,15 +15,15 @@ function Home() {
 						Organize your photos on the run.
 					</h1>
 					<p className="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">
-						Use fast and reliable app to get a grip on your files and have access to them from everywhere.<br />
-						<a className="text-blue-800" href="github.com">
+						Use fast and reliable app to get a grip of your photos and have access to them from everywhere.<br />
+						<a className="text-blue-800" href="https://github.com/pgilewski/my-space/">
 							Check Github repository.
 						</a>
 					</p>
 				</div>
 				<div className="lg:mt-0 lg:flex-shrink-0">
 					<div className="inline-flex rounded-md">
-						<Link to="/recognize">
+						<Link to="/upload">
 							<button
 								type="button"
 								className="py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
@@ -55,7 +55,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium" >Trzymanie plików na s3</span>
+									<span className="title-font font-medium" >Store images on S3</span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -72,7 +72,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Tworzenie folderów</span>
+									<span className="title-font font-medium">Create directories [upcoming]</span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -89,7 +89,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Wykorzystanie AWS Rekognition</span>
+									<span className="title-font font-medium">Usage of AWS Rekognition</span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -106,7 +106,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Oznaczanie zdjęć tagami</span>
+									<span className="title-font font-medium">Automatic photo tagging</span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -123,7 +123,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Tworzenie publicznych linków</span>
+									<span className="title-font font-medium">Create public links</span>
 								</div>
 							</div>
 							<div className="p-2 sm:w-1/2 w-full">
@@ -140,7 +140,7 @@ function Home() {
 										<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 										<path d="M22 4L12 14.01l-3-3" />
 									</svg>
-									<span className="title-font font-medium">Przyjazny interfejs(może)</span>
+									<span className="title-font font-medium">Friendly interface</span>
 								</div>
 							</div>
 						</div>
