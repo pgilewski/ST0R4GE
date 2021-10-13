@@ -123,7 +123,7 @@ const Profile = (props) => {
 
 					<button
 						onClick={addSocial}
-						className="ml-1 px-2 rounded border hover:bg-gray-100 appearance-none border-gray-300 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+						className="ml-1 px-2 rounded border hover:bg-gray-100 appearance-none border-gray-300 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
 					>
 						Add social
 					</button>
@@ -140,15 +140,29 @@ const Profile = (props) => {
 		setFormState(() => ({ ...formState, [e.target.name]: e.target.value }));
 	}
 
-	function backgroundChangeHandler(e) {
+	function onBackgroundChangeCapture(e) {
 		console.log('background change');
         console.log(e.target.files[0]);
 	}
 
-	function avatarChangeHandler(e) {
-        console.log('background change');
+	function onAvatarChangeCapture(e) {
+        console.log('avatar change');
         console.log(e.target.files[0]);
 	}
+
+	const backgroundInput = useRef(null);
+
+	const avatarInput = useRef(null);
+
+	const onBackgroundClick = () => {
+		backgroundInput.current.click();
+	}
+
+	const onAvatarClick = () => {
+		avatarInput.current.click();
+	}
+
+
 	return (
 		<Container>
 			<div className="p-4">
@@ -160,10 +174,10 @@ const Profile = (props) => {
 							backgroundImage: 'url(https://wallpapercave.com/wp/wp2771916.jpg)'
 						}}
 					>
-						<input onChange={backgroundChangeHandler} type="file" accept="image/*" style={{ display: 'none' }} id="background-file" disabled={editMode}/>
+						<input type="file" ref={backgroundInput} onChangeCapture={onBackgroundChangeCapture}  accept="image/*" style={{ display: 'none' }} disabled={!editMode} multiple={false}/>
                         
 						<img
-                            htmlFor="background-file" 
+							onClick={onBackgroundClick}
 							className="opacity-0 w-full h-full"
 							src="https://wallpapercave.com/wp/wp2771916.jpg"
 							alt="background image"
@@ -174,14 +188,14 @@ const Profile = (props) => {
 							<div className="flex flex-1">
 								<div style={{ marginTop: '-6rem' }}>
 									<div style={{ height: '9rem', width: '9rem' }} className="md relative avatar">
-						                <input onChange={avatarChangeHandler} type="file" accept="image/*" style={{ display: 'none' }} id="avatar-file" disabled={editMode}/>
-										
+						                <input type="file" ref={avatarInput} onChange={onAvatarChangeCapture} accept="image/*" style={{ display: 'none' }} id="avatar-file" disabled={!editMode} multiple={false}>
                                         <img
-                                            htmlFor="avatar-file" 
+											onClick={onAvatarClick}
 											className="md relative w-36"
 											src={avatar}
 											alt="avatar image"
 										/>
+										</input>
 										<div className="absolute" />
 									</div>
 								</div>
