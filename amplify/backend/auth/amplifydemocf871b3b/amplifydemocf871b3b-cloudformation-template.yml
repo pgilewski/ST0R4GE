@@ -126,6 +126,22 @@ Parameters:
   usernameAttributes:
     Type: CommaDelimitedList
       
+        
+  userPoolGroupList:
+    Type: CommaDelimitedList
+      
+  serviceName:
+    Type: String
+  
+            
+  
+  usernameCaseSensitive:
+    Type: String
+            
+        
+  dependsOn:
+    Type: CommaDelimitedList
+      
   hostedUIDomainName:
     Type: String
   
@@ -146,21 +162,9 @@ Parameters:
     Type: String
   
             
-        
-  userPoolGroupList:
-    Type: CommaDelimitedList
-      
-            
-  serviceName:
-    Type: String
-  
-            
-  
-  usernameCaseSensitive:
-    Type: String
             
         
-  dependsOn:
+  authProviders:
     Type: CommaDelimitedList
       
 Conditions:
