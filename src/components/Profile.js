@@ -188,14 +188,13 @@ const Profile = (props) => {
 							<div className="flex flex-1">
 								<div style={{ marginTop: '-6rem' }}>
 									<div style={{ height: '9rem', width: '9rem' }} className="md relative avatar">
-						                <input type="file" ref={avatarInput} onChange={onAvatarChangeCapture} accept="image/*" style={{ display: 'none' }} id="avatar-file" disabled={!editMode} multiple={false}>
+						                <input type="file" ref={avatarInput} onChange={onAvatarChangeCapture} accept="image/*" style={{ display: 'none' }} id="avatar-file" disabled={!editMode} multiple={false}/>
                                         <img
 											onClick={onAvatarClick}
 											className="md relative w-36"
 											src={avatar}
 											alt="avatar image"
 										/>
-										</input>
 										<div className="absolute" />
 									</div>
 								</div>
@@ -203,7 +202,7 @@ const Profile = (props) => {
 							<div className="flex flex-col text-right">
 								<button
 									onClick={setEditMode}
-									className="flex justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  rounded max-w-max border bg-transparent border-indigo-500 text-indigo-500 hover:border-indigo-800 hover:border-indigo-800 flex items-center hover:shadow-lg font-bold py-2 px-4  mr-0 ml-auto"
+									className="justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  rounded max-w-max border bg-transparent border-indigo-500 text-indigo-500 hover:border-indigo-800 flex items-center hover:shadow-lg font-bold py-2 px-4  mr-0 ml-auto"
 								>
 									Edit Profile
 								</button>

@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { API, graphqlOperation } from 'aws-amplify';
 import { listPictures, listProfiles } from '../graphql/queries';
-import picture from '../assets/images/dashboard.png';
+import picture from '../assets/images/dashboard.png'
 export default function Dashboard() {
-	return (
-		<div className="w-full max-h-full bg-white flex justify-center align-top items-center text-center">
-				<h2 className="title-font font-medium text-5xl sm:text-4xl l:text-6xl xl:text-7xl  text-gray-900 tracking-wider">
+	return( 
+		<div className="full-height-no-navbar w-full max-h-full bg-white flex-column justify-center align-top items-center text-center">
+				<h2 className="title-font font-medium text-2xl  text-gray-800 tracking-wider">
 					COMING SOON
 				</h2>
-				<img src={picture} className="mx-16 md:mx-8 sm:mx-4 w-full" />
+				<img src={picture} className=" mx-auto w-1/2" />
 		</div>
-	);
+	)
 }
 /* 
 export default function Dashboard() {

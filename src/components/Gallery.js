@@ -77,7 +77,7 @@ export function GalleryNavbar ({setLabel}) {
 		<div>
 			<nav className="bg-white dark:bg-gray-800  shadow py-4 ">
 				<div className="max-w-7xl mx-auto px-8">
-					<div className="md:flex md:items-center md:justify-between md:h-16">
+					<div className="flex items-center justify-between md:h-16">
 						<div className=" flex items-center">
 							<div className="hidden md:block">
 								<div className="ml-10 flex items-baseline space-x-4">
