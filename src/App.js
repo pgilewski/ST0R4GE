@@ -11,12 +11,6 @@ import { AuthProvider } from './context/authContext';
 
 function App() {
 
-	const bodyInput = useRef(null);
-  
-  const onBodyClick = () => {
-		avatarInput.current.click();
-	}
-
   const user = localStorage.getItem('user');
   return (
     <AuthProvider user={user}>
