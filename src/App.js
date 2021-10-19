@@ -17,7 +17,7 @@ function App() {
       <Router>
         <div className="App justify-items-center h-screen w-screen bg-gray-300">
           <Navbar />
-          <div onClick={} className="flex justify-center">
+          <div className="flex justify-center">
             <Routes/>
           </div>
         </div>
