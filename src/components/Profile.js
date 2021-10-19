@@ -23,18 +23,23 @@ const Profile = (props) => {
 
 	const getProfileFromDB = async () => {
 		const cognitoUser = await Auth.currentAuthenticatedUser();
+		console.log(cognitoUser)
 
 		const profile = {
 			id: cognitoUser.username
 		};
 
-		await API.graphql(graphqlOperation(getProfile, { id: profile.id })).then((d) => {
-			if (d.data.getProfile) {
-				setProfileInfo(d.data.getProfile);
-			} else {
-				addProfileToDB(profile);
-			}
-		});
+		try {
+			await API.graphql(graphqlOperation(getProfile, { id: profile.id })).then((d) => {
+				if (d.data.getProfile) {
+					setProfileInfo(d.data.getProfile);
+				} else {
+					addProfileToDB(profile);
+				}
+			});
+		} catch (e) {
+			console.error(e)
+		}
 	};
 
 	async function updateProfileInDB() {
@@ -55,7 +60,7 @@ const Profile = (props) => {
 
 	useEffect(() => {
 		getProfileFromDB();
-	});
+	}, []);
 
 	const [ socialForm, setSocialForm ] = useState();
 	const [ socialFormList, setSocialFormList ] = useState([]);
@@ -161,7 +166,7 @@ const Profile = (props) => {
 	const onAvatarClick = () => {
 		avatarInput.current.click();
 	}
-
+ 
 
 	return (
 		<Container>
@@ -202,7 +207,7 @@ const Profile = (props) => {
 							<div className="flex flex-col text-right">
 								<button
 									onClick={setEditMode}
-									className="justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  rounded max-w-max border bg-transparent border-indigo-500 text-indigo-500 hover:border-indigo-800 flex items-center hover:shadow-lg font-bold py-2 px-4  mr-0 ml-auto"
+									className="justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  rounded max-w-max border bg-transparent border-indigo-500 text-indigo-500 hover:border-indigo-800 hover:border-indigo-800 flex items-center hover:shadow-lg font-bold py-2 px-4  mr-0 ml-auto"
 								>
 									Edit Profile
 								</button>

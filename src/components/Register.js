@@ -36,8 +36,8 @@ export default function Register() {
 
 
 	return (
-		<div className="my-2">
-			<div className="flex flex-col w-full max-w-md px-4 py-8 bg-white rounded-lg shadow dark:bg-gray-800 sm:px-6 md:px-8 lg:px-10">
+        <div className="full-height-no-navbar align-top justify-center">
+          <div className="mx-auto my-2 w-full max-w-md px-4 py-8 bg-white rounded-lg shadow dark:bg-gray-800 sm:px-6 md:px-8 lg:px-10 align-center flex-col">
 				<div className="self-center mb-6 text-xl font-light text-gray-600 sm:text-2xl dark:text-white">
 					Register Your Account
 				</div>
@@ -73,7 +73,7 @@ export default function Register() {
 								name="username"
 								id="username"
 								autoComplete="username"
-								className=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+								className=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
 								placeholder="Your email"/>
 						</div>
 					</div>
@@ -91,7 +91,7 @@ export default function Register() {
 								id="password"
 								autoComplete="password"
 								type="password"
-								className=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+								className=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
 								placeholder="Your password"/>
 						</div>
 					</div>
@@ -102,7 +102,7 @@ export default function Register() {
 					</div>
 					<div className="flex w-full">
 						<button onClick={() => {signUp(formState)}}
-								className="py-2 px-4  bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+								className="py-2 px-4  bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
 							Register
 						</button>
 					</div>
