@@ -17,24 +17,24 @@ import Public from '../components/Public';
 import Profile from '../components/Profile';
 
 const ProtectedRoute = ({ children, ...rest }) => {
-    const { currentUser } = useAuthContext();
-    
-    return (
-        <Route
-          {...rest}
-            render={({ location }) =>
-              currentUser ? children :
-                (
-                  <Redirect
-                    to={{
-                      pathname: '/',
-                      state: { from: location },
-                    }}
-                  />
-                )
-            }
-        />
-    );
+  const { currentUser } = useAuthContext();
+  const { redirect } = rest
+  return (
+      <Route
+        {...rest}
+          render={({ location }) =>
+            currentUser ? children :
+              (
+                <Redirect
+                  to={{
+                    pathname: redirect ? redirect : '/',
+                    state: { from: location },
+                  }}
+                />
+              )
+          }
+      />
+  );
 }
 
 const Routes = () => {
@@ -42,7 +42,7 @@ const Routes = () => {
     const { currentUser } = useAuthContext();
     return (
         <Switch>
-        <ProtectedRoute path="/upload">
+        <ProtectedRoute path="/upload" redirect="/login">
           <Upload />
         </ProtectedRoute>
         <Route path="/register">
@@ -54,10 +54,10 @@ const Routes = () => {
         <Route path="/profile">
           <Profile user={currentUser}/>
         </Route>
-        <ProtectedRoute path="/dashboard">
+        <ProtectedRoute path="/dashboard" redirect="/login">
           <Dashboard />
         </ProtectedRoute>
-        <ProtectedRoute path="/gallery">
+        <ProtectedRoute path="/gallery" redirect="/login">
           <Gallery />
         </ProtectedRoute>
             {/* add eslint file */}

@@ -184,7 +184,7 @@ function Upload() {
                         <button
                             type="button"
                             onClick={onSubmit}
-                            className="mt-4 py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+                            className="mb-4 mt-4 py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
                         >
                             Upload {files.length} pictures
                         </button>
