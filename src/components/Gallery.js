@@ -77,7 +77,7 @@ export function GalleryNavbar ({setLabel}) {
 		<div>
 			<nav className="bg-white dark:bg-gray-800  shadow py-4 ">
 				<div className="max-w-7xl mx-auto px-8">
-					<div className="flex items-center justify-between md:h-16">
+					<div className="md:flex md:items-center md:justify-between md:h-16">
 						<div className=" flex items-center">
 							<div className="hidden md:block">
 								<div className="ml-10 flex items-baseline space-x-4">
@@ -99,7 +99,7 @@ export function GalleryNavbar ({setLabel}) {
 						<div className="block">
 							<div className="-mr-2 flex">
 								<form
-									className="flex flex-row w-full max-w-sm space-x-3 md:space-y-0 justify-center">
+									className="flex flex-row w-3/4 w-full max-w-sm space-x-3 md:space-y-0 justify-center">
 									<div className=" relative ">
 										<input
 												onChange={(e) => {
@@ -146,7 +146,7 @@ export function RenderImages ({ pictures, label }) {
 								className="absolute inset-0 w-full h-full object-cover object-center"
 								src={url}
 							/>
-							<div className="px-8 py-24 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-50">
+							<div className="px-8 py-24 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
 								<h2 className="tracking-widest text-sm title-font font-medium text-indigo-500">
 								</h2>
 								<Tags labels={labels}/>
@@ -199,7 +199,7 @@ export default function Gallery() {
 	return (
 		<div className="full-height-no-navbar">
 			<div className="text-gray-600 body-font ">
-				<div className="container px-5 py-12 mx-auto">
+				<div className="container px-5 py-24 mx-auto">
 					<div className="flex flex-col text-center w-full mb-8">
 						<h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Gallery</h1>
 						<p className="lg:w-2/3 mx-auto leading-relaxed text-base mb-8">

@@ -1,70 +1,109 @@
-# Getting Started with Create React App
+# Intive schoolarship React + AWS Amplify Gallery app with Rekognition and Authentication
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Link to demo: [https://main.d2hjyas9gj2dki.amplifyapp.com/](https://main.d2hjyas9gj2dki.amplifyapp.com/).
 
-## Available Scripts
+## To reproduce locally:
 
-In the project directory, you can run:
+Clone github repository: [https://github.com/pgilewski/my-space](https://github.com/pgilewski/my-space)
 
-### `npm start`
+### Prerequirements:
+- node 14.18.0
+- npm 6.14.15
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### `npm install -g @aws-amplify/cli`
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### `amplify config`
 
-### `npm test`
+### `amplify init`
+- Use default settings
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### `amplify add auth` 
+- Default configuration / default configuration with social providers (require addictional configuration)
+- Email
+- Enter your redirect signin URI (eg. http://localhost:3000/)
+- No
+- Enter your redirect signout URI (eg. http://localhost:3000/)
+- Select google and facebook using space, then enter.
+- Enter your Facebook App ID for your OAuth flow:
+- Enter your Facebook App Secret for your OAuth flow:  
+- Enter your Google Web Client ID for your OAuth flow: 
+- Enter your Google Web Client Secret for your OAuth flow:
 
-### `npm run build`
+- No, I am done.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `amplify add api`
+- GraphQL
+- (your_api_name)
+- Amazon Cognito User Pool
+- No, I am done
+- No
+- Single objects with fields
+- Do you want to edit the schema now? Yes
+if file didnt pop out go to /amplify/backend/api/(your_api_name)/schema.grahpql and change existing file to following: 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+type S3Object {
+  bucket: String!
+  region: String!
+  key: String!
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+type Picture @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
+  id: ID!
+  name: String
+  owner: String
+  labels:[String]
+  file: S3Object
+}
 
-### `npm run eject`
+type Social {
+  name: String!
+  url: String!
+}
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
+  id: ID!
+  email: String !
+  identityId: String!
+  name: String
+  profilePic: S3Object
+  backgroundPic: S3Object
+  bio: String
+  socials: [Social]
+}
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `amplify add storage`
+- Content
+- (default_category)
+- (default_bucket_name)
+- Auth users only
+- select 'create/update, read, delete' using space
+- No
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### `amplify add predictions`
+- Identify
+- Identify Labels
+- (deafult_name)
+- Default Configuration
+- Auth users only
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### `amplify push`
+- Yes
+- javascript
+- (deafult)
+- Yes
+- 2
+To push changes.
 
-## Learn More
+Check mutations,queries, etc. to build locally.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Last changes you need to make is to go to your [AWS Console](https://eu-central-1.console.aws.amazon.com/amplify/home?region=eu-central-1#/)
+Select Cognito from services
+Manage User Pools
+Select your created user pool
+In General setting select Message Customizations
+Then set Verification type to Link.
+Save changes.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
