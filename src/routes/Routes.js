@@ -47,13 +47,13 @@ const Routes = () => {
       <Route path="/login">
         <Login />
       </Route>
-      <Route path="/profile">
+      <ProtectedRoute redirect="/login" path="/profile">
         <Profile user={currentUser} />
-      </Route>
+      </ProtectedRoute>
       <ProtectedRoute redirect="/login" path="/dashboard">
         <Dashboard />
       </ProtectedRoute>
-      <ProtectedRoute path="/gallery" redirect="/login">
+      <ProtectedRoute redirect="/login" path="/gallery">
         <Gallery />
       </ProtectedRoute>
       {/* add eslint file */}

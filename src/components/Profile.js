@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import avatar from '../assets/images/avatar-placeholder.jpg'
-import background from '../assets/images/background-placeholder.png'
+import background from '../assets/images/SM-placeholder.png'
 import { useToggle } from '../hooks/useToggle'
 import { Auth, API, Storage, graphqlOperation } from 'aws-amplify'
 import { getProfile } from '../graphql/queries'
