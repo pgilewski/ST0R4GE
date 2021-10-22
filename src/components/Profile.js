@@ -2,9 +2,6 @@
  * TODO:
  * -
  * -
- *
- *
- *
  */
 
 import React, { useState, useEffect, useRef } from 'react'
@@ -39,9 +36,7 @@ const Profile = (props) => {
       console.error(error)
     }
   }
-  /*   bucket: String!
-  region: String!
-  key: String! */
+
   async function updateProfileInDB() {
     const creds = await Auth.currentCredentials()
 
@@ -106,28 +101,10 @@ const Profile = (props) => {
       identityId: creds.identityId,
     }
     try {
-      /*       await API.graphql(graphqlOperation(getProfile, { id: profile.id })).then(
-        (d) => {
-          if (d.data.getProfile === null) {
-            addProfileToDB(profile)
-          } else {
-            try {
-              const background =  Storage.get(d.data.getProfile.backgroundPic, { level: 'protected' })
-              setBackgroundPicture(background)
-
-              const avatar = await Storage.get(d.data.getProfile.profilePic, { level: 'protected' })
-              console.log(avatar)
-            } catch (error) {}
-            setProfileInfo(d.data.getProfile)
-          }
-        },
-      ) */
-
       const response = await API.graphql(
         graphqlOperation(getProfile, { id: profile.id }),
       )
-
-      if (response === null) {
+      if (response.data.getProfile === null) {
         addProfileToDB(profile)
       } else {
         try {
@@ -137,7 +114,8 @@ const Profile = (props) => {
           const profilePicKey = response.data.getProfile.profilePic.key.split(
             '/',
           )[2]
-          if (response.data.getProfile.backgroundPic) {
+
+          if (response.data.getProfile.backgroundPic && backgroundPicKey) {
             Storage.get(backgroundPicKey, {
               level: 'protected',
             }).then((d) => {
@@ -154,7 +132,7 @@ const Profile = (props) => {
               src: background,
             })
           }
-          if (response.data.getProfile.profilePic) {
+          if (response.data.getProfile.profilePic && profilePicKey) {
             await Storage.get(profilePicKey, {
               level: 'protected',
             }).then((d) => {
@@ -267,10 +245,6 @@ const Profile = (props) => {
     setFormState(() => ({ ...formState, [e.target.name]: e.target.value }))
   }
 
-  // Flow:
-  // onChangeCapture ustawia podgląd i state
-  // onSave wysyła do S3 i
-  //
   const [backgroundPicture, setBackgroundPicture] = useState({
     name: '',
     src: background,
@@ -284,7 +258,6 @@ const Profile = (props) => {
   })
 
   async function onBackgroundChangeCapture(e) {
-    console.log(URL.createObjectURL(e.target.files[0]))
     if (e.target.files[0]) {
       setBackgroundPicture({
         src: URL.createObjectURL(e.target.files[0]),
@@ -295,7 +268,6 @@ const Profile = (props) => {
   }
 
   function onAvatarChangeCapture(e) {
-    console.log(URL.createObjectURL(e.target.files[0]))
     if (e.target.files[0]) {
       setAvatarPicture({
         src: URL.createObjectURL(e.target.files[0]),
