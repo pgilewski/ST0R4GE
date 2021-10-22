@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { useHistory } from 'react-router-dom'
 import { Auth, Storage, API, graphqlOperation } from 'aws-amplify'
 import Predictions from '@aws-amplify/predictions'
 import awsmobile from '../aws-exports'
@@ -11,12 +12,11 @@ function Upload() {
   const [files, setFiles] = useState([])
   const [loading, setLoading] = useState('start')
 
-  useEffect(
-    () => () => {
-      files.forEach((file) => URL.revokeObjectURL(file.preview))
-    },
-    [files],
-  )
+  useEffect(() => {
+    files.forEach((file) => {
+      URL.revokeObjectURL(file.preview)
+    })
+  }, [files])
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -106,11 +106,13 @@ function Upload() {
       />
     )
   })
+  const history = useHistory()
 
   const renderResult = (props) => {
     if (loading === 'result') {
-      return (
-        <div>
+      history.push('/gallery')
+
+      /*         <div>
           <h1>Uploaded {props} files.</h1>
           <Link to="/gallery">
             <button
@@ -120,8 +122,7 @@ function Upload() {
               Go to Gallery
             </button>
           </Link>
-        </div>
-      )
+        </div> */
     } else if (loading === 'loading') {
       return (
         <div>

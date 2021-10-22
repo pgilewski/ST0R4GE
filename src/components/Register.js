@@ -23,14 +23,15 @@ export default function Register() {
   const signUp = async (formState) => {
     const { username, password } = formState
     try {
-      const { user } = await Auth.signUp({
+      await Auth.signUp({
         username,
         password,
+      }).then((d) => {
+        console.log(
+          'You have created an account. You have to confirm it by going to your e mail.',
+          d,
+        )
       })
-      console.log(
-        'You created an account. You have to confirm it by going to your e mail.',
-        user,
-      )
     } catch (error) {
       console.error(error.message)
     }

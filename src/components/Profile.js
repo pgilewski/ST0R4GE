@@ -7,12 +7,14 @@
  *
  */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import avatar from '../assets/images/avatar-placeholder.jpg'
+import background from '../assets/images/background-placeholder.png'
 import { useToggle } from '../hooks/useToggle'
-import { Auth, API, graphqlOperation } from 'aws-amplify'
+import { Auth, API, Storage, graphqlOperation } from 'aws-amplify'
 import { getProfile } from '../graphql/queries'
 import { createProfile, updateProfile } from '../graphql/mutations'
+import awsmobile from '../aws-exports'
 
 const Profile = (props) => {
   const initialState = {
@@ -20,40 +22,67 @@ const Profile = (props) => {
     name: '',
     bio: '',
     socials: null,
+    avatar: null,
+    background: null,
   }
 
   const [profileInfo, setProfileInfo] = useState(initialState)
 
   const addProfileToDB = async (profile) => {
-    const response = await API.graphql(
-      graphqlOperation(createProfile, { input: profile }),
-    )
-    setProfileInfo(response.data.createProfile)
+    try {
+      await API.graphql(
+        graphqlOperation(createProfile, { input: profile }),
+      ).then((d) => {
+        setProfileInfo(d.data.createProfile)
+      })
+    } catch (error) {
+      console.error(error)
+    }
   }
+  /*   bucket: String!
+  region: String!
+  key: String! */
+  async function updateProfileInDB() {
+    const creds = await Auth.currentCredentials()
 
-  const getProfileFromDB = async () => {
-    const cognitoUser = await Auth.currentAuthenticatedUser()
-
-    const profile = {
-      id: cognitoUser.username,
+    try {
+      await Storage.put(backgroundPicture.name, backgroundPicture.data, {
+        contentType: 'image/*',
+        level: 'protected',
+      }).then((d) => {
+        console.log('background uploaded successfully', d)
+      })
+    } catch (error) {
+      console.error('Error uploading file: ', error)
     }
 
-    await API.graphql(graphqlOperation(getProfile, { id: profile.id })).then(
-      (d) => {
-        if (d.data.getProfile) {
-          setProfileInfo(d.data.getProfile)
-        } else {
-          addProfileToDB(profile)
-        }
-      },
-    )
-  }
+    try {
+      await Storage.put(avatarPicture.name, avatarPicture.data, {
+        contentType: 'image/*',
+        level: 'protected',
+      }).then((d) => {
+        console.log('avatar uploaded successfully', d)
+      })
+    } catch (error) {
+      console.error('Error uploading file: ', error)
+    }
 
-  async function updateProfileInDB() {
     const profile = {
       ...profileInfo,
       ...formState,
       socials: socialFormList,
+
+      profilePic: {
+        bucket: awsmobile.aws_user_files_s3_bucket,
+        region: awsmobile.aws_user_files_s3_bucket_region,
+        key: `protected/${creds.identityId}/${avatarPicture.name}`,
+      },
+
+      backgroundPic: {
+        bucket: awsmobile.aws_user_files_s3_bucket,
+        region: awsmobile.aws_user_files_s3_bucket_region,
+        key: `protected/${creds.identityId}/${backgroundPicture.name}`,
+      },
     }
     delete profile.createdAt
     delete profile.updatedAt
@@ -65,6 +94,90 @@ const Profile = (props) => {
       },
     )
     setEditMode(false)
+  }
+
+  const getProfileFromDB = async () => {
+    const cognitoUser = await Auth.currentAuthenticatedUser()
+    const creds = await Auth.currentCredentials()
+
+    const profile = {
+      id: cognitoUser.username,
+      email: cognitoUser.attributes.email,
+      identityId: creds.identityId,
+    }
+    try {
+      /*       await API.graphql(graphqlOperation(getProfile, { id: profile.id })).then(
+        (d) => {
+          if (d.data.getProfile === null) {
+            addProfileToDB(profile)
+          } else {
+            try {
+              const background =  Storage.get(d.data.getProfile.backgroundPic, { level: 'protected' })
+              setBackgroundPicture(background)
+
+              const avatar = await Storage.get(d.data.getProfile.profilePic, { level: 'protected' })
+              console.log(avatar)
+            } catch (error) {}
+            setProfileInfo(d.data.getProfile)
+          }
+        },
+      ) */
+
+      const response = await API.graphql(
+        graphqlOperation(getProfile, { id: profile.id }),
+      )
+
+      if (response === null) {
+        addProfileToDB(profile)
+      } else {
+        try {
+          const backgroundPicKey = response.data.getProfile.backgroundPic.key.split(
+            '/',
+          )[2]
+          const profilePicKey = response.data.getProfile.profilePic.key.split(
+            '/',
+          )[2]
+          if (response.data.getProfile.backgroundPic) {
+            Storage.get(backgroundPicKey, {
+              level: 'protected',
+            }).then((d) => {
+              console.log('obrazek', d)
+
+              setBackgroundPicture({
+                src: d,
+                name: backgroundPicKey,
+              })
+            })
+          } else {
+            setBackgroundPicture({
+              name: '',
+              src: background,
+            })
+          }
+          if (response.data.getProfile.profilePic) {
+            await Storage.get(profilePicKey, {
+              level: 'protected',
+            }).then((d) => {
+              console.log('obrazek', d)
+              setAvatarPicture({
+                src: d,
+                name: profilePicKey,
+              })
+            })
+          } else {
+            setAvatarPicture({
+              name: '',
+              src: avatar,
+            })
+          }
+        } catch (error) {
+          console.log('we couldnt download image.', error)
+        }
+        setProfileInfo(response.data.getProfile)
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   useEffect(() => {
@@ -118,29 +231,29 @@ const Profile = (props) => {
     } else {
       return editMode ? (
         <div className="flex mt-2">
-          <div className="flex ">
+          {/* <div className="flex ">
             <input
               onChange={onChangeSocial}
               type="text"
               name="social"
               className=" rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
-              placeholder="social name"
+              placeholder="e.g facebook"
             />
             <input
               onChange={onChangeSocial}
               name="url"
               type="text"
               className="ml-2 rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
-              placeholder="https://site.com"
+              placeholder="https://facebook.com/your_account"
             />
           </div>
 
           <button
             onClick={addSocial}
-            className="ml-1 px-2 rounded border hover:bg-gray-100 appearance-none border-gray-300 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+            className="ml-1 rounded border hover:bg-gray-100 appearance-none border-gray-300 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
           >
             Add social
-          </button>
+          </button> */}
         </div>
       ) : null
     }
@@ -154,6 +267,56 @@ const Profile = (props) => {
     setFormState(() => ({ ...formState, [e.target.name]: e.target.value }))
   }
 
+  // Flow:
+  // onChangeCapture ustawia podgląd i state
+  // onSave wysyła do S3 i
+  //
+  const [backgroundPicture, setBackgroundPicture] = useState({
+    name: '',
+    src: background,
+    data: null,
+  })
+
+  const [avatarPicture, setAvatarPicture] = useState({
+    name: '',
+    src: avatar,
+    data: null,
+  })
+
+  async function onBackgroundChangeCapture(e) {
+    console.log(URL.createObjectURL(e.target.files[0]))
+    if (e.target.files[0]) {
+      setBackgroundPicture({
+        src: URL.createObjectURL(e.target.files[0]),
+        name: e.target.files[0].name,
+        data: e.target.files[0],
+      })
+    }
+  }
+
+  function onAvatarChangeCapture(e) {
+    console.log(URL.createObjectURL(e.target.files[0]))
+    if (e.target.files[0]) {
+      setAvatarPicture({
+        src: URL.createObjectURL(e.target.files[0]),
+        name: e.target.files[0].name,
+        data: e.target.files[0],
+      })
+    }
+  }
+
+  const backgroundInput = useRef(null)
+
+  const onBackgroundClick = () => {
+    backgroundInput.current.click()
+  }
+
+  const onAvatarClick = () => {
+    avatarInput.current.click()
+  }
+
+  const avatarInput = useRef(null)
+
   return (
     <div className="max-w-screen-lg mt-2 glass-card min mx-4 w-full">
       <div className="p-4">
@@ -162,13 +325,22 @@ const Profile = (props) => {
             className="w-full bg-cover bg-no-repeat bg-center"
             style={{
               height: '200px',
-              backgroundImage:
-                'url(https://wallpapercave.com/wp/wp2771916.jpg)',
+              backgroundImage: `url(${backgroundPicture.src})`,
             }}
           >
+            <input
+              type="file"
+              ref={backgroundInput}
+              onChangeCapture={onBackgroundChangeCapture}
+              accept="image/*"
+              style={{ display: 'none' }}
+              disabled={!editMode}
+              multiple={false}
+            />
             <img
+              onClick={onBackgroundClick}
               className="opacity-0 w-full h-full"
-              src="https://wallpapercave.com/wp/wp2771916.jpg"
+              src={backgroundPicture.src}
               alt=""
             />
           </div>
@@ -180,9 +352,20 @@ const Profile = (props) => {
                     style={{ height: '9rem', width: '9rem' }}
                     className="md relative avatar"
                   >
+                    <input
+                      type="file"
+                      ref={avatarInput}
+                      onChange={onAvatarChangeCapture}
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      id="avatar-file"
+                      disabled={!editMode}
+                      multiple={false}
+                    />
                     <img
+                      onClick={onAvatarClick}
                       className="md relative border-2 border-gray-300 w-36"
-                      src={avatar}
+                      src={avatarPicture.src}
                       alt="avatar"
                     />
                     <div className="absolute" />
@@ -206,11 +389,11 @@ const Profile = (props) => {
                     onChange={onChange}
                     name="name"
                     id="name"
-                    placeholder={profileInfo.name}
+                    placeholder={profileInfo.name ? profileInfo.name : null}
                   />
                 ) : (
                   <h2 className="text-xl leading-6 font-bold">
-                    {profileInfo.name}
+                    {profileInfo.name ? profileInfo.name : null}
                   </h2>
                 )}
               </div>
@@ -221,13 +404,13 @@ const Profile = (props) => {
                     className="w-full"
                     name="bio"
                     id="bio"
-                    placeholder={profileInfo.bio}
+                    placeholder={profileInfo.bio ? profileInfo.bio : null}
                   />
                 ) : (
-                  <p className="mb-2 text-left">{profileInfo.bio}</p>
+                  <p className="mb-2 text-left">
+                    {profileInfo.bio ? profileInfo.bio : null}
+                  </p>
                 )}
-
-                {renderSocials()}
               </div>
             </div>
             <div className="text-left">
