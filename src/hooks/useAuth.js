@@ -62,7 +62,7 @@ const useAuth = () => {
       checkUser()
 
       if (user) {
-        history.push('/profile')
+        history.push('/')
       }
     } catch (err) {
       console.error(err)
@@ -77,6 +77,7 @@ const useAuth = () => {
     setCurrentUser(null)
     localStorage.removeItem('user')
     await Auth.signOut()
+    history.push('/')
   }
 
   return {

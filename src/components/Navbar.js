@@ -11,15 +11,25 @@ import { ReactComponent as ProfileIcon } from '../assets/icons/profile.svg'
 import { ReactComponent as ArrowUpIcon } from '../assets/icons/arrow-up.svg'
 import { ReactComponent as ArrowDownIcon } from '../assets/icons/arrow-down.svg'
 
-export default function Navbar() {
+export default function Navbar(props) {
   // Call the hook which returns, current value and the toggler function
-  const [navbarVisibility, setNavbarVisibility] = useToggle()
-  const [profileNavVisibility, setProfileNavVisibility] = useToggle()
+  const {
+    isNavbarDown,
+    setIsNavbarDown,
+    isProfileDown,
+    setIsProfileDown,
+  } = props
 
   const { currentUser } = useAuthContext()
 
   const { signOut } = useAuth()
 
+  const profileToggle = () => {
+    setIsProfileDown(isProfileDown ? false : true)
+  }
+  const navbarToggle = () => {
+    setIsNavbarDown(isNavbarDown ? false : true)
+  }
   return (
     <div>
       <nav className="bg-white dark:bg-gray-800 shadow font-mono ">
@@ -31,10 +41,6 @@ export default function Navbar() {
               </Link>
               <div className="hidden md:block">
                 <div className="ml-10 flex items-baseline space-x-4">
-                  {/*                             <Link to="/" className=" text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium" >
-                                Home
-                            </Link> */}
-                  {/* text-gray-800 dark:text-white  */}
                   {currentUser ? (
                     <div>
                       <Link
@@ -68,7 +74,7 @@ export default function Navbar() {
                   <div className="relative inline-block text-left">
                     <div>
                       <button
-                        onClick={setProfileNavVisibility}
+                        onClick={profileToggle}
                         type="button"
                         className="flex items-center justify-center w-full rounded-md  px-4 py-2 text-lg font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500"
                         id="options-menu"
@@ -76,7 +82,7 @@ export default function Navbar() {
                         <ProfileIcon className="h-6 w-6" />
                       </button>
                     </div>
-                    {profileNavVisibility ? (
+                    {isProfileDown ? (
                       <div className="z-10 origin-top-right absolute right-0 mt-3 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
                         <div
                           className="py-1 "
@@ -136,10 +142,10 @@ export default function Navbar() {
             </div>
             <div className="-mr-2 flex md:hidden">
               <button
-                onClick={setNavbarVisibility}
+                onClick={navbarToggle}
                 className="text-gray-800 dark:text-white hover: uppercaseinline-flex items-center justify-center p-2 rounded-md focus:outline-none"
               >
-                {navbarVisibility ? (
+                {isNavbarDown ? (
                   <ArrowUpIcon className="h-6 w-6" />
                 ) : (
                   <ArrowDownIcon className="h-6 w-6" />
@@ -148,7 +154,7 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-        {navbarVisibility ? (
+        {isNavbarDown ? (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {currentUser ? (

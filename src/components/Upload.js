@@ -19,13 +19,14 @@ function Upload() {
   }, [files])
 
   const onDrop = useCallback((acceptedFiles) => {
-    setFiles(
-      acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        }),
-      ),
+    // check if files are the same
+    const newFiles = acceptedFiles.map((file) =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      }),
     )
+
+    setFiles((prev) => prev.concat(newFiles))
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
@@ -58,42 +59,76 @@ function Upload() {
 
     for (const [index, file] of files.entries()) {
       try {
-        await Storage.put(file.name, file, {
+        const storagePromise = Storage.put(file.name, file, {
           contentType: 'image/jpg',
           level: 'private',
         })
-      } catch (error) {
-        console.error('Error uploading file: ', error)
-      }
-
-      Predictions.identify({
-        labels: {
-          source: {
-            file,
-          },
-          type: 'LABELS',
-        },
-      })
-        .then((response) => {
-          let { labels } = response
-          let picture = {
-            id: `private/${creds.identityId}/${file.name}`,
-            labels: filterLabels(labels),
-            file: {
-              bucket: awsmobile.aws_user_files_s3_bucket,
-              region: awsmobile.aws_user_files_s3_bucket_region,
-              key: `private/${creds.identityId}/${file.name}`,
+        const labelsPromise = Predictions.identify({
+          labels: {
+            source: {
+              file,
             },
-          }
-          addImageToDB(picture).catch((e) => {
-            console.error(e)
+            type: 'LABELS',
+          },
+        })
+        if (recognize) {
+          const picture = await Promise.all([
+            storagePromise,
+            labelsPromise,
+          ]).then(([storageData, labelsData]) => {
+            let { labels } = labelsData
+            console.log(storageData)
+
+            let picture = {
+              id: `private/${creds.identityId}/${file.name}`,
+              labels: labels ? filterLabels(labels) : null,
+              file: {
+                bucket: awsmobile.aws_user_files_s3_bucket,
+                region: awsmobile.aws_user_files_s3_bucket_region,
+                key: `private/${creds.identityId}/${file.name}`,
+              },
+            }
+            return picture
           })
-        })
-        .then(() => {
-          if (index === files.length - 1) {
-            setLoading('result')
+
+          try {
+            await API.graphql(
+              graphqlOperation(createPicture, { input: picture }),
+            )
+          } catch (error) {
+            console.error(error)
           }
-        })
+        } else {
+          const picture = await Promise.resolve(storagePromise).then(
+            (storageData) => {
+              console.log(storageData)
+
+              let picture = {
+                id: `private/${creds.identityId}/${file.name}`,
+                labels: null,
+                file: {
+                  bucket: awsmobile.aws_user_files_s3_bucket,
+                  region: awsmobile.aws_user_files_s3_bucket_region,
+                  key: `private/${creds.identityId}/${file.name}`,
+                },
+              }
+              return picture
+            },
+          )
+          try {
+            await API.graphql(
+              graphqlOperation(createPicture, { input: picture }),
+            )
+          } catch (error) {
+            console.error(error)
+          }
+        }
+        if (index === files.length - 1) {
+          setLoading('result')
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
   const preview = files.map((file) => {
@@ -131,7 +166,15 @@ function Upload() {
       )
     }
   }
-
+  const [recognize, setRecognize] = useState(false)
+  const handleToggleChange = (e) => {
+    let isChecked = e.target.checked
+    if (isChecked) {
+      setRecognize(true)
+    } else {
+      setRecognize(true)
+    }
+  }
   const renderUpload = () => {
     return (
       <div>
@@ -197,10 +240,26 @@ function Upload() {
             <button
               type="button"
               onClick={onSubmit}
-              className="mt-4 py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+              className="mt-4 mb-4 py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
             >
               Upload {files.length} pictures
             </button>
+            <div className="ml-4 relative inline-block w-10 mr-2 align-middle select-none">
+              <input
+                type="checkbox"
+                name="toggle"
+                id="Recognition"
+                onChange={handleToggleChange}
+                className="checked:bg-indigo-500 outline-none focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+              />
+              <label
+                htmlFor="Recognition"
+                className="block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+              ></label>
+            </div>
+            <span className=" text-gray-700 mt-2 dark:text-white font-normal">
+              Recognize
+            </span>
           </div>
         ) : null}
       </div>

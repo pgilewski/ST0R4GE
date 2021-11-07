@@ -8,7 +8,7 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 
 import { useAuthContext } from '../context/authContext'
 import Dashboard from '../components/Dashboard'
-import Gallery from '../components/Gallery'
+import GalleryRouter from '../components/Gallery'
 import Public from '../components/Public'
 import Profile from '../components/Profile'
 
@@ -39,29 +39,29 @@ const Routes = () => {
   return (
     <Switch>
       <ProtectedRoute path="/upload" redirect="/login">
-        <Upload />
+        <Upload className="full-height-no-navbar" />
       </ProtectedRoute>
       <Route path="/register">
-        <Register />
+        <Register className="full-height-no-navbar" />
       </Route>
       <Route path="/login">
-        <Login />
+        <Login className="full-height-no-navbar" />
       </Route>
-      <ProtectedRoute redirect="/login" path="/profile">
-        <Profile user={currentUser} />
-      </ProtectedRoute>
+      <Route path="/profile">
+        <Profile className="full-height-no-navbar" />
+      </Route>
       <ProtectedRoute redirect="/login" path="/dashboard">
-        <Dashboard />
+        <Dashboard className="full-height-no-navbar" />
       </ProtectedRoute>
-      <ProtectedRoute redirect="/login" path="/gallery">
-        <Gallery />
+      <ProtectedRoute path="/gallery" redirect="/login">
+        <GalleryRouter className="full-height-no-navbar" />
       </ProtectedRoute>
       {/* add eslint file */}
       <Route path="/public">
-        <Public />
+        <Public className="full-height-no-navbar" />
       </Route>
       <Route path="/">
-        <Home />
+        <Home className="full-height-no-navbar" />
       </Route>
     </Switch>
   )

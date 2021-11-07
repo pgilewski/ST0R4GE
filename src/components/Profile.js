@@ -39,27 +39,29 @@ const Profile = (props) => {
 
   async function updateProfileInDB() {
     const creds = await Auth.currentCredentials()
-
-    try {
-      await Storage.put(backgroundPicture.name, backgroundPicture.data, {
-        contentType: 'image/*',
-        level: 'protected',
-      }).then((d) => {
-        console.log('background uploaded successfully', d)
-      })
-    } catch (error) {
-      console.error('Error uploading file: ', error)
+    if (backgroundPicture.data) {
+      try {
+        await Storage.put(backgroundPicture.name, backgroundPicture.data, {
+          contentType: 'image/*',
+          level: 'protected',
+        }).then((d) => {
+          console.log('background uploaded successfully', d)
+        })
+      } catch (error) {
+        console.error('Error uploading file: ', error)
+      }
     }
-
-    try {
-      await Storage.put(avatarPicture.name, avatarPicture.data, {
-        contentType: 'image/*',
-        level: 'protected',
-      }).then((d) => {
-        console.log('avatar uploaded successfully', d)
-      })
-    } catch (error) {
-      console.error('Error uploading file: ', error)
+    if (avatarPicture.data) {
+      try {
+        await Storage.put(avatarPicture.name, avatarPicture.data, {
+          contentType: 'image/*',
+          level: 'protected',
+        }).then((d) => {
+          console.log('avatar uploaded successfully', d)
+        })
+      } catch (error) {
+        console.error('Error uploading file: ', error)
+      }
     }
 
     const profile = {
@@ -127,10 +129,10 @@ const Profile = (props) => {
               })
             })
           } else {
-            setBackgroundPicture({
+            /*             setBackgroundPicture({
               name: '',
               src: background,
-            })
+            }) */
           }
           if (response.data.getProfile.profilePic && profilePicKey) {
             await Storage.get(profilePicKey, {
@@ -143,10 +145,10 @@ const Profile = (props) => {
               })
             })
           } else {
-            setAvatarPicture({
+            /*             setAvatarPicture({
               name: '',
               src: avatar,
-            })
+            }) */
           }
         } catch (error) {
           console.log('we couldnt download image.', error)
@@ -210,28 +212,28 @@ const Profile = (props) => {
       return editMode ? (
         <div className="flex mt-2">
           {/* <div className="flex ">
-            <input
-              onChange={onChangeSocial}
-              type="text"
-              name="social"
-              className=" rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
-              placeholder="e.g facebook"
-            />
-            <input
-              onChange={onChangeSocial}
-              name="url"
-              type="text"
-              className="ml-2 rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
-              placeholder="https://facebook.com/your_account"
-            />
-          </div>
-
-          <button
-            onClick={addSocial}
-            className="ml-1 rounded border hover:bg-gray-100 appearance-none border-gray-300 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
-          >
-            Add social
-          </button> */}
+             <input
+               onChange={onChangeSocial}
+               type="text"
+               name="social"
+               className=" rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+               placeholder="e.g facebook"
+             />
+             <input
+               onChange={onChangeSocial}
+               name="url"
+               type="text"
+               className="ml-2 rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+               placeholder="https://facebook.com/your_account"
+             />
+           </div>
+ 
+           <button
+             onClick={addSocial}
+             className="ml-1 rounded border hover:bg-gray-100 appearance-none border-gray-300 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+           >
+             Add social
+           </button> */}
         </div>
       ) : null
     }
@@ -282,123 +284,156 @@ const Profile = (props) => {
   const onBackgroundClick = () => {
     backgroundInput.current.click()
   }
+  const avatarInput = useRef(null)
 
   const onAvatarClick = () => {
     avatarInput.current.click()
   }
 
-  const avatarInput = useRef(null)
+  useEffect(() => {
+    // storing input name
+    const color = localStorage.getItem('backgroundColor')
+    console.log(color)
+    setBackgroundColor(color)
+  }, [])
+
+  const [backgroundColor, setBackgroundColor] = useState()
+  const backgroundColorChange = (e) => {
+    const color = e.target.value
+    setBackgroundColor(color)
+    console.log(color)
+
+    localStorage.setItem('backgroundColor', backgroundColor)
+  }
 
   return (
-    <div className="max-w-screen-lg mt-2 glass-card min mx-4 w-full">
-      <div className="p-4">
-        <div>
-          <div
-            className="w-full bg-cover bg-no-repeat bg-center"
-            style={{
-              height: '200px',
-              backgroundImage: `url(${backgroundPicture.src})`,
-            }}
-          >
-            <input
-              type="file"
-              ref={backgroundInput}
-              onChangeCapture={onBackgroundChangeCapture}
-              accept="image/*"
-              style={{ display: 'none' }}
-              disabled={!editMode}
-              multiple={false}
-            />
-            <img
-              onClick={onBackgroundClick}
-              className="opacity-0 w-full h-full"
-              src={backgroundPicture.src}
-              alt=""
-            />
-          </div>
-          <div className="p-4">
-            <div className="relative flex w-full">
-              <div className="flex flex-1">
-                <div style={{ marginTop: '-6rem' }}>
-                  <div
-                    style={{ height: '9rem', width: '9rem' }}
-                    className="md relative avatar"
-                  >
-                    <input
-                      type="file"
-                      ref={avatarInput}
-                      onChange={onAvatarChangeCapture}
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      id="avatar-file"
-                      disabled={!editMode}
-                      multiple={false}
-                    />
-                    <img
-                      onClick={onAvatarClick}
-                      className="md relative border-2 border-gray-300 w-36"
-                      src={avatarPicture.src}
-                      alt="avatar"
-                    />
-                    <div className="absolute" />
+    <div
+      className="full-height-no-navbar"
+      style={{ backgroundColor: backgroundColor }}
+    >
+      <div className=" mt-2 max-w-screen-lg glass-card min mx-auto w-full">
+        <div className="p-4">
+          <div>
+            <div
+              className="w-full bg-cover bg-no-repeat bg-center"
+              style={{
+                height: '200px',
+                backgroundImage: `url(${backgroundPicture.src})`,
+              }}
+            >
+              <input
+                type="file"
+                ref={backgroundInput}
+                onChangeCapture={onBackgroundChangeCapture}
+                accept="image/*"
+                style={{ display: 'none' }}
+                disabled={!editMode}
+                multiple={false}
+              />
+              <img
+                onClick={onBackgroundClick}
+                className="opacity-0 w-full h-full"
+                src={backgroundPicture.src}
+                alt=""
+              />
+            </div>
+            <div className="p-4">
+              <div className="relative flex w-full">
+                <div className="flex flex-1">
+                  <div style={{ marginTop: '-6rem' }}>
+                    <div
+                      style={{ height: '9rem', width: '9rem' }}
+                      className="md relative avatar"
+                    >
+                      <input
+                        type="file"
+                        ref={avatarInput}
+                        onChange={onAvatarChangeCapture}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        id="avatar-file"
+                        disabled={!editMode}
+                        multiple={false}
+                      />
+                      <img
+                        onClick={onAvatarClick}
+                        className="md relative border-2 border-gray-300 w-36"
+                        src={avatarPicture.src}
+                        alt="avatar"
+                      />
+                      <div className="absolute" />
+                    </div>
                   </div>
                 </div>
+                <div className="flex flex-col text-right">
+                  <button
+                    onClick={setEditMode}
+                    className="justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  rounded max-w-max border bg-transparent border-indigo-500 text-indigo-500 hover:border-indigo-800 hover:border-indigo-800 flex items-center hover:shadow-lg font-bold py-2 px-4  mr-0 ml-auto"
+                  >
+                    Edit Profile
+                  </button>
+                </div>
               </div>
-              <div className="flex flex-col text-right">
-                <button
-                  onClick={setEditMode}
-                  className="justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  rounded max-w-max border bg-transparent border-indigo-500 text-indigo-500 hover:border-indigo-800 hover:border-indigo-800 flex items-center hover:shadow-lg font-bold py-2 px-4  mr-0 ml-auto"
-                >
-                  Edit Profile
-                </button>
-              </div>
-            </div>
 
-            <div className="w-full mt-2 text-left">
-              <div>
-                {editMode ? (
-                  <input
-                    onChange={onChange}
-                    name="name"
-                    id="name"
-                    placeholder={profileInfo.name ? profileInfo.name : null}
-                  />
-                ) : (
-                  <h2 className="text-xl leading-6 font-bold">
-                    {profileInfo.name ? profileInfo.name : null}
-                  </h2>
-                )}
+              <div className="w-full mt-2 text-left">
+                <div>
+                  {editMode ? (
+                    <input
+                      className="bg-gray-200"
+                      onChange={onChange}
+                      name="name"
+                      id="name"
+                      placeholder={profileInfo.name ? profileInfo.name : null}
+                    />
+                  ) : (
+                    <h2 className="text-xl leading-6 font-bold">
+                      {profileInfo.name ? profileInfo.name : null}
+                    </h2>
+                  )}
+                </div>
+                <div className="mt-2">
+                  {editMode ? (
+                    <textarea
+                      onChange={onChange}
+                      className="w-full bg-gray-200"
+                      name="bio"
+                      id="bio"
+                      placeholder={profileInfo.bio ? profileInfo.bio : null}
+                    />
+                  ) : (
+                    <p className="mb-2 text-left">
+                      {profileInfo.bio ? profileInfo.bio : null}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="mt-2">
-                {editMode ? (
-                  <textarea
-                    onChange={onChange}
-                    className="w-full"
-                    name="bio"
-                    id="bio"
-                    placeholder={profileInfo.bio ? profileInfo.bio : null}
-                  />
-                ) : (
-                  <p className="mb-2 text-left">
-                    {profileInfo.bio ? profileInfo.bio : null}
-                  </p>
-                )}
+              <div className="text-left">
+                <div>
+                  {profileInfo.createdAt
+                    ? 'Created at: ' + profileInfo.createdAt.split('T')[0]
+                    : null}
+                </div>
+
+                <input
+                  type="color"
+                  className="mt-2"
+                  onChange={backgroundColorChange}
+                  value={backgroundColor}
+                />
               </div>
-            </div>
-            <div className="text-left">
-              {profileInfo.createdAt
-                ? 'Created at: ' + profileInfo.createdAt.split('T')[0]
-                : null}
             </div>
           </div>
-        </div>
-        <div className="flex w-full justify-right">
-          <button
-            onClick={updateProfileInDB}
-            className="ml-auto py-2 px-4  mr-4 lex justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  rounded max-w-max border bg-transparent border-green-500 text-green-500 hover:border-green-800 hover:border-green-800 flex items-center hover:shadow-lg font-bold"
-          >
-            Save
-          </button>
+          <div className="flex w-full justify-right">
+            {editMode ? (
+              <button
+                onClick={updateProfileInDB}
+                className="ml-auto py-2 px-4  mr-4 lex justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  rounded max-w-max border bg-transparent border-green-500 text-green-500 hover:border-green-800 hover:border-green-800 flex items-center hover:shadow-lg font-bold"
+              >
+                Save
+              </button>
+            ) : null}
+          </div>
+          <hr className="border border-gray-400 my-4 mx-8" />
         </div>
       </div>
     </div>
