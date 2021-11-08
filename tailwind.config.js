@@ -5,9 +5,6 @@ module.exports = {
     defaultLocale: 'en-US',
   },
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  purge: {
-    content: ['./pages/**/*.tsx', './components/**/*.tsx'],
-  },
   darkMode: false, // or 'media' or 'class'
   theme: {
     screens: {

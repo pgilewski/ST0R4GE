@@ -8,7 +8,7 @@ type Picture @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
   id: ID!
   name: String
   owner: String
-  labels:[String]
+  labels: [String]
   file: S3Object
 }
 
@@ -19,7 +19,7 @@ type Social {
 
 type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
   id: ID!
-  email: String !
+  email: String!
   identityId: String!
   name: String
   profilePic: S3Object
