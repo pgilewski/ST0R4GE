@@ -343,14 +343,19 @@ const Gallery = (props) => {
               getS3Promise,
               getDbPromise,
             ]).then(([url, data]) => {
-              const { file, id, labels } = data.data.getPicture
-              return {
-                id,
-                file,
-                labels,
-                url,
-                graphqlKey: cognitoS3Path,
-                s3Key: item.key,
+              if (data.data.getPicture && url) {
+                const { file, id, labels } = data.data.getPicture
+                return {
+                  id,
+                  file,
+                  labels,
+                  url,
+                  graphqlKey: cognitoS3Path,
+                  s3Key: item.key,
+                }
+              } else {
+                //error handling
+                console.log('couldnt fetch the data.')
               }
             })
             setPictures((prevPictures) => [...prevPictures, newPicture])
