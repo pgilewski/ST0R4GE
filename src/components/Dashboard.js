@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { API, graphqlOperation } from "aws-amplify";
-import { listPictures, listProfiles } from "../graphql/queries";
-import picture from "../assets/images/dashboard.png";
+import React, { useEffect, useState } from 'react'
+import { API, graphqlOperation } from 'aws-amplify'
+import { listPictures, listProfiles } from '../graphql/queries'
+import picture from '../assets/images/dashboard.png'
 
 export default function Dashboard() {
-  const [dots, setDots] = useState("");
-  const [i, setI] = useState(1);
+  const [dots, setDots] = useState('')
+  const [i, setI] = useState(1)
 
   useEffect(() => {
     if (i % 4 === 0) {
       setTimeout(() => {
-        setDots("");
-      }, 1000);
+        setDots('')
+      }, 1000)
     } else {
       setTimeout(() => {
-        setDots(dots + ".");
-      }, 1000);
+        setDots(dots + '.')
+      }, 1000)
     }
-    setI(i + 1);
-  }, [dots]);
+    setI(i + 1)
+  }, [dots])
 
   return (
     <div className="full-height-no-navbar w-full max-h-full bg-white flex-column justify-center align-top items-center text-center font-mono py-12">
@@ -30,7 +30,7 @@ export default function Dashboard() {
         className=" mx-auto w-4/5 sm:w-3/4 md:w-1/2 l:w-1/2 xl:w-1/3 mt-4"
       />
     </div>
-  );
+  )
 }
 /* 
 export default function Dashboard() {

@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react'
 
 const Tags = (props) => {
-  const { editMode, full, labelsToState, setLabelsToState, labels } = props
+  const {
+    editMode,
+    full,
+    labelsToState,
+    setLabelsToState,
+    labels,
+    oldTags,
+    setOldTags,
+  } = props
 
   /*   if (props.labels) {
     //tagi wyswietlane w galerii
@@ -28,20 +36,31 @@ const Tags = (props) => {
   }, [])
 
   const deleteTag = (e) => {
+    setOldTags(labelsToState)
+
     const id = e.target.getAttribute('name')
     const newLabels = labelsToState.filter(
       (item, index) => index !== parseInt(id),
     )
-    setLabelsToState(newLabels)
-  }
-  const [newLabel, setNewLabel] = useState(null)
 
-  const addLabel = (e) => {
-    e.preventDefault()
-    const newLabels = labelsToState
-    newLabels.push(newLabel)
     setLabelsToState(newLabels)
-    setNewLabel('')
+    setLabelsGallery(newLabels)
+  }
+
+  const [newLabel, setNewLabel] = useState('')
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      setOldTags(labelsToState)
+      const newLabels = labelsToState
+
+      newLabels.push(newLabel)
+
+      setLabelsToState(newLabels)
+      setLabelsGallery(newLabels)
+
+      setNewLabel('')
+    }
   }
   return (
     <div>
@@ -100,14 +119,13 @@ const Tags = (props) => {
               )
             })}{' '}
             {editMode ? (
-              <form onSubmit={addLabel}>
-                <input
-                  type="text"
-                  value={newLabel}
-                  onChange={(e) => setNewLabel(e.target.value)}
-                  className="border border-gray-400 px-2 mt-2"
-                />
-              </form>
+              <input
+                onKeyDown={handleKeyDown}
+                type="text"
+                value={newLabel || ''}
+                onChange={(e) => setNewLabel(e.target.value)}
+                className="border border-gray-400 px-2 mt-2"
+              />
             ) : null}{' '}
           </div>
         )}

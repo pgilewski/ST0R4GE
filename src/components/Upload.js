@@ -43,14 +43,6 @@ function Upload() {
     return filteredLabels
   }
 
-  const addImageToDB = async (image) => {
-    try {
-      await API.graphql(graphqlOperation(createPicture, { input: image }))
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
   const onSubmit = async (event) => {
     event.preventDefault()
     setLoading('loading')
@@ -60,45 +52,71 @@ function Upload() {
     for (const [index, file] of files.entries()) {
       try {
         const storagePromise = Storage.put(file.name, file, {
-          contentType: 'image/jpg',
           level: 'private',
         })
-        const labelsPromise = Predictions.identify({
-          labels: {
-            source: {
-              file,
-            },
-            type: 'LABELS',
-          },
-        })
+
+        // if recognize
         if (recognize) {
-          const picture = await Promise.all([
-            storagePromise,
-            labelsPromise,
-          ]).then(([storageData, labelsData]) => {
-            let { labels } = labelsData
-            console.log(storageData)
+          if (file.type === 'image/gif') {
+            await Promise.resolve([storagePromise]).then((storageData) => {
+              console.log(storageData)
 
-            let picture = {
-              id: `private/${creds.identityId}/${file.name}`,
-              labels: labels ? filterLabels(labels) : null,
-              file: {
-                bucket: awsmobile.aws_user_files_s3_bucket,
-                region: awsmobile.aws_user_files_s3_bucket_region,
-                key: `private/${creds.identityId}/${file.name}`,
+              let picture = {
+                id: `private/${creds.identityId}/${file.name}`,
+                file: {
+                  bucket: awsmobile.aws_user_files_s3_bucket,
+                  region: awsmobile.aws_user_files_s3_bucket_region,
+                  key: `private/${creds.identityId}/${file.name}`,
+                },
+              }
+              try {
+                const response = API.graphql(
+                  graphqlOperation(createPicture, { input: picture }),
+                )
+                console.log(response)
+              } catch (error) {
+                console.error(error)
+              }
+            })
+          } else {
+            const labelsPromise = Predictions.identify({
+              labels: {
+                source: {
+                  file,
+                },
+                type: 'LABELS',
               },
-            }
-            return picture
-          })
+            })
+            await Promise.all([storagePromise, labelsPromise]).then(
+              ([storageData, labelsData]) => {
+                console.log(labelsData)
 
-          try {
-            await API.graphql(
-              graphqlOperation(createPicture, { input: picture }),
+                let { labels } = labelsData
+                console.log(storageData)
+
+                let picture = {
+                  id: `private/${creds.identityId}/${file.name}`,
+                  labels: labels ? filterLabels(labels) : null,
+                  file: {
+                    bucket: awsmobile.aws_user_files_s3_bucket,
+                    region: awsmobile.aws_user_files_s3_bucket_region,
+                    key: `private/${creds.identityId}/${file.name}`,
+                  },
+                }
+                try {
+                  const response = API.graphql(
+                    graphqlOperation(createPicture, { input: picture }),
+                  )
+                  console.log(response)
+                } catch (error) {
+                  console.error(error)
+                }
+              },
             )
-          } catch (error) {
-            console.error(error)
           }
-        } else {
+        }
+        // if didnt check "recognize" switch
+        else {
           const picture = await Promise.resolve(storagePromise).then(
             (storageData) => {
               console.log(storageData)
@@ -116,9 +134,10 @@ function Upload() {
             },
           )
           try {
-            await API.graphql(
+            const response = await API.graphql(
               graphqlOperation(createPicture, { input: picture }),
             )
+            console.log(response)
           } catch (error) {
             console.error(error)
           }
@@ -128,6 +147,7 @@ function Upload() {
         }
       } catch (error) {
         console.log(error)
+        setLoading('result')
       }
     }
   }
@@ -178,7 +198,7 @@ function Upload() {
   const renderUpload = () => {
     return (
       <div>
-        <div className="pt-12 mx-auto bg-white dark:bg-gray-800 max-w-lg ">
+        <div className="mt-12 mx-auto bg-white dark:bg-gray-800 max-w-lg ">
           <div className="grid md:grid-cols-3 md:gap-4 ">
             <div
               {...getRootProps({ className: 'dropzone' })}

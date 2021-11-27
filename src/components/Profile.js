@@ -311,7 +311,7 @@ const Profile = (props) => {
       className="full-height-no-navbar"
       style={{ backgroundColor: backgroundColor }}
     >
-      <div className=" mt-2 max-w-screen-lg glass-card min mx-auto w-full">
+      <div className=" m-2 max-w-screen-lg glass-card min mx-auto w-full">
         <div className="p-4">
           <div>
             <div

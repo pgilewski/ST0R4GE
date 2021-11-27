@@ -84,6 +84,7 @@ const Modal = (props) => {
   //   labels: [String]
   //   file: S3Object
   // }
+  useEffect(() => {}, [])
   const updateImageInDB = async () => {
     const input = { id, labels: labelsToState, file }
     console.log(input)
@@ -110,12 +111,21 @@ const Modal = (props) => {
 
   const [editMode, setEditMode] = useState(false)
 
+  const [oldTags, setOldTags] = useState(null)
+
+  const [labelsToState, setLabelsToState] = useState(props.picture.labels || [])
+
+  useEffect(() => {
+    console.log(labelsToState)
+  }, [labelsToState])
+
   const onEditClick = () => {
-    console.log(editMode)
     try {
+      console.log(labelsToState, picture.labels)
       if (editMode) {
         // jezeli tagi sie roznia to zrob put, jesli nie to nic nie rob
-        if (props.picture.labels === labelsToState) {
+        console.log(oldTags, labelsToState)
+        if (oldTags === null) {
           console.log('brak zmian')
         } else {
           console.log('image', picture)
@@ -148,7 +158,6 @@ const Modal = (props) => {
     }
     console.log(d1, d2, 'deleted')
   }
-  const [labelsToState, setLabelsToState] = useState(props.picture.labels || [])
   let history = useHistory()
 
   // let image = IMAGES[parseInt(id, 10)]
@@ -220,8 +229,10 @@ const Modal = (props) => {
               className="mt-2"
               setLabelsToState={setLabelsToState}
               labelsToState={labelsToState}
+              setOldTags={setOldTags}
               full={true}
               editMode={editMode}
+              oldTags={oldTags}
             />
             <div className="flex">
               <button
@@ -269,48 +280,46 @@ function ImageView() {
 function RenderImages(props) {
   const { pictures, search, deletedPictures } = props
   let location = useLocation()
-  useEffect(() => {
-    console.log(deletedPictures)
-  }, [deletedPictures])
+
   return pictures.map((picture, i) => {
-    let { labels, url } = picture
-    if (!labels) {
-      labels = []
-    }
-    if (
-      (search === '') |
-        (labels.find((a) => a.includes(search)) !== undefined) &&
-      !deletedPictures.includes(url)
-    ) {
-      return (
-        <div key={i} className="lg:w-1/3 sm:w-1/2 p-4 img-hover-zoom ">
-          <div>
-            <Link
-              key={i}
-              to={{
-                pathname: `/gallery/img/${i}`,
-                state: {
-                  background: location,
-                  picture,
-                },
-              }}
-              className="flex relative  "
-            >
-              <img
-                alt="gallery"
-                className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
-                src={url}
-              />
-              <div className="px-4 pt-36 pb-4 relative z-10 w-full ">
-                <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500"></h2>
-                <Tags labels={labels} full={false} />
-              </div>
-            </Link>
+    if (picture) {
+      let { labels, url } = picture
+
+      if (
+        (search === '') |
+          (labels.find((a) => a.includes(search)) !== undefined) &&
+        !deletedPictures.includes(url)
+      ) {
+        return (
+          <div key={i} className="lg:w-1/3 sm:w-1/2 w-full p-4 img-hover-zoom ">
+            <div>
+              <Link
+                key={i}
+                to={{
+                  pathname: `/gallery/img/${i}`,
+                  state: {
+                    background: location,
+                    picture,
+                  },
+                }}
+                className="flex relative  "
+              >
+                <img
+                  alt="gallery"
+                  className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
+                  src={url}
+                />
+                <div className="px-4 pt-36 pb-4 relative z-10 w-full ">
+                  <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500"></h2>
+                  <Tags labels={labels} full={false} />
+                </div>
+              </Link>
+            </div>
           </div>
-        </div>
-      )
-    } else {
-      return null
+        )
+      } else {
+        return null
+      }
     }
   })
 }
@@ -358,7 +367,10 @@ const Gallery = (props) => {
                 console.log('couldnt fetch the data.')
               }
             })
+            if (!newPicture) {
+            }
             setPictures((prevPictures) => [...prevPictures, newPicture])
+            setLoading(false)
           }
         })
         .then(() => {
