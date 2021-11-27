@@ -1,74 +1,70 @@
-import React from 'react';
-import Upload from '../components/Upload';
-import Home from '../components/Home';
-import Register from '../components/Register';
-import Login from '../components/Login';
+import React from 'react'
+import Upload from '../components/Upload'
+import Home from '../components/Home'
+import Register from '../components/Register'
+import Login from '../components/Login'
 
-import {
-    Switch,
-    Route,
-    Redirect
-  } from "react-router-dom";
+import { Switch, Route, Redirect } from 'react-router-dom'
 
 import { useAuthContext } from '../context/authContext'
-import Dashboard from '../components/Dashboard';
-import Gallery from '../components/Gallery';
-import Public from '../components/Public';
-import Profile from '../components/Profile';
+import Dashboard from '../components/Dashboard'
+import GalleryRouter from '../components/Gallery'
+import Public from '../components/Public'
+import Profile from '../components/Profile'
 
 const ProtectedRoute = ({ children, ...rest }) => {
-  const { currentUser } = useAuthContext();
+  const { currentUser } = useAuthContext()
   const { redirect } = rest
   return (
-      <Route
-        {...rest}
-          render={({ location }) =>
-            currentUser ? children :
-              (
-                <Redirect
-                  to={{
-                    pathname: redirect ? redirect : '/',
-                    state: { from: location },
-                  }}
-                />
-              )
-          }
-      />
-  );
+    <Route
+      {...rest}
+      render={({ location }) =>
+        currentUser ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: redirect ? redirect : '/',
+              state: { from: location },
+            }}
+          />
+        )
+      }
+    />
+  )
 }
 
 const Routes = () => {
-
-    const { currentUser } = useAuthContext();
-    return (
-        <Switch>
-        <ProtectedRoute path="/upload" redirect="/login">
-          <Upload />
-        </ProtectedRoute>
-        <Route path="/register">
-          <Register />
-        </Route>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/profile">
-          <Profile user={currentUser}/>
-        </Route>
-        <ProtectedRoute path="/dashboard" redirect="/login">
-          <Dashboard />
-        </ProtectedRoute>
-        <ProtectedRoute path="/gallery" redirect="/login">
-          <Gallery />
-        </ProtectedRoute>
-            {/* add eslint file */}
-            <Route path="/public">
-                <Public />
-            </Route>
-        <Route path="/">
-          <Home />
-        </Route>
-      </Switch>
-    )
+  const { currentUser } = useAuthContext()
+  return (
+    <Switch>
+      <ProtectedRoute path="/upload" redirect="/login">
+        <Upload className="full-height-no-navbar" />
+      </ProtectedRoute>
+      <Route path="/register">
+        <Register className="full-height-no-navbar" />
+      </Route>
+      <Route path="/login">
+        <Login className="full-height-no-navbar" />
+      </Route>
+      <Route path="/profile">
+        <Profile className="full-height-no-navbar" />
+      </Route>
+      <ProtectedRoute redirect="/login" path="/dashboard">
+        <Dashboard className="full-height-no-navbar" />
+      </ProtectedRoute>
+      <ProtectedRoute path="/gallery" redirect="/login">
+        <GalleryRouter className="full-height-no-navbar" />
+      </ProtectedRoute>
+      {/* add eslint file */}
+      <Route path="/public">
+        <Public className="full-height-no-navbar" />
+      </Route>
+      <Route path="/">
+        <Home className="full-height-no-navbar" />
+      </Route>
+    </Switch>
+  )
 }
 
-export default Routes;
+export default Routes

@@ -1,99 +1,92 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {  useEffect } from 'react'
-import { Auth, Hub } from 'aws-amplify';
+import { useEffect } from 'react'
+import { Auth, Hub } from 'aws-amplify'
 import { useAuthContext } from '../context/authContext'
-import { useHistory } from 'react-router-dom';
-
-
+import { useHistory } from 'react-router-dom'
 
 const useAuth = () => {
-    
-  const { setCurrentUser } = useAuthContext();
+  const { setCurrentUser } = useAuthContext()
 
   useEffect(() => {
-    setAuthListener();
-  }, []);
+    setAuthListener()
+  }, [])
 
   async function setAuthListener() {
     Hub.listen('auth', (data) => {
       switch (data.payload.event) {
         case 'signIn':
-            checkUser();
-            break;
+          checkUser()
+          break
         case 'signOut':
-            checkUser();
-            break;
+          checkUser()
+          break
         default:
-            break;
+          break
       }
-    });
+    })
   }
-
 
   // sprawdzanie aktualnego uzytkownika
   const checkUser = async () => {
     try {
-        const user = await Auth.currentAuthenticatedUser()
-        const creds = await Auth.currentCredentials()
-        const profile = {
-            username: user.username,
-            identityId: creds.identityId,
-            email: user.attributes.email,
-        }
-        setCurrentUser(profile)
-        localStorage.setItem('user', profile)
+      const user = await Auth.currentAuthenticatedUser()
+      const creds = await Auth.currentCredentials()
+      const profile = {
+        username: user.username,
+        identityId: creds.identityId,
+        email: user.attributes.email,
+      }
+      setCurrentUser(profile)
+      localStorage.setItem('user', profile)
     } catch (err) {
-        setCurrentUser(null)
-        localStorage.removeItem('user')
+      setCurrentUser(null)
+      localStorage.removeItem('user')
     }
   }
-  
+
   // ma zapisywać do localstorage usera za każdym razem gdy wartość się zmieni
-/*   useEffect(() => {
+  /*   useEffect(() => {
       localStorage.setItem('user', currentUser);
   }, [ currentUser ]) */
 
- 
-  const history = useHistory();
+  const history = useHistory()
 
   const signIn = async (formState) => {
-
-    const {username, password} = formState
+    const { username, password } = formState
     try {
-        const user = await Auth.signIn({
-          username,   
-          password,
-        });
+      const user = await Auth.signIn({
+        username,
+        password,
+      })
 
-        checkUser();
+      checkUser()
 
-        if(user) {
-          history.push("/profile");
-        }
-
-    } catch (err) {
-        console.error(err)
+      if (user) {
+        history.push('/')
       }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
-  const signInSocial = async ({provider}) => {
-      await Auth.federatedSignIn({ provider })
+  const signInSocial = async ({ provider }) => {
+    await Auth.federatedSignIn({ provider })
   }
-
 
   const signOut = async () => {
-      setCurrentUser(null)
-      localStorage.removeItem('user')
-      await Auth.signOut();
+    setCurrentUser(null)
+    localStorage.removeItem('user')
+    await Auth.signOut()
+    history.push('/')
   }
 
   return {
- /*    ...state, */
+    /*    ...state, */
     signIn,
     signInSocial,
     signOut,
-    checkUser
+    checkUser,
   }
 }
 
-export default useAuth;
+export default useAuth
