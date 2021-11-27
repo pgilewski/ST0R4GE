@@ -55,30 +55,12 @@ function Upload() {
           level: 'private',
         })
 
-        // if recognize
         if (recognize) {
-          if (file.type === 'image/gif') {
-            await Promise.resolve([storagePromise]).then((storageData) => {
-              console.log(storageData)
-
-              let picture = {
-                id: `private/${creds.identityId}/${file.name}`,
-                file: {
-                  bucket: awsmobile.aws_user_files_s3_bucket,
-                  region: awsmobile.aws_user_files_s3_bucket_region,
-                  key: `private/${creds.identityId}/${file.name}`,
-                },
-              }
-              try {
-                const response = API.graphql(
-                  graphqlOperation(createPicture, { input: picture }),
-                )
-                console.log(response)
-              } catch (error) {
-                console.error(error)
-              }
-            })
-          } else {
+          if (
+            file.type === 'image/jpg' ||
+            file.type === 'image/jpeg' ||
+            file.type === 'image/png'
+          ) {
             const labelsPromise = Predictions.identify({
               labels: {
                 source: {
@@ -89,14 +71,11 @@ function Upload() {
             })
             await Promise.all([storagePromise, labelsPromise]).then(
               ([storageData, labelsData]) => {
-                console.log(labelsData)
-
                 let { labels } = labelsData
-                console.log(storageData)
 
                 let picture = {
                   id: `private/${creds.identityId}/${file.name}`,
-                  labels: labels ? filterLabels(labels) : null,
+                  labels: labels ? filterLabels(labels) : [],
                   file: {
                     bucket: awsmobile.aws_user_files_s3_bucket,
                     region: awsmobile.aws_user_files_s3_bucket_region,
@@ -107,37 +86,48 @@ function Upload() {
                   const response = API.graphql(
                     graphqlOperation(createPicture, { input: picture }),
                   )
-                  console.log(response)
                 } catch (error) {
                   console.error(error)
                 }
               },
             )
-          }
-        }
-        // if didnt check "recognize" switch
-        else {
-          const picture = await Promise.resolve(storagePromise).then(
-            (storageData) => {
-              console.log(storageData)
-
+          } else {
+            await Promise.resolve([storagePromise]).then((storageData) => {
               let picture = {
                 id: `private/${creds.identityId}/${file.name}`,
-                labels: null,
                 file: {
                   bucket: awsmobile.aws_user_files_s3_bucket,
                   region: awsmobile.aws_user_files_s3_bucket_region,
                   key: `private/${creds.identityId}/${file.name}`,
                 },
+                labels: [],
               }
-              return picture
-            },
-          )
+              try {
+                const response = API.graphql(
+                  graphqlOperation(createPicture, { input: picture }),
+                )
+              } catch (error) {
+                console.error(error)
+              }
+            })
+          }
+        } else {
+          const picture = await Promise.resolve(storagePromise).then(() => {
+            let picture = {
+              id: `private/${creds.identityId}/${file.name}`,
+              labels: [],
+              file: {
+                bucket: awsmobile.aws_user_files_s3_bucket,
+                region: awsmobile.aws_user_files_s3_bucket_region,
+                key: `private/${creds.identityId}/${file.name}`,
+              },
+            }
+            return picture
+          })
           try {
             const response = await API.graphql(
               graphqlOperation(createPicture, { input: picture }),
             )
-            console.log(response)
           } catch (error) {
             console.error(error)
           }
@@ -146,7 +136,7 @@ function Upload() {
           setLoading('result')
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
         setLoading('result')
       }
     }
