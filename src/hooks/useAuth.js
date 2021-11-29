@@ -1,11 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react'
+import { useEffect, useContext } from 'react'
 import { Auth, Hub } from 'aws-amplify'
 import { useAuthContext } from '../context/authContext'
+import NotyfContext from '../context/NotyfContext'
 import { useHistory } from 'react-router-dom'
 
 const useAuth = () => {
   const { setCurrentUser } = useAuthContext()
+
+  const notyf = useContext(NotyfContext)
 
   useEffect(() => {
     setAuthListener()
@@ -58,19 +61,22 @@ const useAuth = () => {
         username,
         password,
       })
-
-      checkUser()
-
       if (user) {
+        notyf.success('You sucessfully logged in.')
         history.push('/')
+      } else {
+        notyf.error(`Couldn't log in. Check your username or password.`)
       }
-    } catch (err) {
-      console.error(err)
+    } catch (error) {
+      notyf.error(`Couldn't log in. Check your username or password.`)
     }
   }
 
   const signInSocial = async ({ provider }) => {
-    await Auth.federatedSignIn({ provider })
+    const user = await Auth.federatedSignIn({ provider })
+    if (user) {
+      notyf.success('You sucessfully logged in.')
+    }
   }
 
   const signOut = async () => {
@@ -78,6 +84,7 @@ const useAuth = () => {
     localStorage.removeItem('user')
     await Auth.signOut()
     history.push('/')
+    notyf.success('You logged out.')
   }
 
   return {

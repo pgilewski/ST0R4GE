@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react'
 import './App.css'
+import 'notyf/notyf.min.css'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import Navbar from './components/Navbar'

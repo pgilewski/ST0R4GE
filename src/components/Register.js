@@ -1,10 +1,13 @@
 import React from 'react'
 import { Auth } from 'aws-amplify'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+import NotyfContext from '../context/NotyfContext'
 
 export default function Register() {
+  const notyf = useContext(NotyfContext)
+
   const initialFormState = {
     username: '',
     password: '',
@@ -26,14 +29,13 @@ export default function Register() {
       await Auth.signUp({
         username,
         password,
-      }).then((d) => {
-        console.log(
+      }).then(() =>
+        notyf.success(
           'You have created an account. You have to confirm it by going to your e mail.',
-          d,
-        )
-      })
+        ),
+      )
     } catch (error) {
-      console.error(error.message)
+      notyf.error('An account with the given email already exists.')
     }
   }
 
