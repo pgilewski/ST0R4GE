@@ -5,8 +5,7 @@
 .glass-card {
   backdrop-filter: blur(15px) saturate(156%);
   -webkit-backdrop-filter: blur(15px) saturate(156%);
-  background-color: rgba(255, 255, 255, 0.74);
-  border-radius: 12px;
+  background-color: rgb(239, 239, 239);
   border: 1px solid rgba(209, 213, 219, 0.3);
 }
 .background {

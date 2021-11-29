@@ -84,7 +84,6 @@ const Modal = (props) => {
   //   labels: [String]
   //   file: S3Object
   // }
-  useEffect(() => {}, [])
   const updateImageInDB = async () => {
     const input = { id, labels: labelsToState, file }
     console.log(input)
@@ -111,27 +110,18 @@ const Modal = (props) => {
 
   const [editMode, setEditMode] = useState(false)
 
-  const [oldTags, setOldTags] = useState(null)
-
   const [labelsToState, setLabelsToState] = useState(props.picture.labels || [])
 
   useEffect(() => {
-    console.log(labelsToState)
+    console.log('lts', labelsToState)
   }, [labelsToState])
 
   const onEditClick = () => {
     try {
       console.log(labelsToState, picture.labels)
       if (editMode) {
-        // jezeli tagi sie roznia to zrob put, jesli nie to nic nie rob
-        console.log(oldTags, labelsToState)
-        if (oldTags === null) {
-          console.log('brak zmian')
-        } else {
-          console.log('image', picture)
-
-          updateImageInDB()
-        }
+        //TODO: jezeli tagi sie roznia to zrob put, jesli nie to nic nie rob
+        updateImageInDB()
         setEditMode(false)
       } else {
         setEditMode(true)
@@ -229,10 +219,8 @@ const Modal = (props) => {
               className="mt-2"
               setLabelsToState={setLabelsToState}
               labelsToState={labelsToState}
-              setOldTags={setOldTags}
               full={true}
               editMode={editMode}
-              oldTags={oldTags}
             />
             <div className="flex">
               <button
@@ -277,6 +265,44 @@ function ImageView() {
   )
 }
 
+const GalerryElement = (props) => {
+  const { i, url, labels, picture, location } = props
+  return (
+    <div
+      key={i}
+      className="w-full xl:w-1/3 lg:w-1/3 sm:w-1/2 p-4 img-hover-zoom "
+    >
+      <div>
+        <Link
+          key={i}
+          to={{
+            pathname: `/gallery/img/${i}`,
+            state: {
+              background: location,
+              picture,
+            },
+          }}
+          className="flex relative  "
+        >
+          <img
+            alt="gallery"
+            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
+            src={url}
+          />
+          <div className="px-14 pt-36 pb-4 relative z-10 w-full ">
+            <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500"></h2>
+            {labels ? (
+              <Tags labels={labels} full={false} />
+            ) : (
+              <Tags full={false} />
+            )}
+          </div>
+        </Link>
+      </div>
+    </div>
+  )
+}
+
 function RenderImages(props) {
   const { pictures, search, deletedPictures } = props
   let location = useLocation()
@@ -284,41 +310,33 @@ function RenderImages(props) {
   return pictures.map((picture, i) => {
     if (picture) {
       let { labels, url } = picture
-
-      if (
-        (search === '') |
-          (labels.find((a) => a.includes(search)) !== undefined) &&
-        !deletedPictures.includes(url)
-      ) {
-        return (
-          <div key={i} className="lg:w-1/3 sm:w-1/2 w-full p-4 img-hover-zoom ">
-            <div>
-              <Link
-                key={i}
-                to={{
-                  pathname: `/gallery/img/${i}`,
-                  state: {
-                    background: location,
-                    picture,
-                  },
-                }}
-                className="flex relative  "
-              >
-                <img
-                  alt="gallery"
-                  className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
-                  src={url}
-                />
-                <div className="px-4 pt-36 pb-4 relative z-10 w-full ">
-                  <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500"></h2>
-                  <Tags labels={labels} full={false} />
-                </div>
-              </Link>
-            </div>
-          </div>
-        )
-      } else {
+      if (deletedPictures.includes(url)) {
         return null
+      } else {
+        if (search === '') {
+          return (
+            <GalerryElement
+              i={i}
+              url={url}
+              labels={labels}
+              picture={picture}
+              location={location}
+            />
+          )
+        } else if (
+          labels !== null &&
+          labels.find((a) => a.includes(search)) !== undefined
+        ) {
+          return (
+            <GalerryElement
+              i={i}
+              url={url}
+              labels={labels}
+              picture={picture}
+              location={location}
+            />
+          )
+        }
       }
     }
   })

@@ -92,24 +92,26 @@ function Upload() {
               },
             )
           } else {
-            await Promise.resolve([storagePromise]).then((storageData) => {
-              let picture = {
-                id: `private/${creds.identityId}/${file.name}`,
-                file: {
-                  bucket: awsmobile.aws_user_files_s3_bucket,
-                  region: awsmobile.aws_user_files_s3_bucket_region,
-                  key: `private/${creds.identityId}/${file.name}`,
-                },
-                labels: [],
-              }
-              try {
-                const response = API.graphql(
-                  graphqlOperation(createPicture, { input: picture }),
-                )
-              } catch (error) {
-                console.error(error)
-              }
-            })
+            const picture = await Promise.resolve(storagePromise).then(
+              (storageData) => {
+                let picture = {
+                  id: `private/${creds.identityId}/${file.name}`,
+                  file: {
+                    bucket: awsmobile.aws_user_files_s3_bucket,
+                    region: awsmobile.aws_user_files_s3_bucket_region,
+                    key: `private/${creds.identityId}/${file.name}`,
+                  },
+                  labels: [],
+                }
+                try {
+                  const response = API.graphql(
+                    graphqlOperation(createPicture, { input: picture }),
+                  )
+                } catch (error) {
+                  console.error(error)
+                }
+              },
+            )
           }
         } else {
           const picture = await Promise.resolve(storagePromise).then(() => {

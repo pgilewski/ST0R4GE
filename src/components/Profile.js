@@ -4,7 +4,7 @@
  * -
  */
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import avatar from '../assets/images/avatar-placeholder.jpg'
 import background from '../assets/images/SM-placeholder.png'
 import { useToggle } from '../hooks/useToggle'
@@ -12,8 +12,11 @@ import { Auth, API, Storage, graphqlOperation } from 'aws-amplify'
 import { getProfile } from '../graphql/queries'
 import { createProfile, updateProfile } from '../graphql/mutations'
 import awsmobile from '../aws-exports'
+import NotyfContext from '../context/NotyfContext'
 
 const Profile = (props) => {
+  const notyf = useContext(NotyfContext)
+
   const initialState = {
     id: null,
     name: '',
@@ -85,11 +88,14 @@ const Profile = (props) => {
     delete profile.updatedAt
     delete profile.owner
 
-    await API.graphql(graphqlOperation(updateProfile, { input: profile })).then(
-      (d) => {
+    await API.graphql(graphqlOperation(updateProfile, { input: profile }))
+      .then((d) => {
         setProfileInfo(d.data.updateProfile)
-      },
-    )
+        notyf.success('Your profile updated successfully.')
+      })
+      .catch(() => {
+        notyf.error(`We couldn't update your profile.`)
+      })
     setEditMode(false)
   }
 
@@ -311,7 +317,7 @@ const Profile = (props) => {
       className="full-height-no-navbar"
       style={{ backgroundColor: backgroundColor }}
     >
-      <div className=" m-2 max-w-screen-lg glass-card min mx-auto w-full">
+      <div className=" max-w-screen-lg glass-card min h-full mx-auto w-full">
         <div className="p-4">
           <div>
             <div
@@ -416,7 +422,7 @@ const Profile = (props) => {
 
                 <input
                   type="color"
-                  className="mt-2"
+                  className="mt-2 hidden xl:block"
                   onChange={backgroundColorChange}
                   value={backgroundColor}
                 />

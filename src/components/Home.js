@@ -29,7 +29,7 @@ function Home() {
                 type="button"
                 className="py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
               >
-                Go to Upload
+                Go to demo
               </button>
             </Link>
           </div>
