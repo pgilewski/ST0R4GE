@@ -22,20 +22,25 @@ export default function Register() {
   }
 
   const { signInSocial } = useAuth()
-
   const signUp = async (formState) => {
     const { username, password } = formState
-    try {
-      await Auth.signUp({
-        username,
-        password,
-      }).then(() =>
-        notyf.success(
-          'You have created an account. You have to confirm it by going to your e mail.',
-        ),
-      )
-    } catch (error) {
-      notyf.error('An account with the given email already exists.')
+    if (password === '') {
+      notyf.error("Password can't be empty.")
+    } else if (username === '') {
+      notyf.error("Email can't be empty.")
+    } else {
+      try {
+        const user = await Auth.signUp({
+          username,
+          password,
+        }).then(() =>
+          notyf.success(
+            'You have created an account. Confirm it by going to your e-mail.',
+          ),
+        )
+      } catch (error) {
+        notyf.error('An account with the given email already exists.')
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useState, useEffect, useContext } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useHistory } from 'react-router-dom'
 import { Auth, Storage, API, graphqlOperation } from 'aws-amplify'
@@ -7,19 +7,32 @@ import awsmobile from '../aws-exports'
 import { createPicture } from '../graphql/mutations'
 import { Link } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner'
+import NotyfContext from '../context/NotyfContext'
+import docs_placeholder from '../assets/images/docs_placeholder.png'
+import rar_placeholder from '../assets/images/rar_placeholder.png'
+import audio_placeholder from '../assets/images/audio_placeholder.png'
 
 function Upload() {
   const [files, setFiles] = useState([])
   const [loading, setLoading] = useState('start')
 
+  const notif = useContext(NotyfContext)
+
   useEffect(() => {
     files.forEach((file) => {
-      URL.revokeObjectURL(file.preview)
+      if (!file.type.includes('video')) {
+        URL.revokeObjectURL(file.preview)
+      }
     })
   }, [files])
 
+  // i want to check if object in array has type: includes("executable")
   const onDrop = useCallback((acceptedFiles) => {
     // check if files are the same
+    // const filteredLabels = acceptedFiles.filter((file) =>
+    //
+    // )
+
     const newFiles = acceptedFiles.map((file) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
@@ -50,108 +63,163 @@ function Upload() {
     const creds = await Auth.currentCredentials()
 
     for (const [index, file] of files.entries()) {
-      try {
-        const storagePromise = Storage.put(file.name, file, {
-          level: 'private',
-        })
+      // 1,048,576 = 1MB
+      if (file.size > 20 * 1048576) {
+        notif.error(
+          "You can't upload file bigger than 20MB. Other files has been uploaded.",
+        )
+        history.push('/upload')
+        setFiles([])
 
-        if (recognize) {
-          if (
-            file.type === 'image/jpg' ||
-            file.type === 'image/jpeg' ||
-            file.type === 'image/png'
-          ) {
-            const labelsPromise = Predictions.identify({
-              labels: {
-                source: {
-                  file,
-                },
-                type: 'LABELS',
-              },
-            })
-            await Promise.all([storagePromise, labelsPromise]).then(
-              ([storageData, labelsData]) => {
-                let { labels } = labelsData
-
-                let picture = {
-                  id: `private/${creds.identityId}/${file.name}`,
-                  labels: labels ? filterLabels(labels) : [],
-                  file: {
-                    bucket: awsmobile.aws_user_files_s3_bucket,
-                    region: awsmobile.aws_user_files_s3_bucket_region,
-                    key: `private/${creds.identityId}/${file.name}`,
-                  },
-                }
-                try {
-                  const response = API.graphql(
-                    graphqlOperation(createPicture, { input: picture }),
-                  )
-                } catch (error) {
-                  console.error(error)
-                }
-              },
-            )
-          } else {
-            const picture = await Promise.resolve(storagePromise).then(
-              (storageData) => {
-                let picture = {
-                  id: `private/${creds.identityId}/${file.name}`,
-                  file: {
-                    bucket: awsmobile.aws_user_files_s3_bucket,
-                    region: awsmobile.aws_user_files_s3_bucket_region,
-                    key: `private/${creds.identityId}/${file.name}`,
-                  },
-                  labels: [],
-                }
-                try {
-                  const response = API.graphql(
-                    graphqlOperation(createPicture, { input: picture }),
-                  )
-                } catch (error) {
-                  console.error(error)
-                }
-              },
-            )
-          }
-        } else {
-          const picture = await Promise.resolve(storagePromise).then(() => {
-            let picture = {
-              id: `private/${creds.identityId}/${file.name}`,
-              labels: [],
-              file: {
-                bucket: awsmobile.aws_user_files_s3_bucket,
-                region: awsmobile.aws_user_files_s3_bucket_region,
-                key: `private/${creds.identityId}/${file.name}`,
-              },
-            }
-            return picture
+        setLoading('start')
+      } else {
+        try {
+          const storagePromise = Storage.put(file.name, file, {
+            level: 'private',
           })
-          try {
-            const response = await API.graphql(
-              graphqlOperation(createPicture, { input: picture }),
-            )
-          } catch (error) {
-            console.error(error)
+
+          if (recognize) {
+            if (
+              file.type === 'image/jpg' ||
+              file.type === 'image/jpeg' ||
+              file.type === 'image/png'
+            ) {
+              const labelsPromise = Predictions.identify({
+                labels: {
+                  source: {
+                    file,
+                  },
+                  type: 'LABELS',
+                },
+              })
+              // TODO: Rewrite file.key to get only key (but when make sure i dont need file owner there)
+              await Promise.all([storagePromise, labelsPromise]).then(
+                ([storageData, labelsData]) => {
+                  let { labels } = labelsData
+
+                  let picture = {
+                    id: `private/${creds.identityId}/${file.name}`,
+                    labels: labels ? filterLabels(labels) : [],
+                    file: {
+                      bucket: awsmobile.aws_user_files_s3_bucket,
+                      region: awsmobile.aws_user_files_s3_bucket_region,
+                      key: `private/${creds.identityId}/${file.name}`,
+                      type: file.type,
+                    },
+                  }
+                  try {
+                    const response = API.graphql(
+                      graphqlOperation(createPicture, { input: picture }),
+                    )
+                  } catch (error) {
+                    console.error(error)
+                  }
+                },
+              )
+            } else {
+              const picture = await Promise.resolve(storagePromise).then(
+                (storageData) => {
+                  let picture = {
+                    id: `private/${creds.identityId}/${file.name}`,
+                    file: {
+                      bucket: awsmobile.aws_user_files_s3_bucket,
+                      region: awsmobile.aws_user_files_s3_bucket_region,
+                      key: `private/${creds.identityId}/${file.name}`,
+                      type: file.type,
+                    },
+                    labels: [],
+                  }
+                  try {
+                    const response = API.graphql(
+                      graphqlOperation(createPicture, { input: picture }),
+                    )
+                  } catch (error) {
+                    console.error(error)
+                  }
+                },
+              )
+            }
+          } else {
+            const picture = await Promise.resolve(storagePromise).then(() => {
+              let picture = {
+                id: `private/${creds.identityId}/${file.name}`,
+                labels: [],
+                file: {
+                  bucket: awsmobile.aws_user_files_s3_bucket,
+                  region: awsmobile.aws_user_files_s3_bucket_region,
+                  key: `private/${creds.identityId}/${file.name}`,
+                  type: file.type,
+                },
+              }
+              return picture
+            })
+            try {
+              const response = await API.graphql(
+                graphqlOperation(createPicture, { input: picture }),
+              )
+            } catch (error) {
+              console.error(error)
+            }
           }
-        }
-        if (index === files.length - 1) {
+          notif.success('Uploaded a file.')
+          if (index === files.length - 1) {
+            setLoading('result')
+          }
+        } catch (error) {
+          console.error(error)
           setLoading('result')
         }
-      } catch (error) {
-        console.error(error)
-        setLoading('result')
       }
     }
   }
   const preview = files.map((file) => {
-    return (
-      <img
-        src={file.preview}
-        alt={file.name}
-        className="w-2/3 md:w-full"
-        key={file.name}
-      />
-    )
+    let type = file.type
+    console.log(type)
+
+    if (type.includes('image')) {
+      return (
+        <img
+          src={file.preview}
+          alt={file.name}
+          className="w-2/3 md:w-full"
+          key={file.name}
+        />
+      )
+    } else if (type.includes('video')) {
+      return (
+        <video controls key={file.name} className="w-2/3 md:w-full">
+          <source src={file.preview} type="video/mp4" />
+          Your browser does not support HTML5 video.
+        </video>
+      )
+    } else if (type.includes('pdf')) {
+      return (
+        <img
+          src={docs_placeholder}
+          alt={file.name}
+          className="w-2/3 md:w-full"
+          key={file.name}
+        />
+      )
+    } else if (type.includes('rar')) {
+      return (
+        <img
+          src={rar_placeholder}
+          alt={file.name}
+          className="w-2/3 md:w-full"
+          key={file.name}
+        />
+      )
+    } else if (type.includes('mpeg')) {
+      return (
+        <img
+          src={audio_placeholder}
+          alt={file.name}
+          className="w-2/3 md:w-full"
+          key={file.name}
+        />
+      )
+    }
   })
   const history = useHistory()
 
@@ -228,7 +296,7 @@ function Upload() {
                   </label>
 
                   <p className="text-xs text-gray-600 mt-4">
-                    Maximum upload file size: 512MB.
+                    Maximum upload file size: 20MB.
                   </p>
                 </div>
               </div>

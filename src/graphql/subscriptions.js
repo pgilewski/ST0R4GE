@@ -12,6 +12,7 @@ export const onCreatePicture = /* GraphQL */ `
         bucket
         region
         key
+        type
       }
       createdAt
       updatedAt
@@ -29,6 +30,7 @@ export const onUpdatePicture = /* GraphQL */ `
         bucket
         region
         key
+        type
       }
       createdAt
       updatedAt
@@ -46,6 +48,7 @@ export const onDeletePicture = /* GraphQL */ `
         bucket
         region
         key
+        type
       }
       createdAt
       updatedAt
@@ -63,11 +66,13 @@ export const onCreateProfile = /* GraphQL */ `
         bucket
         region
         key
+        type
       }
       backgroundPic {
         bucket
         region
         key
+        type
       }
       bio
       socials {
@@ -91,11 +96,13 @@ export const onUpdateProfile = /* GraphQL */ `
         bucket
         region
         key
+        type
       }
       backgroundPic {
         bucket
         region
         key
+        type
       }
       bio
       socials {
@@ -119,11 +126,13 @@ export const onDeleteProfile = /* GraphQL */ `
         bucket
         region
         key
+        type
       }
       backgroundPic {
         bucket
         region
         key
+        type
       }
       bio
       socials {

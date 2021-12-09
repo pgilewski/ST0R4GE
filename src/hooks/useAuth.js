@@ -56,19 +56,25 @@ const useAuth = () => {
 
   const signIn = async (formState) => {
     const { username, password } = formState
-    try {
-      const user = await Auth.signIn({
-        username,
-        password,
-      })
-      if (user) {
-        notyf.success('You sucessfully logged in.')
-        history.push('/')
-      } else {
+    if (username === '') {
+      notyf.error("Email can't be empty.")
+    } else if (password === '') {
+      notyf.error("Password can't be empty.")
+    } else {
+      try {
+        const user = await Auth.signIn({
+          username,
+          password,
+        })
+        if (user) {
+          notyf.success('You sucessfully logged in.')
+          history.push('/')
+        } else {
+          notyf.error(`Couldn't log in. Check your username or password.`)
+        }
+      } catch (error) {
         notyf.error(`Couldn't log in. Check your username or password.`)
       }
-    } catch (error) {
-      notyf.error(`Couldn't log in. Check your username or password.`)
     }
   }
 

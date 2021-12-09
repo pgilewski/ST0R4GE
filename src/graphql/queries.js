@@ -12,6 +12,7 @@ export const getPicture = /* GraphQL */ `
         bucket
         region
         key
+        type
       }
       createdAt
       updatedAt
@@ -34,6 +35,7 @@ export const listPictures = /* GraphQL */ `
           bucket
           region
           key
+          type
         }
         createdAt
         updatedAt
@@ -53,11 +55,13 @@ export const getProfile = /* GraphQL */ `
         bucket
         region
         key
+        type
       }
       backgroundPic {
         bucket
         region
         key
+        type
       }
       bio
       socials {
@@ -86,11 +90,13 @@ export const listProfiles = /* GraphQL */ `
           bucket
           region
           key
+          type
         }
         backgroundPic {
           bucket
           region
           key
+          type
         }
         bio
         socials {

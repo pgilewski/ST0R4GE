@@ -181,13 +181,13 @@ export default function Navbar(props) {
                   </Link>
                 </div>
               ) : null}
-              {/* <Link
-                to="/public"
+              <Link
+                to="/about"
                 className=" block text-gray-800 uppercase dark:hover:text-white px-3 py-2 rounded-md text-lg font-medium"
                 href="/#"
               >
-                public
-              </Link> */}
+                About
+              </Link>
             </div>
           </div>
         ) : null}

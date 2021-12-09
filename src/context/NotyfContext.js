@@ -3,6 +3,6 @@ import { Notyf } from 'notyf'
 
 export default React.createContext(
   new Notyf({
-    duration: 2000,
+    duration: 3000,
   }),
 )

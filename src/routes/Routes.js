@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Upload from '../components/Upload'
 import Home from '../components/Home'
 import Register from '../components/Register'
@@ -11,9 +11,12 @@ import Dashboard from '../components/Dashboard'
 import GalleryRouter from '../components/Gallery'
 import Public from '../components/Public'
 import Profile from '../components/Profile'
+import NotyfContext from '../context/NotyfContext'
 
 const ProtectedRoute = ({ children, ...rest }) => {
   const { currentUser } = useAuthContext()
+  const notyf = useContext(NotyfContext)
+
   const { redirect } = rest
   return (
     <Route
@@ -57,7 +60,7 @@ const Routes = () => {
         <GalleryRouter className="full-height-no-navbar" />
       </ProtectedRoute>
       {/* add eslint file */}
-      <Route path="/public">
+      <Route path="/about">
         <Public className="full-height-no-navbar" />
       </Route>
       <Route path="/">

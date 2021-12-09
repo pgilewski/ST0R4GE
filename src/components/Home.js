@@ -29,7 +29,7 @@ function Home() {
                 type="button"
                 className="py-4 px-6  bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
               >
-                Go to demo
+                Go to Upload
               </button>
             </Link>
           </div>
@@ -57,7 +57,7 @@ function Home() {
                     <path d="M22 4L12 14.01l-3-3" />
                   </svg>
                   <span className="title-font font-medium">
-                    Store images in AWS cloud
+                    Store files using cloud storage
                   </span>
                 </div>
               </div>
@@ -76,7 +76,7 @@ function Home() {
                     <path d="M22 4L12 14.01l-3-3" />
                   </svg>
                   <span className="title-font font-medium">
-                    Use of AWS Rekognition
+                    Recognize images
                   </span>
                 </div>
               </div>
@@ -95,7 +95,7 @@ function Home() {
                     <path d="M22 4L12 14.01l-3-3" />
                   </svg>
                   <span className="title-font font-medium">
-                    Responsive design
+                    Upload images, pdfs, and archives
                   </span>
                 </div>
               </div>
@@ -113,7 +113,9 @@ function Home() {
                     <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
                     <path d="M22 4L12 14.01l-3-3" />
                   </svg>
-                  <span className="title-font font-medium">Tag photos</span>
+                  <span className="title-font font-medium">
+                    Tag and search files
+                  </span>
                 </div>
               </div>
               <div className="p-2 sm:w-1/2 w-full">
@@ -151,7 +153,7 @@ function Home() {
                     <path d="M22 4L12 14.01l-3-3" />
                   </svg>
                   <span className="title-font font-medium">
-                    Share photos{' '}
+                    Share files{' '}
                     <span className="text-indigo-400">[upcoming]</span>
                   </span>
                 </div>

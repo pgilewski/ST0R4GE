@@ -42,48 +42,84 @@ const Profile = (props) => {
 
   async function updateProfileInDB() {
     const creds = await Auth.currentCredentials()
-    if (backgroundPicture.data) {
-      try {
-        await Storage.put(backgroundPicture.name, backgroundPicture.data, {
-          contentType: 'image/*',
-          level: 'protected',
-        }).then((d) => {
-          console.log('background uploaded successfully', d)
-        })
-      } catch (error) {
-        console.error('Error uploading file: ', error)
-      }
-    }
-    if (avatarPicture.data) {
-      try {
-        await Storage.put(avatarPicture.name, avatarPicture.data, {
-          contentType: 'image/*',
-          level: 'protected',
-        }).then((d) => {
-          console.log('avatar uploaded successfully', d)
-        })
-      } catch (error) {
-        console.error('Error uploading file: ', error)
-      }
-    }
 
-    const profile = {
+    let profileData = {
       ...profileInfo,
       ...formState,
       socials: socialFormList,
-
-      profilePic: {
-        bucket: awsmobile.aws_user_files_s3_bucket,
-        region: awsmobile.aws_user_files_s3_bucket_region,
-        key: `protected/${creds.identityId}/${avatarPicture.name}`,
-      },
-
-      backgroundPic: {
-        bucket: awsmobile.aws_user_files_s3_bucket,
-        region: awsmobile.aws_user_files_s3_bucket_region,
-        key: `protected/${creds.identityId}/${backgroundPicture.name}`,
-      },
     }
+    const checkForUpdates = async () => {
+      if (avatarPicture.data && backgroundPicture.data) {
+        try {
+          await Storage.put(avatarPicture.name, avatarPicture.data, {
+            contentType: 'image/*',
+            level: 'protected',
+          })
+          await Storage.put(backgroundPicture.name, backgroundPicture.data, {
+            contentType: 'image/*',
+            level: 'protected',
+          })
+        } catch (error) {
+          console.error('There occured an error when uploading files. ', error)
+        }
+        const profilePic = {
+          bucket: awsmobile.aws_user_files_s3_bucket,
+          region: awsmobile.aws_user_files_s3_bucket_region,
+          key: `protected/${creds.identityId}/${avatarPicture.name}`,
+        }
+        const backgroundPic = {
+          bucket: awsmobile.aws_user_files_s3_bucket,
+          region: awsmobile.aws_user_files_s3_bucket_region,
+          key: `protected/${creds.identityId}/${backgroundPicture.name}`,
+        }
+        let profile = { ...profileData, backgroundPic, profilePic }
+        return profile
+      } else if (avatarPicture.data) {
+        try {
+          await Storage.put(avatarPicture.name, avatarPicture.data, {
+            contentType: 'image/*',
+            level: 'protected',
+          })
+        } catch (error) {
+          console.error(
+            'There occured an error when uploading avatar file: ',
+            error,
+          )
+        }
+        const profilePic = {
+          bucket: awsmobile.aws_user_files_s3_bucket,
+          region: awsmobile.aws_user_files_s3_bucket_region,
+          key: `protected/${creds.identityId}/${avatarPicture.name}`,
+        }
+
+        let profile = { ...profileData, profilePic }
+        return profile
+      } else if (backgroundPicture.data) {
+        try {
+          await Storage.put(backgroundPicture.name, backgroundPicture.data, {
+            contentType: 'image/*',
+            level: 'protected',
+          })
+        } catch (error) {
+          console.error(
+            'There occured an error when uploading background file: ',
+            error,
+          )
+        }
+        const backgroundPic = {
+          bucket: awsmobile.aws_user_files_s3_bucket,
+          region: awsmobile.aws_user_files_s3_bucket_region,
+          key: `protected/${creds.identityId}/${backgroundPicture.name}`,
+        }
+        let profile = { ...profileData, backgroundPic }
+        return profile
+      } else {
+        return profileData
+      }
+    }
+
+    const profile = await checkForUpdates()
+
     delete profile.createdAt
     delete profile.updatedAt
     delete profile.owner
@@ -108,61 +144,41 @@ const Profile = (props) => {
       email: cognitoUser.attributes.email,
       identityId: creds.identityId,
     }
-    try {
-      const response = await API.graphql(
-        graphqlOperation(getProfile, { id: profile.id }),
-      )
-      if (response.data.getProfile === null) {
-        addProfileToDB(profile)
-      } else {
-        try {
-          const backgroundPicKey = response.data.getProfile.backgroundPic.key.split(
-            '/',
-          )[2]
-          const profilePicKey = response.data.getProfile.profilePic.key.split(
-            '/',
-          )[2]
-
-          if (response.data.getProfile.backgroundPic && backgroundPicKey) {
-            Storage.get(backgroundPicKey, {
-              level: 'protected',
-            }).then((d) => {
-              console.log('obrazek', d)
-
-              setBackgroundPicture({
-                src: d,
-                name: backgroundPicKey,
-              })
-            })
-          } else {
-            /*             setBackgroundPicture({
-              name: '',
-              src: background,
-            }) */
-          }
-          if (response.data.getProfile.profilePic && profilePicKey) {
-            await Storage.get(profilePicKey, {
-              level: 'protected',
-            }).then((d) => {
-              console.log('obrazek', d)
-              setAvatarPicture({
-                src: d,
-                name: profilePicKey,
-              })
-            })
-          } else {
-            /*             setAvatarPicture({
-              name: '',
-              src: avatar,
-            }) */
-          }
-        } catch (error) {
-          console.log('we couldnt download image.', error)
-        }
-        setProfileInfo(response.data.getProfile)
+    const response = await API.graphql(
+      graphqlOperation(getProfile, { id: profile.id }),
+    )
+    if (response.data.getProfile === null) {
+      addProfileToDB(profile)
+    } else {
+      // check if backgroundPic is set
+      if (response.data.getProfile.backgroundPic) {
+        const backgroundPicKey = response.data.getProfile.backgroundPic.key.split(
+          '/',
+        )[2]
+        Storage.get(backgroundPicKey, {
+          level: 'protected',
+        }).then((d) => {
+          setBackgroundPicture({
+            src: d,
+            name: backgroundPicKey,
+          })
+        })
       }
-    } catch (error) {
-      console.error(error)
+      if (response.data.getProfile.profilePic) {
+        const profilePicKey = response.data.getProfile.profilePic.key.split(
+          '/',
+        )[2]
+        await Storage.get(profilePicKey, {
+          level: 'protected',
+        }).then((d) => {
+          setAvatarPicture({
+            src: d,
+            name: profilePicKey,
+          })
+        })
+      }
+
+      setProfileInfo(response.data.getProfile)
     }
   }
 
@@ -197,7 +213,6 @@ const Profile = (props) => {
                     {social.name}
                   </a>
                   <svg
-                    onClick={() => console.log('remove')}
                     className="ml-1 cursor-pointer"
                     xmlns="http://www.w3.org/2000/svg"
                     x="0px"
@@ -299,7 +314,6 @@ const Profile = (props) => {
   useEffect(() => {
     // storing input name
     const color = localStorage.getItem('backgroundColor')
-    console.log(color)
     setBackgroundColor(color)
   }, [])
 
@@ -307,7 +321,6 @@ const Profile = (props) => {
   const backgroundColorChange = (e) => {
     const color = e.target.value
     setBackgroundColor(color)
-    console.log(color)
 
     localStorage.setItem('backgroundColor', backgroundColor)
   }

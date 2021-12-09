@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 const Tags = (props) => {
-  const { editMode, full, labelsToState, setLabelsToState } = props
+  const { editMode, labelsToState, setLabelsToState } = props
 
   /*   if (props.labels) {
     //tagi wyswietlane w galerii
@@ -30,7 +30,6 @@ const Tags = (props) => {
     const newLabels = labelsToState.filter(
       (item, index) => index !== parseInt(id),
     )
-    console.log(newLabels)
     setLabelsToState(newLabels)
   }
 
@@ -47,41 +46,60 @@ const Tags = (props) => {
       setNewLabel('')
     }
   }
+  const onClick = () => {
+    const newLabels = labelsToState
 
+    newLabels.push(newLabel)
+
+    setLabelsToState(newLabels)
+
+    setNewLabel('')
+  }
   return (
     <div>
       <div>
         {
-          <div>
-            {labelsToState
-              ? labelsToState.map((label, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className="mb-1 ml-1 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full bg-white text-gray-700 border"
-                    >
-                      {editMode ? (
-                        <span
-                          name={i}
-                          className="text-red-600 mr-1 cursor-pointer"
-                          onClick={deleteTag}
-                        >
-                          x
-                        </span>
-                      ) : null}
-                      {label}
-                    </div>
-                  )
-                })
-              : null}{' '}
+          <div className="">
+            <div className="w-1/2">
+              {labelsToState
+                ? labelsToState.map((label, i) => {
+                    return (
+                      <div
+                        key={i}
+                        className="mb-1 ml-1 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full bg-white text-gray-700 border"
+                      >
+                        {editMode ? (
+                          <span
+                            name={i}
+                            className="text-red-600 mr-1 cursor-pointer"
+                            onClick={deleteTag}
+                          >
+                            x
+                          </span>
+                        ) : null}
+                        {label}
+                      </div>
+                    )
+                  })
+                : null}
+            </div>
             {editMode ? (
-              <input
-                onKeyDown={handleKeyDown}
-                type="text"
-                value={newLabel || ''}
-                onChange={(e) => setNewLabel(e.target.value)}
-                className="border border-gray-400 px-2 mt-2"
-              />
+              <div className="flex flex-row">
+                <input
+                  onKeyDown={handleKeyDown}
+                  type="text"
+                  value={newLabel || ''}
+                  onChange={(e) => setNewLabel(e.target.value)}
+                  className="border border-gray-400 px-2 mt-2"
+                />
+                <button
+                  onClick={onClick}
+                  type="button"
+                  className="px-2 mt-2 mx-2 font-light font-mono flex justify-center items-center  text-white bg-gray-600 transition ease-in duration-200 text-center text-base  shadow-md  rounded-md "
+                >
+                  add tag
+                </button>
+              </div>
             ) : null}{' '}
           </div>
         }

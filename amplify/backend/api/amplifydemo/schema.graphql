@@ -2,6 +2,7 @@ type S3Object {
   bucket: String!
   region: String!
   key: String!
+  type: String
 }
 
 type Picture @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
