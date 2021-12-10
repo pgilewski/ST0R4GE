@@ -7,6 +7,7 @@ Link to demo: [https://main.d2hjyas9gj2dki.amplifyapp.com/](https://main.d2hjyas
 Clone github repository: [https://github.com/pgilewski/my-space](https://github.com/pgilewski/my-space)
 
 ### Prerequirements:
+
 - node 14.18.0
 - npm 6.14.15
 
@@ -15,9 +16,11 @@ Clone github repository: [https://github.com/pgilewski/my-space](https://github.
 ### `amplify config`
 
 ### `amplify init`
+
 - Use default settings
 
-### `amplify add auth` 
+### `amplify add auth`
+
 - Default configuration / default configuration with social providers (require addictional configuration)
 - Email
 - Enter your redirect signin URI (eg. http://localhost:3000/)
@@ -25,13 +28,14 @@ Clone github repository: [https://github.com/pgilewski/my-space](https://github.
 - Enter your redirect signout URI (eg. http://localhost:3000/)
 - Select google and facebook using space, then enter.
 - Enter your Facebook App ID for your OAuth flow:
-- Enter your Facebook App Secret for your OAuth flow:  
-- Enter your Google Web Client ID for your OAuth flow: 
+- Enter your Facebook App Secret for your OAuth flow:
+- Enter your Google Web Client ID for your OAuth flow:
 - Enter your Google Web Client Secret for your OAuth flow:
 
 - No, I am done.
 
 ### `amplify add api`
+
 - GraphQL
 - (your_api_name)
 - Amazon Cognito User Pool
@@ -39,21 +43,25 @@ Clone github repository: [https://github.com/pgilewski/my-space](https://github.
 - No
 - Single objects with fields
 - Do you want to edit the schema now? Yes
-if file didnt pop out go to /amplify/backend/api/(your_api_name)/schema.grahpql and change existing file to following: 
+  if file didnt pop out go to /amplify/backend/api/(your_api_name)/schema.grahpql and change existing file to following:
 
 ```
 type S3Object {
   bucket: String!
   region: String!
   key: String!
+  type: String
 }
 
-type Picture @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
+type File @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
   id: ID!
   name: String
   owner: String
-  labels:[String]
+  labels: [String]
   file: S3Object
+  type: String
+  createdAt: String
+  size: Int
 }
 
 type Social {
@@ -63,7 +71,7 @@ type Social {
 
 type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
   id: ID!
-  email: String !
+  email: String!
   identityId: String!
   name: String
   profilePic: S3Object
@@ -71,9 +79,11 @@ type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
   bio: String
   socials: [Social]
 }
+
 ```
 
 ### `amplify add storage`
+
 - Content
 - (default_category)
 - (default_bucket_name)
@@ -82,6 +92,7 @@ type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
 - No
 
 ### `amplify add predictions`
+
 - Identify
 - Identify Labels
 - (deafult_name)
@@ -89,12 +100,13 @@ type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
 - Auth users only
 
 ### `amplify push`
+
 - Yes
 - javascript
 - (deafult)
 - Yes
 - 2
-To push changes.
+  To push changes.
 
 Check mutations,queries, etc. to build locally.
 
@@ -105,5 +117,3 @@ Select your created user pool
 In General setting select Message Customizations
 Then set Verification type to Link.
 Save changes.
-
-

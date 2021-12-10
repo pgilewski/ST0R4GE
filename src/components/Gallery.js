@@ -2,8 +2,8 @@ import React, { useContext } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 import { useState, useEffect } from 'react'
 import { Storage, Auth, API, graphqlOperation } from 'aws-amplify'
-import { getPicture } from '../graphql/queries'
-import { updatePicture, deletePicture } from '../graphql/mutations'
+import { getFile } from '../graphql/queries'
+import { updateFile, deleteFile } from '../graphql/mutations'
 import Tags from './gallery/Tags'
 import GalleryNavbar from './gallery/GalleryNavbar'
 import { ReactComponent as DeleteIcon } from '../assets/icons/delete.svg'
@@ -52,7 +52,7 @@ function GallerySwitch() {
   // the modal.
   let background = location.state && location.state.background
 
-  const [deletedPictures, setDeletedPictures] = useState([])
+  const [deletedFiles, setDeletedFiles] = useState([])
   // const { graphqlKey, s3Key, url, labels }=
   return (
     <div>
@@ -60,7 +60,7 @@ function GallerySwitch() {
         <Route
           exact
           path="/gallery"
-          children={<Gallery deletedPictures={deletedPictures} />}
+          children={<Gallery deletedFiles={deletedFiles} />}
         />
         <Route path="/gallery/img/:id" children={<ImageView />} />
       </Switch>
@@ -71,9 +71,9 @@ function GallerySwitch() {
           path="/gallery/img/:id"
           children={
             <Modal
-              picture={location.state.picture}
-              setDeletedPictures={setDeletedPictures}
-              deletedPictures={deletedPictures}
+              file={location.state.file}
+              setDeletedFiles={setDeletedFiles}
+              deletedFiles={deletedFiles}
             />
           }
         />
@@ -107,11 +107,14 @@ const Modal = (props) => {
   const [message, setMessage] = useState({})
   const notyf = useContext(NotyfContext)
   const {
-    picture: { id, file, s3Key, url },
-    picture,
-    setDeletedPictures,
-    deletedPictures,
+    file: { id, name, labels, createdAt, size, url },
+    file,
+    setDeletedFiles,
+    deletedFiles,
   } = props
+
+  const time =
+    createdAt.split('T')[0] + ' ' + createdAt.split('T')[1].split('.')[0]
   //   id: ID!
   //   name: String
   //   owner: String
@@ -119,34 +122,20 @@ const Modal = (props) => {
   //   file: S3Object
   // }
   const updateImageInDB = async () => {
-    const input = { id, labels: labelsToState, file }
+    const input = { id, name, labels: labelsToState, size, createdAt }
     try {
       const d1 = await API.graphql(
-        graphqlOperation(updatePicture, { input: input }),
+        graphqlOperation(updateFile, { input: input }),
       )
       notyf.success('Updated file successfully')
     } catch (e) {
-      notyf.error("Couldn't update a picture.")
-    }
-  }
-
-  const deleteImageFromDB = async (image) => {
-    try {
-      const d1 = await API.graphql(
-        graphqlOperation(deletePicture, { input: image }),
-      )
-
-      console.log(image)
-      const d2 = await Storage.list('', { level: 'private' })
-      console.log(d2)
-    } catch (e) {
-      notyf.error('We had a problem with removing your photo.')
+      notyf.error("Couldn't update a file.")
     }
   }
 
   const [editMode, setEditMode] = useState(false)
 
-  const [labelsToState, setLabelsToState] = useState(props.picture.labels || [])
+  const [labelsToState, setLabelsToState] = useState(labels || [])
 
   const onEditClick = () => {
     if (editMode) {
@@ -161,11 +150,11 @@ const Modal = (props) => {
   const onRemoveClick = async () => {
     // TODO: rewrite to do both symutanously
     const d1 = await API.graphql(
-      graphqlOperation(deletePicture, { input: { id } }),
+      graphqlOperation(deleteFile, { input: { id } }),
     )
-    const d2 = await Storage.remove(s3Key, { level: 'private' })
+    const d2 = await Storage.remove(name, { level: 'private' })
     if (d1 && d2) {
-      setDeletedPictures([...deletedPictures, url])
+      setDeletedFiles([...deletedFiles, url])
       notyf.success('Successfully deleted file.')
 
       history.push('/gallery')
@@ -188,12 +177,11 @@ const Modal = (props) => {
     e.stopPropagation()
     history.goBack()
   }
-  const renderInModal = ({ file, s3Key, url }) => {
-    const type = file.type
-    if (type === null) {
+  const renderInModal = ({ type, name, url, size, createdAt }) => {
+    if (type.includes('image') && !type.includes('svg')) {
       return (
         <img
-          alt={s3Key}
+          key={name}
           className="m-auto"
           src={url}
           style={{
@@ -201,42 +189,40 @@ const Modal = (props) => {
           }}
         />
       )
+    } else if (type.includes('video')) {
+      return (
+        <video
+          controls
+          key={name}
+          className="mx-auto"
+          style={{
+            maxHeight: '50vh',
+          }}
+        >
+          <source src={url} type="video/mp4" />
+          Your browser does not support HTML5 video.
+        </video>
+      )
+    } else if (type.includes('pdf')) {
+      return <PdfPlayer url={url} className="mx-auto" />
+    } else if (type.includes('mpeg')) {
+      return (
+        <audio controls className="mx-auto">
+          <source key={name} src={url} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      )
     } else {
-      if (type.includes('image')) {
-        return (
-          <img
-            key={s3Key}
-            className="m-auto"
-            src={url}
-            style={{
-              maxHeight: '50vh',
-            }}
-          />
-        )
-      } else if (type.includes('video')) {
-        return (
-          <video
-            controls
-            key={s3Key}
-            className="mx-auto"
-            style={{
-              maxHeight: '50vh',
-            }}
-          >
-            <source src={url} type="video/mp4" />
-            Your browser does not support HTML5 video.
-          </video>
-        )
-      } else if (type.includes('pdf')) {
-        return <PdfPlayer file={file} url={url} className="mx-auto" />
-      } else if (type.includes('mpeg')) {
-        return (
-          <audio controls className="mx-auto">
-            <source key={s3Key} src={url} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
-        )
-      }
+      return (
+        <img
+          key={name}
+          className="m-auto"
+          src={file_placeholder}
+          style={{
+            maxHeight: '50vh',
+          }}
+        />
+      )
     }
   }
   return (
@@ -278,24 +264,40 @@ const Modal = (props) => {
           className="w-8 h-8 cursor-pointer"
         />
         <div className="flex flex-col text-left p-4">
-          <div className="w-full">{renderInModal(picture)}</div>
-          <div className=" w-full p-4 flex flex-row">
-            <div className="w-1/2">
-              <h3 className="mt-2">
-                <strong>Data dodania:</strong> 2021-10-29
-              </h3>
-              <h3 className="my-2">
-                <strong>Tagi:</strong>
-              </h3>
-              <Tags
-                className="mt-2"
-                setLabelsToState={setLabelsToState}
-                labelsToState={labelsToState}
-                full={true}
-                editMode={editMode}
-              />
+          <div className="w-full">{renderInModal(file)}</div>
+          <div className=" w-full  md:p-4 flex flex-col md:flex-row ">
+            <div className="w-full  md:w-1/2">
+              <div className="w-full h-full border border-gray-500 p-4">
+                <div className="w-full my-1">
+                  <div className="w-1/2 inline-block">
+                    <strong>Data dodania:</strong>
+                  </div>
+                  <div className="w-1/2 inline-block">{time}</div>
+                </div>
+                <div className="w-full my-1">
+                  <div className="w-1/2 inline-block mb-4">
+                    <strong>Rozmiar pliku:</strong>
+                  </div>
+                  <div className="w-1/2 inline-block">
+                    {(size / 1048576).toFixed(2)}MB
+                  </div>
+                </div>
+                <div className="w-full mt-2">
+                  {/* <strong>Tagi:</strong> */}
+
+                  <div className="w-full mx-2 border-t pt-4 ">
+                    <Tags
+                      className="mt-2"
+                      setLabelsToState={setLabelsToState}
+                      labelsToState={labelsToState}
+                      full={true}
+                      editMode={editMode}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="w-1/2  align-bottom">
+            <div className="w-full md:w-1/2 px-2">
               <div className="flex">
                 <button
                   onClick={onEditClick}
@@ -340,37 +342,35 @@ function ImageView() {
 }
 
 const GalleryElement = (props) => {
-  const { i, url, labels, picture, location, s3Key, filesDisplayed } = props
+  const { file, url, location, filesDisplayed } = props
+  const { name, labels, type, createdAt, size } = file
+
   function renderGalleryElement(props) {
-    const {
-      url,
-      s3Key,
-      file: { type },
-    } = props
+    const { url, name, type } = props
     // wsteczna obsługa
     if (!type) {
       return (
         <img
-          alt={picture.name}
-          className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
           src={url}
+          alt={name}
+          className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
         />
       )
     } else {
-      if (type.includes('image')) {
+      if (type.includes('image') && !type.includes('svg')) {
         return (
           <img
             src={url}
-            alt={s3Key}
+            alt={name}
             className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
           />
         )
       } else if (type.includes('doc') || type.includes('pdf')) {
         return (
           <img
-            alt={s3Key}
-            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
             src={pdf2_placeholder}
+            alt={name}
+            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
           />
         )
       } else if (
@@ -380,33 +380,33 @@ const GalleryElement = (props) => {
       ) {
         return (
           <img
-            alt={s3Key}
-            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
             src={rar_placeholder}
+            alt={name}
+            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
           />
         )
       } else if (type.includes('video')) {
         return (
           <img
-            alt={s3Key}
-            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
             src={video_placeholder}
+            alt={name}
+            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
           />
         )
       } else if (type.includes('mpeg')) {
         return (
           <img
-            alt={s3Key}
-            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
             src={audio_placeholder}
+            alt={name}
+            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
           />
         )
       } else {
         return (
           <img
-            alt={s3Key}
-            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
             src={file_placeholder}
+            alt={name}
+            className="gallery-item absolute inset-0 w-full h-full object-cover object-center hover:scale-110"
           />
         )
       }
@@ -415,25 +415,23 @@ const GalleryElement = (props) => {
 
   return (
     <div
-      key={s3Key}
+      key={name}
       className="w-full xl:w-1/3 lg:w-1/3 sm:w-1/2 p-4 img-hover-zoom "
     >
       <div>
         <Link
           to={{
-            pathname: `/gallery/img/${i}`,
+            pathname: `/gallery/img/${name}`,
             state: {
               background: location,
-              picture,
+              file,
             },
           }}
           className="flex relative  "
         >
-          {renderGalleryElement(picture, url)}
+          {renderGalleryElement(file, url)}
           <div className="px-14 pt-48 relative z-10 w-full ">
-            <h1 className="text-white">
-              {filesDisplayed ? picture.s3Key : null}
-            </h1>
+            <h1 className="text-white">{filesDisplayed ? file.name : null}</h1>
             {/* <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500"></h2>
             {labels ? (
               <Tags labels={labels} full={false} />
@@ -448,30 +446,29 @@ const GalleryElement = (props) => {
 }
 
 function RenderImages(props) {
-  const {
-    pictures,
-    search,
-    deletedPictures,
-    filesDisplayed,
-    sortMethod,
-    setPictures,
-  } = props
+  const { files, search, deletedFiles, filesDisplayed, sortMethod } = props
   let location = useLocation()
+  const [filesInRender, setFilesInRender] = useState(files)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    pictures.forEach((file) => {
-      if (file.type) {
-        if (file.type.includes('image')) {
-          URL.revokeObjectURL(file.preview)
-        }
-      }
-    })
-  }, [pictures])
+  // useEffect(() => {
+  //   pictures.forEach((file) => {
+  //     console.log(file)
+  //     if (file.type) {
+  //       if (file.type.includes('image')) {
+  //         URL.revokeObjectURL(file.preview)
+  //       }
+  //     }
+  //   })
+  // }, [pictures])
 
-  if (sortMethod === 'name') {
-    // console.log(pictures)
-    let newPicturesArray = pictures
-    newPicturesArray.sort((a, b) => {
+  if (
+    sortMethod === 'name' &&
+    filesInRender == !files &&
+    filesInRender.length === files.length
+  ) {
+    let newFilesArray = filesInRender
+    newFilesArray.sort((a, b) => {
       let fa = a.s3Key.toLowerCase().charAt(0),
         fb = b.s3Key.toLowerCase().charAt(0)
       // console.log(fa, fb)
@@ -483,10 +480,27 @@ function RenderImages(props) {
       }
       return 0
     })
-    setPictures(newPicturesArray)
-    console.log('new pictures set')
-  } else if (sortMethod === 'oldest') {
-    console.log('321')
+    setFilesInRender(newFilesArray)
+  } else if (
+    sortMethod === 'oldest' &&
+    filesInRender == !files &&
+    filesInRender.length === files.length
+  ) {
+    let newFilesArray = filesInRender
+    console.log(files)
+    newFilesArray.sort((a, b) => {
+      let fa = a.s3Key.toLowerCase(),
+        fb = b.s3Key.toLowerCase()
+      // console.log(fa, fb)
+      if (fa > fb) {
+        return -1
+      }
+      if (fa < fb) {
+        return 1
+      }
+      return 0
+    })
+    setFilesInRender(newFilesArray)
   } else if (sortMethod === 'newest') {
     console.log('123')
   } else if (sortMethod === 'size') {
@@ -495,20 +509,57 @@ function RenderImages(props) {
     console.log('size')
   }
 
-  return pictures.map((picture, i) => {
-    if (picture) {
-      let { labels, url, s3Key } = picture
-      if (deletedPictures.includes(url)) {
+  // if (sortMethod === '') {
+  //   return pictures.map((picture, i) => {
+  //     if (picture) {
+  //       let { labels, url, s3Key } = picture
+  //       if (deletedFiles.includes(url)) {
+  //         return null
+  //       } else {
+  //         if (search === '') {
+  //           return (
+  //             <GalleryElement
+  //               i={i}
+  //               key={s3Key}
+  //               url={url}
+  //               labels={labels}
+  //               picture={picture}
+  //               location={location}
+  //               filesDisplayed={filesDisplayed}
+  //             />
+  //           )
+  //         } else if (
+  //           labels !== null &&
+  //           labels.find((a) => a.includes(search)) !== undefined
+  //         ) {
+  //           return (
+  //             <GalleryElement
+  //               i={i}
+  //               key={s3Key}
+  //               url={url}
+  //               labels={labels}
+  //               picture={picture}
+  //               location={location}
+  //             />
+  //           )
+  //         } else {
+  //           return null
+  //         }
+  //       }
+  //     }
+  //   })
+  // }
+  return files.map((file, i) => {
+    if (file) {
+      let { id, name, labels, type, createdAt, size, url } = file
+      if (deletedFiles.includes(url)) {
         return null
       } else {
         if (search === '') {
           return (
             <GalleryElement
-              i={i}
-              key={s3Key}
               url={url}
-              labels={labels}
-              picture={picture}
+              file={file}
               location={location}
               filesDisplayed={filesDisplayed}
             />
@@ -519,12 +570,10 @@ function RenderImages(props) {
         ) {
           return (
             <GalleryElement
-              i={i}
-              key={s3Key}
               url={url}
-              labels={labels}
-              picture={picture}
+              file={file}
               location={location}
+              filesDisplayed={filesDisplayed}
             />
           )
         } else {
@@ -541,41 +590,47 @@ labels: [String]
 file: S3Object
  */
 const Gallery = (props) => {
-  const [pictures, setPictures] = useState([])
+  const [files, setFiles] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [showNames, setShowNames] = useToggle()
   const [sortMethod, setSortMethod] = useState('')
 
-  useEffect(() => {}, pictures)
   const notyf = useContext(NotyfContext)
-  async function getImages() {
+  async function getFiles() {
     const creds = await Auth.currentCredentials()
     try {
       await Storage.list('', { level: 'private' })
         .then(async (result) => {
           for (const item of result) {
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
             const cognitoS3Path = `private/${creds.identityId}/${item.key}`
             const getS3Promise = Storage.get(item.key, { level: 'private' })
             const getDbPromise = API.graphql(
-              graphqlOperation(getPicture, {
+              graphqlOperation(getFile, {
                 id: cognitoS3Path,
               }),
             )
-            const newPicture = await Promise.all([
+            const newFile = await Promise.all([
               getS3Promise,
               getDbPromise,
             ]).then(([url, data]) => {
-              if (data.data.getPicture && url) {
-                const { file, id, labels } = data.data.getPicture
-                return {
+              if (data.data.getFile && url) {
+                const {
                   id,
-                  file,
+                  name,
                   labels,
+                  type,
+                  createdAt,
+                  size,
+                } = data.data.getFile
+                return {
                   url,
-                  graphqlKey: cognitoS3Path,
-                  s3Key: item.key,
+                  id,
+                  name,
+                  labels,
+                  type,
+                  createdAt,
+                  size,
                 }
               } else {
                 //error handling
@@ -583,7 +638,7 @@ const Gallery = (props) => {
               }
             })
 
-            setPictures((prevPictures) => [...prevPictures, newPicture])
+            setFiles((prevFiles) => [...prevFiles, newFile])
             setLoading(false)
           }
         })
@@ -600,27 +655,28 @@ const Gallery = (props) => {
   // }
   // cont[hasError, setHasError] = useState(false)
   useEffect(() => {
-    getImages()
+    getFiles()
   }, [])
 
-  const { deletedPictures } = props
+  const { deletedFiles } = props
   return (
-    <div className="full-height-no-navbar">
+    <div className="">
       <div className="text-gray-600 body-font ">
-        <div className="container px-5 py-24 mx-auto">
+        <div className=" px-5 py-24 mx-auto">
           <div className="flex flex-col text-center w-full mb-8">
             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
               Gallery
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base mb-8">
-              Search, filter and grid settings are coming up next, as app is
-              still in development.
+              Sort, filter and grid settings are coming up, as app is still in
+              development.
             </p>
             <GalleryNavbar
+              className=""
               setSearch={setSearch}
               setShowNames={setShowNames}
               setSortMethod={setSortMethod}
-              pictures={pictures}
+              files={files}
             />
           </div>
           {loading ? (
@@ -630,11 +686,10 @@ const Gallery = (props) => {
               {/* change label to "keyword" or "search" */}
               <RenderImages
                 filesDisplayed={showNames}
-                pictures={pictures}
+                files={files}
                 search={search}
-                deletedPictures={deletedPictures}
+                deletedFiles={deletedFiles}
                 sortMethod={sortMethod}
-                setPictures={setPictures}
               />
             </div>
           )}

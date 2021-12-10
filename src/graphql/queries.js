@@ -1,9 +1,9 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getPicture = /* GraphQL */ `
-  query GetPicture($id: ID!) {
-    getPicture(id: $id) {
+export const getFile = /* GraphQL */ `
+  query GetFile($id: ID!) {
+    getFile(id: $id) {
       id
       name
       owner
@@ -14,18 +14,20 @@ export const getPicture = /* GraphQL */ `
         key
         type
       }
+      type
       createdAt
+      size
       updatedAt
     }
   }
 `;
-export const listPictures = /* GraphQL */ `
-  query ListPictures(
-    $filter: ModelPictureFilterInput
+export const listFiles = /* GraphQL */ `
+  query ListFiles(
+    $filter: ModelFileFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listPictures(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listFiles(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         name
@@ -37,7 +39,9 @@ export const listPictures = /* GraphQL */ `
           key
           type
         }
+        type
         createdAt
+        size
         updatedAt
       }
       nextToken

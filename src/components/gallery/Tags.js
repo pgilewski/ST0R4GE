@@ -60,7 +60,7 @@ const Tags = (props) => {
       <div>
         {
           <div className="">
-            <div className="w-1/2">
+            <div className="">
               {labelsToState
                 ? labelsToState.map((label, i) => {
                     return (

@@ -1,9 +1,9 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreatePicture = /* GraphQL */ `
-  subscription OnCreatePicture($owner: String!) {
-    onCreatePicture(owner: $owner) {
+export const onCreateFile = /* GraphQL */ `
+  subscription OnCreateFile($owner: String!) {
+    onCreateFile(owner: $owner) {
       id
       name
       owner
@@ -14,14 +14,16 @@ export const onCreatePicture = /* GraphQL */ `
         key
         type
       }
+      type
       createdAt
+      size
       updatedAt
     }
   }
 `;
-export const onUpdatePicture = /* GraphQL */ `
-  subscription OnUpdatePicture($owner: String!) {
-    onUpdatePicture(owner: $owner) {
+export const onUpdateFile = /* GraphQL */ `
+  subscription OnUpdateFile($owner: String!) {
+    onUpdateFile(owner: $owner) {
       id
       name
       owner
@@ -32,14 +34,16 @@ export const onUpdatePicture = /* GraphQL */ `
         key
         type
       }
+      type
       createdAt
+      size
       updatedAt
     }
   }
 `;
-export const onDeletePicture = /* GraphQL */ `
-  subscription OnDeletePicture($owner: String!) {
-    onDeletePicture(owner: $owner) {
+export const onDeleteFile = /* GraphQL */ `
+  subscription OnDeleteFile($owner: String!) {
+    onDeleteFile(owner: $owner) {
       id
       name
       owner
@@ -50,7 +54,9 @@ export const onDeletePicture = /* GraphQL */ `
         key
         type
       }
+      type
       createdAt
+      size
       updatedAt
     }
   }

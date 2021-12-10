@@ -1,12 +1,12 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createPicture = /* GraphQL */ `
-  mutation CreatePicture(
-    $input: CreatePictureInput!
-    $condition: ModelPictureConditionInput
+export const createFile = /* GraphQL */ `
+  mutation CreateFile(
+    $input: CreateFileInput!
+    $condition: ModelFileConditionInput
   ) {
-    createPicture(input: $input, condition: $condition) {
+    createFile(input: $input, condition: $condition) {
       id
       name
       owner
@@ -17,17 +17,19 @@ export const createPicture = /* GraphQL */ `
         key
         type
       }
+      type
       createdAt
+      size
       updatedAt
     }
   }
 `;
-export const updatePicture = /* GraphQL */ `
-  mutation UpdatePicture(
-    $input: UpdatePictureInput!
-    $condition: ModelPictureConditionInput
+export const updateFile = /* GraphQL */ `
+  mutation UpdateFile(
+    $input: UpdateFileInput!
+    $condition: ModelFileConditionInput
   ) {
-    updatePicture(input: $input, condition: $condition) {
+    updateFile(input: $input, condition: $condition) {
       id
       name
       owner
@@ -38,17 +40,19 @@ export const updatePicture = /* GraphQL */ `
         key
         type
       }
+      type
       createdAt
+      size
       updatedAt
     }
   }
 `;
-export const deletePicture = /* GraphQL */ `
-  mutation DeletePicture(
-    $input: DeletePictureInput!
-    $condition: ModelPictureConditionInput
+export const deleteFile = /* GraphQL */ `
+  mutation DeleteFile(
+    $input: DeleteFileInput!
+    $condition: ModelFileConditionInput
   ) {
-    deletePicture(input: $input, condition: $condition) {
+    deleteFile(input: $input, condition: $condition) {
       id
       name
       owner
@@ -59,7 +63,9 @@ export const deletePicture = /* GraphQL */ `
         key
         type
       }
+      type
       createdAt
+      size
       updatedAt
     }
   }

@@ -2,6 +2,7 @@ export default function GalleryNavbar({
   setSearch,
   setShowNames,
   setSortMethod,
+  pictures,
 }) {
   function capitalize(input) {
     const CapitalizedWords = []
@@ -82,7 +83,7 @@ export default function GalleryNavbar({
               placeholder="search"
             />
             <div className="flex flex-row">
-              <label class="flex items-center mx-2 space-x-2 justify-center align-middle ">
+              <label className="flex items-center mx-2 space-x-2 justify-center align-middle ">
                 <div className="ml-4 relative inline-block w-10 mr-2 align-middle select-none">
                   <input
                     onChange={setShowNames}
@@ -96,7 +97,7 @@ export default function GalleryNavbar({
                     className="block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
                   ></label>
                 </div>
-                <span class="text-gray-700 dark:text-white font-normal">
+                <span className="text-gray-700 dark:text-white font-normal">
                   Show names
                 </span>
               </label>
@@ -104,7 +105,7 @@ export default function GalleryNavbar({
               <div className="mx-2">
                 <div className=" border border-1 border-gray-300 h-full"></div>
               </div>
-              <select
+              {/* <select
                 onChange={handleSelectChange}
                 className="w-48 text-gray-500 mx-2  py-2  px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 name="animals"
@@ -114,7 +115,7 @@ export default function GalleryNavbar({
                 <option value="oldest">oldest</option>
                 <option value="newest">newest</option>
                 <option value="size">size</option>
-              </select>
+              </select> */}
             </div>
           </div>
           {/*						<div className="-mr-2 flex md:hidden">
