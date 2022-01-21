@@ -1,12 +1,28 @@
+const colors = require('tailwindcss/colors')
+
 module.exports = {
+  darkMode: 'class',
   important: true,
   i18n: {
     locales: ['en-US'],
     defaultLocale: 'en-US',
   },
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: false, // or 'media' or 'class'
+  purge: {
+    content: ['./pages/**/*.tsx', './components/**/*.tsx'],
+  },
   theme: {
+    extend: {
+      colors: {
+        sky: colors.sky,
+        cyan: colors.cyan,
+        teal: colors.teal,
+        warmGray: colors.warmGray,
+        trueGray: colors.trueGray,
+        coolGray: colors.coolGray,
+        blueGray: colors.blueGray,
+      },
+    },
     screens: {
       sm: '640px',
       md: '768px',

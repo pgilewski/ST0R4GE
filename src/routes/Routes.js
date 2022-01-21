@@ -42,29 +42,29 @@ const Routes = () => {
   return (
     <Switch>
       <ProtectedRoute path="/upload" redirect="/login">
-        <Upload className="full-height-no-navbar" />
+        <Upload className="bg-white dark:bg-gray-800 " />
       </ProtectedRoute>
       <Route path="/register">
-        <Register className="full-height-no-navbar" />
+        <Register className="bg-white dark:bg-gray-800 h-screen" />
       </Route>
       <Route path="/login">
-        <Login className="full-height-no-navbar" />
+        <Login className="bg-white dark:bg-gray-800 h-screen" />
       </Route>
       <Route path="/profile">
-        <Profile className="full-height-no-navbar" />
+        <Profile className="bg-white dark:bg-gray-800 h-screen" />
       </Route>
       <ProtectedRoute redirect="/login" path="/dashboard">
-        <Dashboard className="full-height-no-navbar" />
+        <Dashboard className="bg-white dark:bg-gray-800 h-screen" />
       </ProtectedRoute>
       <ProtectedRoute path="/gallery" redirect="/login">
-        <GalleryRouter className="full-height-no-navbar" />
+        <GalleryRouter className="bg-white dark:bg-gray-800 h-screen" />
       </ProtectedRoute>
       {/* add eslint file */}
       <Route path="/about">
-        <Public className="full-height-no-navbar" />
+        <Public className="bg-white dark:bg-gray-800 " />
       </Route>
       <Route path="/">
-        <Home className="full-height-no-navbar" />
+        <Home className="bg-white dark:bg-gray-800 h-screen" />
       </Route>
     </Switch>
   )

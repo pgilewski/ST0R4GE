@@ -66,7 +66,7 @@ const Tags = (props) => {
                     return (
                       <div
                         key={i}
-                        className="mb-1 ml-1 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full bg-white text-gray-700 border"
+                        className="mb-1 ml-1 text-xs inline-flex items-center font-bold leading-sm px-3 py-1 rounded-full bg-white text-gray-700 border"
                       >
                         {editMode ? (
                           <span
@@ -77,25 +77,25 @@ const Tags = (props) => {
                             x
                           </span>
                         ) : null}
-                        {label}
+                        <div className="font-mono">{label}</div>
                       </div>
                     )
                   })
                 : null}
             </div>
             {editMode ? (
-              <div className="flex flex-row">
+              <div className="flex flex-row mb-4">
                 <input
                   onKeyDown={handleKeyDown}
                   type="text"
                   value={newLabel || ''}
                   onChange={(e) => setNewLabel(e.target.value)}
-                  className="border border-gray-400 px-2 mt-2"
+                  className="border border-gray-400 dark:text-black px-2"
                 />
                 <button
                   onClick={onClick}
                   type="button"
-                  className="px-2 mt-2 mx-2 font-light font-mono flex justify-center items-center  text-white bg-gray-600 transition ease-in duration-200 text-center text-base  shadow-md  rounded-md "
+                  className="px-2 mx-2 font-light font-mono flex justify-center items-center  text-white bg-gray-600 transition ease-in duration-200 text-center text-base  shadow-md  rounded-md "
                 >
                   add tag
                 </button>

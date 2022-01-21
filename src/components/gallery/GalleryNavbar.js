@@ -2,7 +2,8 @@ export default function GalleryNavbar({
   setSearch,
   setShowNames,
   setSortMethod,
-  pictures,
+  setItemsPerPage,
+  itemsPerPage,
 }) {
   function capitalize(input) {
     const CapitalizedWords = []
@@ -40,9 +41,17 @@ export default function GalleryNavbar({
     }
     //setSortMethod(sortMethod)
   }
+  const handleIPPChange = (event) => {
+    if (isNaN(parseInt(event.target.value))) {
+    } else {
+      console.log(parseInt(event.target.value))
+
+      setItemsPerPage(event.target.value)
+    }
+  }
   return (
     <div>
-      <nav className="bg-white dark:bg-gray-800  shadow py-4 ">
+      <nav className="bg-white dark:bg-gray-800 shadow py-4 ">
         <div className="max-w-7xl mx-auto px-8">
           {/*<div className="md:flex md:items-center md:justify-between md:h-16">
              <div className=" flex items-center">
@@ -72,42 +81,56 @@ export default function GalleryNavbar({
             </div>
             */}
 
-          <div className="flex justify justify-between flex-row w-full space-x-3 ">
+          <div className="flex md:justify-between flex-col md:flex-row w-full space-x-3 ">
             <input
               onChange={(e) => {
-                setSearch(capitalize(e.target.value))
+                setSearch(e.target.value)
               }}
               type="text"
               id='"form-subscribe-Search'
-              className=" w-48 rounded-lg border-transparent  appearance-none border border-gray-300  py-2 px-4 bg-white text-gray-700 placeholder-gray-500 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              className="mb-2 md:mb-0 rounded-lg border-transparent  appearance-none border border-gray-300  py-2 px-4 bg-white text-gray-700 placeholder-gray-500 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
               placeholder="search"
             />
-            <div className="flex flex-row">
-              <label className="flex items-center mx-2 space-x-2 justify-center align-middle ">
+            <div className="flex pt-2 md:pt-0 border-t dark:border-gray-600 border-gray-300 md:border-t-0">
+              <div className="flex items-center mx-2 space-x-2 justify-center align-middle ">
+                <span className="dark:text-white font-normal">Names:</span>
+
                 <div className="ml-4 relative inline-block w-10 mr-2 align-middle select-none">
                   <input
                     onChange={setShowNames}
                     type="checkbox"
                     name="toggle"
-                    id="Recognition"
+                    id="showNames"
                     className="checked:bg-indigo-500 outline-none focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
                   />
                   <label
-                    htmlFor="Recognition"
-                    className="block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+                    htmlFor="showNames"
+                    className="block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer "
                   ></label>
                 </div>
-                <span className="text-gray-700 dark:text-white font-normal">
-                  Show names
+              </div>
+              <div className="flex items-center mx-2 space-x-2 justify-center align-middle ">
+                <span className="dark:text-white font-normal">
+                  Items Per Page:
                 </span>
-              </label>
+                <input
+                  className="rounded-md pl-2"
+                  type="number"
+                  min="1"
+                  max="15"
+                  value={itemsPerPage}
+                  onChange={handleIPPChange}
+                />
+              </div>
               {/* vertical line */}
-              <div className="mx-2">
+              <div className="mx-2 invisible md:visible">
                 <div className=" border border-1 border-gray-300 h-full"></div>
               </div>
-              {/* <select
+              {/*
+              
+              <select
                 onChange={handleSelectChange}
-                className="w-48 text-gray-500 mx-2  py-2  px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className=" text-gray-500 mx-2  py-2  px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 name="animals"
               >
                 <option value="">sort by:</option>

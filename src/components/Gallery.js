@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import LoadingSpinner from './LoadingSpinner'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Storage, Auth, API, graphqlOperation } from 'aws-amplify'
 import { getFile } from '../graphql/queries'
 import { updateFile, deleteFile } from '../graphql/mutations'
@@ -31,10 +31,11 @@ import {
 } from 'react-router-dom'
 
 import NotyfContext from '../context/NotyfContext'
+import Pagination from './gallery/Pagination'
 
 export default function GalleryRouter() {
   return (
-    <Router className="">
+    <Router className="h-screen">
       <GallerySwitch />
     </Router>
   )
@@ -60,7 +61,12 @@ function GallerySwitch() {
         <Route
           exact
           path="/gallery"
-          children={<Gallery deletedFiles={deletedFiles} />}
+          children={
+            <Gallery
+              classname="bg-white dark:bg-gray-800 h-screen"
+              deletedFiles={deletedFiles}
+            />
+          }
         />
         <Route path="/gallery/img/:id" children={<ImageView />} />
       </Switch>
@@ -107,12 +113,12 @@ const Modal = (props) => {
   const [message, setMessage] = useState({})
   const notyf = useContext(NotyfContext)
   const {
-    file: { id, name, labels, createdAt, size, url },
+    file: { id, labels, createdAt, size, url },
     file,
     setDeletedFiles,
     deletedFiles,
   } = props
-
+  const [name, setName] = useState(file.name)
   const time =
     createdAt.split('T')[0] + ' ' + createdAt.split('T')[1].split('.')[0]
   //   id: ID!
@@ -122,14 +128,36 @@ const Modal = (props) => {
   //   file: S3Object
   // }
   const updateImageInDB = async () => {
-    const input = { id, name, labels: labelsToState, size, createdAt }
-    try {
-      const d1 = await API.graphql(
-        graphqlOperation(updateFile, { input: input }),
-      )
-      notyf.success('Updated file successfully')
-    } catch (e) {
-      notyf.error("Couldn't update a file.")
+    console.log(newName, name)
+    if (newName !== name && newName !== '') {
+      const input = {
+        id,
+        name: newName,
+        labels: labelsToState,
+        size,
+        createdAt,
+      }
+      try {
+        const d1 = await API.graphql(
+          graphqlOperation(updateFile, { input: input }),
+        )
+        setName(newName)
+
+        console.log(name)
+        notyf.success('Updated file successfully')
+      } catch (e) {
+        notyf.error("Couldn't update a file.")
+      }
+    } else {
+      const input = { id, name, labels: labelsToState, size, createdAt }
+      try {
+        const d1 = await API.graphql(
+          graphqlOperation(updateFile, { input: input }),
+        )
+        notyf.success('Updated file successfully')
+      } catch (e) {
+        notyf.error("Couldn't update a file.")
+      }
     }
   }
 
@@ -148,11 +176,15 @@ const Modal = (props) => {
   }
 
   const onRemoveClick = async () => {
+    console.log(file)
     // TODO: rewrite to do both symutanously
     const d1 = await API.graphql(
       graphqlOperation(deleteFile, { input: { id } }),
     )
-    const d2 = await Storage.remove(name, { level: 'private' })
+    const s3Entry = id.split('/')[2]
+    console.log(s3Entry)
+    const d2 = await Storage.remove(s3Entry, { level: 'private' })
+    console.log('d2: ', d2)
     if (d1 && d2) {
       setDeletedFiles([...deletedFiles, url])
       notyf.success('Successfully deleted file.')
@@ -172,7 +204,12 @@ const Modal = (props) => {
     // TODO: back handling when location in on photo
     // console.log(e)
   }
+  const [newName, setNewName] = useState('')
 
+  const handleChange = (e) => {
+    const value = e.target.value
+    setNewName(value)
+  }
   let back = (e) => {
     e.stopPropagation()
     history.goBack()
@@ -240,10 +277,9 @@ const Modal = (props) => {
       onKeyPress={onEscHandle}
     >
       <div
-        className="modal overflow-y-auto "
+        className="modal overflow-y-auto bg-white dark:bg-gray-700"
         style={{
           position: 'fixed',
-          background: '#fff',
           top: 15,
           left: '5%',
           right: '5%',
@@ -255,7 +291,6 @@ const Modal = (props) => {
         <BackIcon
           style={{
             position: 'absolute',
-            background: '#fff',
             top: 10,
             right: 10,
           }}
@@ -268,15 +303,26 @@ const Modal = (props) => {
           <div className=" w-full  md:p-4 flex flex-col md:flex-row ">
             <div className="w-full  md:w-1/2">
               <div className="w-full h-full border border-gray-500 p-4">
-                <div className="w-full my-1">
+                <div className="w-full my-1 overflow-hidden overflow-ellipsis dark:text-gray-200">
                   <div className="w-1/2 inline-block">
-                    <strong>Data dodania:</strong>
+                    <strong>File name:</strong>
+                  </div>
+                  {editMode ? (
+                    <input
+                      type=" text-gray-800"
+                      onChange={handleChange}
+                      placeholder={name}
+                    />
+                  ) : (
+                    <div className="w-1/2 inline-block ">{name}</div>
+                  )}
+                  <div className="w-1/2 inline-block">
+                    <strong>Date added:</strong>
                   </div>
                   <div className="w-1/2 inline-block">{time}</div>
-                </div>
-                <div className="w-full my-1">
+
                   <div className="w-1/2 inline-block mb-4">
-                    <strong>Rozmiar pliku:</strong>
+                    <strong>File size:</strong>
                   </div>
                   <div className="w-1/2 inline-block">
                     {(size / 1048576).toFixed(2)}MB
@@ -347,7 +393,7 @@ const GalleryElement = (props) => {
 
   function renderGalleryElement(props) {
     const { url, name, type } = props
-    // wsteczna obsługa
+    // obsługa poprzedniej wersji gdzie nie było 'type'
     if (!type) {
       return (
         <img
@@ -431,7 +477,9 @@ const GalleryElement = (props) => {
         >
           {renderGalleryElement(file, url)}
           <div className="px-14 pt-48 relative z-10 w-full ">
-            <h1 className="text-white">{filesDisplayed ? file.name : null}</h1>
+            <h1 className="text-white overflow-hidden overflow-ellipsis">
+              {filesDisplayed ? file.name : null}
+            </h1>
             {/* <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500"></h2>
             {labels ? (
               <Tags labels={labels} full={false} />
@@ -449,7 +497,6 @@ function RenderImages(props) {
   const { files, search, deletedFiles, filesDisplayed, sortMethod } = props
   let location = useLocation()
   const [filesInRender, setFilesInRender] = useState(files)
-  const [loading, setLoading] = useState(false)
 
   // useEffect(() => {
   //   pictures.forEach((file) => {
@@ -461,53 +508,6 @@ function RenderImages(props) {
   //     }
   //   })
   // }, [pictures])
-
-  if (
-    sortMethod === 'name' &&
-    filesInRender == !files &&
-    filesInRender.length === files.length
-  ) {
-    let newFilesArray = filesInRender
-    newFilesArray.sort((a, b) => {
-      let fa = a.s3Key.toLowerCase().charAt(0),
-        fb = b.s3Key.toLowerCase().charAt(0)
-      // console.log(fa, fb)
-      if (fa < fb) {
-        return -1
-      }
-      if (fa > fb) {
-        return 1
-      }
-      return 0
-    })
-    setFilesInRender(newFilesArray)
-  } else if (
-    sortMethod === 'oldest' &&
-    filesInRender == !files &&
-    filesInRender.length === files.length
-  ) {
-    let newFilesArray = filesInRender
-    console.log(files)
-    newFilesArray.sort((a, b) => {
-      let fa = a.s3Key.toLowerCase(),
-        fb = b.s3Key.toLowerCase()
-      // console.log(fa, fb)
-      if (fa > fb) {
-        return -1
-      }
-      if (fa < fb) {
-        return 1
-      }
-      return 0
-    })
-    setFilesInRender(newFilesArray)
-  } else if (sortMethod === 'newest') {
-    console.log('123')
-  } else if (sortMethod === 'size') {
-    console.log('size')
-  } else if (sortMethod === 'type') {
-    console.log('size')
-  }
 
   // if (sortMethod === '') {
   //   return pictures.map((picture, i) => {
@@ -549,6 +549,7 @@ function RenderImages(props) {
   //     }
   //   })
   // }
+
   return files.map((file, i) => {
     if (file) {
       let { id, name, labels, type, createdAt, size, url } = file
@@ -595,13 +596,16 @@ const Gallery = (props) => {
   const [search, setSearch] = useState('')
   const [showNames, setShowNames] = useToggle()
   const [sortMethod, setSortMethod] = useState('')
+  const [itemsPerPage, setItemsPerPage] = useState(9)
 
   const notyf = useContext(NotyfContext)
+
   async function getFiles() {
     const creds = await Auth.currentCredentials()
     try {
       await Storage.list('', { level: 'private' })
         .then(async (result) => {
+          console.log('Result: ', result)
           for (const item of result) {
             const cognitoS3Path = `private/${creds.identityId}/${item.key}`
             const getS3Promise = Storage.get(item.key, { level: 'private' })
@@ -614,7 +618,7 @@ const Gallery = (props) => {
               getS3Promise,
               getDbPromise,
             ]).then(([url, data]) => {
-              if (data.data.getFile && url) {
+              if (url && data.data.getFile) {
                 const {
                   id,
                   name,
@@ -637,7 +641,7 @@ const Gallery = (props) => {
                 notyf.error('Couldnt fetch the data.')
               }
             })
-
+            console.log(newFile)
             setFiles((prevFiles) => [...prevFiles, newFile])
             setLoading(false)
           }
@@ -650,24 +654,43 @@ const Gallery = (props) => {
     }
   }
 
-  // const deleteImage = (props) => {
-  //   console.log(props)
-  // }
-  // cont[hasError, setHasError] = useState(false)
   useEffect(() => {
     getFiles()
   }, [])
 
+  const [currentItems, setCurrentItems] = useState(0)
+
+  const [pageCount, setPageCount] = useState(0)
+
+  const [itemOffset, setItemOffset] = useState(0)
+
+  useEffect(() => {
+    // Fetch items from another resources.
+    const endOffset = itemOffset + itemsPerPage
+    console.log(`Loading items from ${itemOffset} to ${endOffset}`)
+    setCurrentItems(files.slice(itemOffset, endOffset))
+    setPageCount(Math.ceil(files.length / itemsPerPage))
+  }, [itemOffset, itemsPerPage, files, sortMethod])
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % files.length
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`,
+    )
+    setItemOffset(newOffset)
+  }
+
   const { deletedFiles } = props
   return (
-    <div className="">
+    <div className="bg-white dark:bg-gray-800 ">
       <div className="text-gray-600 body-font ">
-        <div className=" px-5 py-24 mx-auto">
-          <div className="flex flex-col text-center w-full mb-8">
-            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
+        <div className=" px-5 py-24 mx-auto xl:max-w-5xl 2xl:max-w-7x">
+          <div className="flex flex-col text-center w-full mb-8 ">
+            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 dark:text-white">
               Gallery
             </h1>
-            <p className="lg:w-2/3 mx-auto leading-relaxed text-base mb-8">
+            <p className="lg:w-2/3 mx-auto leading-relaxed text-base mb-8 dark:text-gray-400">
               Sort, filter and grid settings are coming up, as app is still in
               development.
             </p>
@@ -676,26 +699,28 @@ const Gallery = (props) => {
               setSearch={setSearch}
               setShowNames={setShowNames}
               setSortMethod={setSortMethod}
-              files={files}
+              itemsPerPage={itemsPerPage}
+              setItemsPerPage={setItemsPerPage}
             />
           </div>
           {loading ? (
             <LoadingSpinner />
           ) : (
-            <div className="flex flex-wrap m-4 ">
-              {/* change label to "keyword" or "search" */}
+            <div className="flex flex-wrap m-4 justify-center">
+              <br />
               <RenderImages
                 filesDisplayed={showNames}
-                files={files}
+                files={currentItems}
                 search={search}
                 deletedFiles={deletedFiles}
                 sortMethod={sortMethod}
               />
             </div>
           )}
+
+          <Pagination onPageChange={handlePageClick} pageCount={pageCount} />
         </div>
       </div>
-      {/* {hasError && <ErrorComponent />} */}
     </div>
   )
 }

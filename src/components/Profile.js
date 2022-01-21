@@ -326,11 +326,8 @@ const Profile = (props) => {
   }
 
   return (
-    <div
-      className="full-height-no-navbar"
-      style={{ backgroundColor: backgroundColor }}
-    >
-      <div className=" max-w-screen-lg glass-card min h-full mx-auto w-full">
+    <div className="h-screen " style={{ backgroundColor: backgroundColor }}>
+      <div className=" max-w-screen-lg glass-card bg-white dark:bg-gray-800 h-full mx-auto w-full">
         <div className="p-4">
           <div>
             <div
@@ -398,14 +395,14 @@ const Profile = (props) => {
                 <div>
                   {editMode ? (
                     <input
-                      className="bg-gray-200"
+                      className="bg-gray-200 dark:bg-gray-600"
                       onChange={onChange}
                       name="name"
                       id="name"
                       placeholder={profileInfo.name ? profileInfo.name : null}
                     />
                   ) : (
-                    <h2 className="text-xl leading-6 font-bold">
+                    <h2 className="text-xl leading-6 font-bold dark:text-gray-300">
                       {profileInfo.name ? profileInfo.name : null}
                     </h2>
                   )}
@@ -414,19 +411,19 @@ const Profile = (props) => {
                   {editMode ? (
                     <textarea
                       onChange={onChange}
-                      className="w-full bg-gray-200"
+                      className="w-full bg-gray-200 dark:bg-gray-600 text-white "
                       name="bio"
                       id="bio"
                       placeholder={profileInfo.bio ? profileInfo.bio : null}
                     />
                   ) : (
-                    <p className="mb-2 text-left">
+                    <p className="mb-2 text-left dark:text-gray-300">
                       {profileInfo.bio ? profileInfo.bio : null}
                     </p>
                   )}
                 </div>
               </div>
-              <div className="text-left">
+              <div className="text-left dark:text-gray-300">
                 <div>
                   {profileInfo.createdAt
                     ? 'Created at: ' + profileInfo.createdAt.split('T')[0]

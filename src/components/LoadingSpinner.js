@@ -10,8 +10,8 @@ const override = css`
 
 export default function LoadingSpinner() {
   return (
-    <div className="m-4 align-items-center justify-content-center">
-      <div className="my-12">
+    <div className="align-items-center justify-content-center ">
+      <div className="py-12">
         <BarLoader color={'#36D7B7'} loading={true} css={override} size={150} />
       </div>
     </div>

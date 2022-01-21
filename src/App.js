@@ -3,7 +3,7 @@
  * - (on prod) This XML file does not appear to have any style information associated with it. The document tree is shown below.
  *
  * TODO:
- * - no established internet connection handling
+ * -
  */
 
 import React, { useState } from 'react'
@@ -15,8 +15,10 @@ import Navbar from './components/Navbar'
 import Routes from './routes/Routes'
 
 import { AuthProvider } from './context/authContext'
+import useDarkMode from './hooks/useDarkMode'
 
 function App() {
+  useDarkMode()
   const [isNavbarDown, setIsNavbarDown] = useState(false)
   const [isProfileDown, setIsProfileDown] = useState(false)
 
@@ -29,14 +31,14 @@ function App() {
   return (
     <AuthProvider user={user}>
       <Router>
-        <div className="App justify-items-center h-screen w-screen ">
+        <div className="bg-white dark:bg-gray-800 h-screen ">
           <Navbar
             isNavbarDown={isNavbarDown}
             setIsNavbarDown={setIsNavbarDown}
             isProfileDown={isProfileDown}
             setIsProfileDown={setIsProfileDown}
           />
-          <div onClick={bodyClick} className="flex justify-center ">
+          <div onClick={bodyClick} className=" w-full justify-center ">
             <Routes />
           </div>
         </div>
