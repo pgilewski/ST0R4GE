@@ -17,10 +17,9 @@ module.exports = {
         sky: colors.sky,
         cyan: colors.cyan,
         teal: colors.teal,
-        warmGray: colors.warmGray,
-        trueGray: colors.trueGray,
-        coolGray: colors.coolGray,
-        blueGray: colors.blueGray,
+        stone: colors.stone,
+        neutral: colors.neutral,
+        gray: colors.gray,
       },
     },
     screens: {
