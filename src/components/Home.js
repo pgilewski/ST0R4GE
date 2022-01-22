@@ -28,7 +28,7 @@ function Home() {
             <Link to="/gallery">
               <button
                 type="button"
-                className="ml-2 py-4 px-6 bg-coolGray-500 hover:bg-coolGray-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+                className="ml-2 py-4 px-6 bg-gray-500 hover:bg-gray-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
               >
                 Gallery
               </button>

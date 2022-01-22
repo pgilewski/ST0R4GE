@@ -1,6 +1,7 @@
 # Intive schoolarship React + AWS Amplify Gallery app with Rekognition and Authentication
 
 Link to demo: [https://main.d2hjyas9gj2dki.amplifyapp.com/](https://main.d2hjyas9gj2dki.amplifyapp.com/).
+(currently there is production problem with compling tailwind, fix phrase)
 
 ## To reproduce locally:
 
