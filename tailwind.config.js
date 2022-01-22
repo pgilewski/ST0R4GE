@@ -8,9 +8,6 @@ module.exports = {
     defaultLocale: 'en-US',
   },
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  purge: {
-    content: ['./pages/**/*.tsx', './components/**/*.tsx'],
-  },
   theme: {
     extend: {
       colors: {
