@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import LoadingSpinner from './LoadingSpinner'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Storage, Auth, API, graphqlOperation } from 'aws-amplify'
 import { getFile } from '../graphql/queries'
 import { updateFile, deleteFile } from '../graphql/mutations'
@@ -9,7 +9,6 @@ import GalleryNavbar from './gallery/GalleryNavbar'
 import { ReactComponent as DeleteIcon } from '../assets/icons/delete.svg'
 import { ReactComponent as EditIcon } from '../assets/icons/edit.svg'
 import { ReactComponent as BackIcon } from '../assets/icons/back.svg'
-import docs_placeholder from '../assets/images/docs_placeholder.png'
 import rar_placeholder from '../assets/images/rar_placeholder.png'
 import video_placeholder from '../assets/images/video_placeholder.png'
 import audio_placeholder from '../assets/images/audio_placeholder.png'
@@ -87,6 +86,7 @@ function GallerySwitch() {
     </div>
   )
 }
+// TODO: page next/previous
 const PdfPlayer = (props) => {
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
@@ -110,7 +110,6 @@ const PdfPlayer = (props) => {
   )
 }
 const Modal = (props) => {
-  const [message, setMessage] = useState({})
   const notyf = useContext(NotyfContext)
   const {
     file: { id, labels, createdAt, size, url },
@@ -128,7 +127,6 @@ const Modal = (props) => {
   //   file: S3Object
   // }
   const updateImageInDB = async () => {
-    console.log(newName, name)
     if (newName !== name && newName !== '') {
       const input = {
         id,
@@ -138,12 +136,9 @@ const Modal = (props) => {
         createdAt,
       }
       try {
-        const d1 = await API.graphql(
-          graphqlOperation(updateFile, { input: input }),
-        )
+        await API.graphql(graphqlOperation(updateFile, { input: input }))
         setName(newName)
 
-        console.log(name)
         notyf.success('Updated file successfully')
       } catch (e) {
         notyf.error("Couldn't update a file.")
@@ -151,9 +146,7 @@ const Modal = (props) => {
     } else {
       const input = { id, name, labels: labelsToState, size, createdAt }
       try {
-        const d1 = await API.graphql(
-          graphqlOperation(updateFile, { input: input }),
-        )
+        await API.graphql(graphqlOperation(updateFile, { input: input }))
         notyf.success('Updated file successfully')
       } catch (e) {
         notyf.error("Couldn't update a file.")
@@ -176,15 +169,12 @@ const Modal = (props) => {
   }
 
   const onRemoveClick = async () => {
-    console.log(file)
     // TODO: rewrite to do both symutanously
     const d1 = await API.graphql(
       graphqlOperation(deleteFile, { input: { id } }),
     )
     const s3Entry = id.split('/')[2]
-    console.log(s3Entry)
     const d2 = await Storage.remove(s3Entry, { level: 'private' })
-    console.log('d2: ', d2)
     if (d1 && d2) {
       setDeletedFiles([...deletedFiles, url])
       notyf.success('Successfully deleted file.')
@@ -214,10 +204,11 @@ const Modal = (props) => {
     e.stopPropagation()
     history.goBack()
   }
-  const renderInModal = ({ type, name, url, size, createdAt }) => {
+  const renderInModal = ({ type, name, url }) => {
     if (type.includes('image') && !type.includes('svg')) {
       return (
         <img
+          alt={name}
           key={name}
           className="m-auto"
           src={url}
@@ -229,6 +220,7 @@ const Modal = (props) => {
     } else if (type.includes('video')) {
       return (
         <video
+          alt={name}
           controls
           key={name}
           className="mx-auto"
@@ -244,14 +236,15 @@ const Modal = (props) => {
       return <PdfPlayer url={url} className="mx-auto" />
     } else if (type.includes('mpeg')) {
       return (
-        <audio controls className="mx-auto">
-          <source key={name} src={url} type="audio/mpeg" />
+        <audio alt={name} key={name} controls className="mx-auto">
+          <source src={url} type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
       )
     } else {
       return (
         <img
+          alt={name}
           key={name}
           className="m-auto"
           src={file_placeholder}
@@ -379,17 +372,13 @@ function ImageView() {
   let { id } = useParams()
   // let image = IMAGES[parseInt(id, 10)]
   // TODO: Change it to something more fitting.
-  return (
-    <div>
-      IMAGEVIEW
-      <img />
-    </div>
-  )
+  return <div>{/* IMAGEVIEW
+      <img alt={name} /> */}</div>
 }
 
 const GalleryElement = (props) => {
   const { file, url, location, filesDisplayed } = props
-  const { name, labels, type, createdAt, size } = file
+  const { name } = file
 
   function renderGalleryElement(props) {
     const { url, name, type } = props
@@ -494,9 +483,8 @@ const GalleryElement = (props) => {
 }
 
 function RenderImages(props) {
-  const { files, search, deletedFiles, filesDisplayed, sortMethod } = props
+  const { files, search, deletedFiles, filesDisplayed } = props
   let location = useLocation()
-  const [filesInRender, setFilesInRender] = useState(files)
 
   // useEffect(() => {
   //   pictures.forEach((file) => {
@@ -552,13 +540,14 @@ function RenderImages(props) {
 
   return files.map((file, i) => {
     if (file) {
-      let { id, name, labels, type, createdAt, size, url } = file
+      let { id, labels, url } = file
       if (deletedFiles.includes(url)) {
         return null
       } else {
         if (search === '') {
           return (
             <GalleryElement
+              key={id}
               url={url}
               file={file}
               location={location}
@@ -571,6 +560,7 @@ function RenderImages(props) {
         ) {
           return (
             <GalleryElement
+              key={id}
               url={url}
               file={file}
               location={location}
@@ -605,7 +595,6 @@ const Gallery = (props) => {
     try {
       await Storage.list('', { level: 'private' })
         .then(async (result) => {
-          console.log('Result: ', result)
           for (const item of result) {
             const cognitoS3Path = `private/${creds.identityId}/${item.key}`
             const getS3Promise = Storage.get(item.key, { level: 'private' })
@@ -641,7 +630,6 @@ const Gallery = (props) => {
                 notyf.error('Couldnt fetch the data.')
               }
             })
-            console.log(newFile)
             setFiles((prevFiles) => [...prevFiles, newFile])
             setLoading(false)
           }
@@ -657,7 +645,6 @@ const Gallery = (props) => {
   useEffect(() => {
     getFiles()
   }, [])
-
   const [currentItems, setCurrentItems] = useState(0)
 
   const [pageCount, setPageCount] = useState(0)
@@ -667,7 +654,6 @@ const Gallery = (props) => {
   useEffect(() => {
     // Fetch items from another resources.
     const endOffset = itemOffset + itemsPerPage
-    console.log(`Loading items from ${itemOffset} to ${endOffset}`)
     setCurrentItems(files.slice(itemOffset, endOffset))
     setPageCount(Math.ceil(files.length / itemsPerPage))
   }, [itemOffset, itemsPerPage, files, sortMethod])
@@ -675,9 +661,7 @@ const Gallery = (props) => {
   // Invoke when user click to request another page.
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % files.length
-    console.log(
-      `User requested page number ${event.selected}, which is offset ${newOffset}`,
-    )
+
     setItemOffset(newOffset)
   }
 

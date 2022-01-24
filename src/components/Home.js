@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 
 function Home() {
   return (
-    // find your recipe today
     <div className="bg-white dark:bg-gray-800 w-full font-mono">
       <div className="text-center w-full mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold  text-sky-800 dark:text-white ">
@@ -151,7 +150,7 @@ function Home() {
                   </svg>
                   <span className="font-mono font-medium">
                     Share files
-                    <span className="text-sky-300">[in progress]</span>
+                    <span className="text-sky-300"> [in progress]</span>
                   </span>
                 </div>
               </div>

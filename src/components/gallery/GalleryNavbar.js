@@ -44,8 +44,6 @@ export default function GalleryNavbar({
   const handleIPPChange = (event) => {
     if (isNaN(parseInt(event.target.value))) {
     } else {
-      console.log(parseInt(event.target.value))
-
       setItemsPerPage(event.target.value)
     }
   }

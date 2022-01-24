@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { API, graphqlOperation } from 'aws-amplify'
-import { listPictures, listProfiles } from '../graphql/queries'
-import picture from '../assets/images/dashboard.png'
 
 export default function Dashboard() {
   const [dots, setDots] = useState('')

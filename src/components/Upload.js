@@ -5,12 +5,13 @@ import { Auth, Storage, API, graphqlOperation } from 'aws-amplify'
 import Predictions from '@aws-amplify/predictions'
 import awsmobile from '../aws-exports'
 import { createFile } from '../graphql/mutations'
-import { Link } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner'
 import NotyfContext from '../context/NotyfContext'
 import docs_placeholder from '../assets/images/docs_placeholder.png'
 import rar_placeholder from '../assets/images/rar_placeholder.png'
 import audio_placeholder from '../assets/images/audio_placeholder.png'
+import file_placeholder from '../assets/images/file_placeholder.png'
+
 import Tags from './gallery/Tags'
 
 function Upload() {
@@ -60,13 +61,18 @@ function Upload() {
   }
   const concatTagsAndLabels = (labels, tags) => {
     const joinedLabels = labels.concat(tags)
-    console.log(joinedLabels)
     return joinedLabels
   }
+
+  let filesListPromise = Storage.list('', { level: 'private' })
 
   const onSubmit = async (event) => {
     event.preventDefault()
     setLoading('loading')
+
+    let filesAmount = await Promise.resolve(filesListPromise).then((data) => {
+      return data.length
+    })
 
     const creds = await Auth.currentCredentials()
 
@@ -81,36 +87,96 @@ function Upload() {
 
         setLoading('start')
       } else {
-        try {
-          const storagePromise = Storage.put(file.name, file, {
-            level: 'private',
-          })
+        if (filesAmount >= 20) {
+          notyf.error('You are allowed to store 20 files on trial version.')
+          setLoading('result')
+        } else {
+          try {
+            const storagePromise = Storage.put(file.name, file, {
+              level: 'private',
+            })
+            filesAmount++
 
-          if (recognize) {
-            if (
-              file.type === 'image/jpg' ||
-              file.type === 'image/jpeg' ||
-              file.type === 'image/png'
-            ) {
-              const labelsPromise = Predictions.identify({
-                labels: {
-                  source: {
-                    file,
+            if (recognize) {
+              if (
+                file.type === 'image/jpg' ||
+                file.type === 'image/jpeg' ||
+                file.type === 'image/png'
+              ) {
+                const labelsPromise = Predictions.identify({
+                  labels: {
+                    source: {
+                      file,
+                    },
+                    type: 'LABELS',
                   },
-                  type: 'LABELS',
-                },
-              })
-              // TODO: Rewrite file.key to get only key (but when make sure i dont need file owner there)
-              const picture = await Promise.all([
-                storagePromise,
-                labelsPromise,
-              ]).then(([storageData, labelsData]) => {
-                let { labels } = labelsData
+                })
+                // TODO: Rewrite file.key to get only key (but when make sure i dont need file owner there)
+                const picture = await Promise.all([
+                  storagePromise,
+                  labelsPromise,
+                ]).then(([storageData, labelsData]) => {
+                  let { labels } = labelsData
+                  let time = new Date()
+                  let picture = {
+                    id: `private/${creds.identityId}/${file.name}`,
+                    name: file.name,
+                    labels: concatTagsAndLabels(filterLabels(labels), tags),
+                    type: file.type,
+                    createdAt: time,
+                    size: file.size,
+                    file: {
+                      bucket: awsmobile.aws_user_files_s3_bucket,
+                      region: awsmobile.aws_user_files_s3_bucket_region,
+                      key: `private/${creds.identityId}/${file.name}`,
+                    },
+                  }
+                  return picture
+                })
+                try {
+                  const response = API.graphql(
+                    graphqlOperation(createFile, { input: picture }),
+                  )
+                } catch (error) {
+                  console.error(error)
+                }
+              } else {
+                notyf.error(file.type + " kind of files can't be recognized.")
+                const picture = await Promise.resolve(storagePromise).then(
+                  (storageData) => {
+                    let time = new Date()
+
+                    let picture = {
+                      id: `private/${creds.identityId}/${file.name}`,
+                      name: file.name,
+                      labels: tags ? tags : [],
+                      type: file.type,
+                      createdAt: time,
+                      size: file.size,
+                      file: {
+                        bucket: awsmobile.aws_user_files_s3_bucket,
+                        region: awsmobile.aws_user_files_s3_bucket_region,
+                        key: `private/${creds.identityId}/${file.name}`,
+                      },
+                    }
+                    return picture
+                  },
+                )
+                try {
+                  const response = API.graphql(
+                    graphqlOperation(createFile, { input: picture }),
+                  )
+                } catch (error) {
+                  console.error(error)
+                }
+              }
+            } else {
+              const picture = await Promise.resolve(storagePromise).then(() => {
                 let time = new Date()
                 let picture = {
                   id: `private/${creds.identityId}/${file.name}`,
                   name: file.name,
-                  labels: concatTagsAndLabels(filterLabels(labels), tags),
+                  labels: tags ? tags : [],
                   type: file.type,
                   createdAt: time,
                   size: file.size,
@@ -123,83 +189,27 @@ function Upload() {
                 return picture
               })
               try {
-                const response = API.graphql(
-                  graphqlOperation(createFile, { input: picture }),
-                )
-              } catch (error) {
-                console.error(error)
-              }
-            } else {
-              console.log(file)
-              notyf.error(file.type + " kind of files can't be recognized.")
-              const picture = await Promise.resolve(storagePromise).then(
-                (storageData) => {
-                  let time = new Date()
-
-                  let picture = {
-                    id: `private/${creds.identityId}/${file.name}`,
-                    name: file.name,
-                    labels: tags ? tags : [],
-                    type: file.type,
-                    createdAt: time,
-                    size: file.size,
-                    file: {
-                      bucket: awsmobile.aws_user_files_s3_bucket,
-                      region: awsmobile.aws_user_files_s3_bucket_region,
-                      key: `private/${creds.identityId}/${file.name}`,
-                    },
-                  }
-                  return picture
-                },
-              )
-              try {
-                const response = API.graphql(
+                const response = await API.graphql(
                   graphqlOperation(createFile, { input: picture }),
                 )
               } catch (error) {
                 console.error(error)
               }
             }
-          } else {
-            const picture = await Promise.resolve(storagePromise).then(() => {
-              let time = new Date()
-              let picture = {
-                id: `private/${creds.identityId}/${file.name}`,
-                name: file.name,
-                labels: tags ? tags : [],
-                type: file.type,
-                createdAt: time,
-                size: file.size,
-                file: {
-                  bucket: awsmobile.aws_user_files_s3_bucket,
-                  region: awsmobile.aws_user_files_s3_bucket_region,
-                  key: `private/${creds.identityId}/${file.name}`,
-                },
-              }
-              return picture
-            })
-            try {
-              const response = await API.graphql(
-                graphqlOperation(createFile, { input: picture }),
-              )
-            } catch (error) {
-              console.error(error)
+            notyf.success('Uploaded a file.')
+            if (index === files.length - 1) {
+              setLoading('result')
             }
-          }
-          notyf.success('Uploaded a file.')
-          if (index === files.length - 1) {
+          } catch (error) {
+            console.error(error)
             setLoading('result')
           }
-        } catch (error) {
-          console.error(error)
-          setLoading('result')
         }
       }
     }
   }
   const preview = files.map((file) => {
     let type = file.type
-    console.log(type)
 
     if (type.includes('image')) {
       return (
@@ -239,6 +249,15 @@ function Upload() {
       return (
         <img
           src={audio_placeholder}
+          alt={file.name}
+          className="w-2/3 md:w-full"
+          key={file.name}
+        />
+      )
+    } else {
+      return (
+        <img
+          src={file_placeholder}
           alt={file.name}
           className="w-2/3 md:w-full"
           key={file.name}
