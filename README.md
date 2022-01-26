@@ -1,7 +1,7 @@
-# Intive schoolarship React + AWS Amplify Gallery app with Rekognition and Authentication
+# React + AWS Amplify Gallery app with Rekognition, Authentication and tagging
 
-Link to demo: [https://main.d2hjyas9gj2dki.amplifyapp.com/](https://main.d2hjyas9gj2dki.amplifyapp.com/).
-(currently there is production problem with compling tailwind, fix phrase)
+Link to demo: [https://main.d2hjyas9gj2dki.amplifyapp.com/](https://main.d2hjyas9gj2dki.amplifyapp.com/)
+
 
 ## To reproduce locally:
 
@@ -51,7 +51,6 @@ type S3Object {
   bucket: String!
   region: String!
   key: String!
-  type: String
 }
 
 type File @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
@@ -80,6 +79,7 @@ type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
   bio: String
   socials: [Social]
 }
+
 
 ```
 
