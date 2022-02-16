@@ -1,48 +1,56 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 
 export default function Dashboard() {
-  const [dots, setDots] = useState('')
-  const [i, setI] = useState(1)
+	const [ dots, setDots ] = useState('');
+	const [ i, setI ] = useState(1);
+	const [ filesAmount, setFilesAmount ] = useState(null);
+	useEffect(async () => {
+		await Storage.list('', { level: 'private' }).then((response) => {
+			setFilesAmount(response.length);
+		});
+	});
+	useEffect(
+		() => {
+			if (i % 4 === 0) {
+				setTimeout(() => {
+					setDots('');
+				}, 1000);
+			} else {
+				setTimeout(() => {
+					setDots(dots + '.');
+				}, 1000);
+			}
+			setI(i + 1);
+		},
+		[ dots ]
+	);
 
-  useEffect(() => {
-    if (i % 4 === 0) {
-      setTimeout(() => {
-        setDots('')
-      }, 1000)
-    } else {
-      setTimeout(() => {
-        setDots(dots + '.')
-      }, 1000)
-    }
-    setI(i + 1)
-  }, [dots])
-
-  return (
-    <div className="h-screen bg-white  dark:bg-gray-700 w-full max-h-full  flex-column justify-center align-top items-center text-center font-mono py-12">
-      {/* <h2 className="dark:text-gray-200 tracking-wider sm:text-3xl text-2xl font-medium text-center title-font text-gray-900">
+	return (
+		<div className="h-screen bg-white  dark:bg-gray-700 w-full max-h-full  flex-column justify-center align-top items-center text-center font-mono py-12">
+			{/* <h2 className="dark:text-gray-200 tracking-wider sm:text-3xl text-2xl font-medium text-center title-font text-gray-900">
         Coming soon {dots}
       </h2>
       <img
         src={picture}
         className=" mx-auto w-4/5 sm:w-3/4 md:w-1/2 l:w-1/2 xl:w-1/3 mt-4"
       /> */}
-      <div class="grid grid-cols-2 gap-8 p-4 lg:grid-cols-3 xl:grid-cols-3">
-        <div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
-          <div>
-            <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
-              Limit
-            </h6>
-            <span class="text-xl font-semibold">2.3MB/1GB</span>
-            <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
-              3.4%
-            </span>
-          </div>
-          <div>
-            <span className="text-blue-800 cursor-pointer">Change plan</span>
-          </div>
-        </div>
+			<div class="grid grid-cols-2 gap-8 p-4 lg:grid-cols-3 xl:grid-cols-3">
+				<div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
+					<div>
+						<h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+							Files limit
+						</h6>
+						<span class="text-xl font-semibold">{filesAmount}/20</span>
+						{/* <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
+							3.4%
+						</span> */}
+					</div>
+					<div>
+						<span className="text-blue-800 cursor-pointer">Change plan</span>
+					</div>
+				</div>
 
-        <div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
+				{/* <div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
           <div>
             <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
               Users
@@ -100,9 +108,9 @@ export default function Dashboard() {
               </svg>
             </span>
           </div>
-        </div>
+        </div> */}
 
-        {/* <div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
+				{/* <div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
           <div>
             <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
               Tickets
@@ -131,9 +139,9 @@ export default function Dashboard() {
             </span>
           </div>
         </div> */}
-      </div>
-    </div>
-  )
+			</div>
+		</div>
+	);
 }
 /* 
 export default function Dashboard() {
