@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Storage } from 'aws-amplify';
 
 export default function Dashboard() {
 	const [ dots, setDots ] = useState('');
