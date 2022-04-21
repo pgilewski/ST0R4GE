@@ -2,11 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.glass-card {
-  backdrop-filter: blur(15px) saturate(156%);
-  -webkit-backdrop-filter: blur(15px) saturate(156%);
-  background-color: rgb(239, 239, 239);
-}
+
 .background {
   background-color: #15202b;
 }

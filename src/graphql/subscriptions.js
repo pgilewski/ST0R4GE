@@ -2,7 +2,7 @@
 // this is an auto generated file. This will be overwritten
 
 export const onCreateFile = /* GraphQL */ `
-  subscription OnCreateFile($owner: String!) {
+  subscription OnCreateFile($owner: String) {
     onCreateFile(owner: $owner) {
       id
       name
@@ -22,7 +22,7 @@ export const onCreateFile = /* GraphQL */ `
   }
 `;
 export const onUpdateFile = /* GraphQL */ `
-  subscription OnUpdateFile($owner: String!) {
+  subscription OnUpdateFile($owner: String) {
     onUpdateFile(owner: $owner) {
       id
       name
@@ -42,7 +42,7 @@ export const onUpdateFile = /* GraphQL */ `
   }
 `;
 export const onDeleteFile = /* GraphQL */ `
-  subscription OnDeleteFile($owner: String!) {
+  subscription OnDeleteFile($owner: String) {
     onDeleteFile(owner: $owner) {
       id
       name
@@ -62,7 +62,7 @@ export const onDeleteFile = /* GraphQL */ `
   }
 `;
 export const onCreateProfile = /* GraphQL */ `
-  subscription OnCreateProfile($owner: String!) {
+  subscription OnCreateProfile($owner: String) {
     onCreateProfile(owner: $owner) {
       id
       email
@@ -92,7 +92,7 @@ export const onCreateProfile = /* GraphQL */ `
   }
 `;
 export const onUpdateProfile = /* GraphQL */ `
-  subscription OnUpdateProfile($owner: String!) {
+  subscription OnUpdateProfile($owner: String) {
     onUpdateProfile(owner: $owner) {
       id
       email
@@ -122,7 +122,7 @@ export const onUpdateProfile = /* GraphQL */ `
   }
 `;
 export const onDeleteProfile = /* GraphQL */ `
-  subscription OnDeleteProfile($owner: String!) {
+  subscription OnDeleteProfile($owner: String) {
     onDeleteProfile(owner: $owner) {
       id
       email

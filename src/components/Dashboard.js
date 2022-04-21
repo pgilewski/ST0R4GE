@@ -2,69 +2,77 @@ import React, { useEffect, useState } from 'react';
 import { Storage } from 'aws-amplify';
 
 export default function Dashboard() {
-	const [ dots, setDots ] = useState('');
-	const [ i, setI ] = useState(1);
-	const [ filesAmount, setFilesAmount ] = useState(null);
-	useEffect(async () => {
-		await Storage.list('', { level: 'private' }).then((response) => {
-			setFilesAmount(response.length);
-		});
-	});
-	useEffect(
-		() => {
-			if (i % 4 === 0) {
-				setTimeout(() => {
-					setDots('');
-				}, 1000);
-			} else {
-				setTimeout(() => {
-					setDots(dots + '.');
-				}, 1000);
-			}
-			setI(i + 1);
-		},
-		[ dots ]
-	);
+  // const [dots, setDots] = useState('');
+  // const [i, setI] = useState(1);
+  const [filesAmount, setFilesAmount] = useState(null);
+  useEffect(() => {
+    const getFilesNumber = async () => {
+      await Storage.list('', { level: 'private' }).then(
+        (response) => {
+          setFilesAmount(response.length);
+        }
+      );
+    };
+    getFilesNumber();
+  }, []);
+  // useEffect(
+  // 	() => {
+  // 		if (i % 4 === 0) {
+  // 			setTimeout(() => {
+  // 				setDots('');
+  // 			}, 1000);
+  // 		} else {
+  // 			setTimeout(() => {
+  // 				setDots(dots + '.');
+  // 			}, 1000);
+  // 		}
+  // 		setI(i + 1);
+  // 	},
+  // 	[ dots ]
+  // );
 
-	return (
-		<div className="h-screen bg-white  dark:bg-gray-700 w-full max-h-full  flex-column justify-center align-top items-center text-center font-mono py-12">
-			{/* <h2 className="dark:text-gray-200 tracking-wider sm:text-3xl text-2xl font-medium text-center title-font text-gray-900">
+  return (
+    <div className="h-screen   dark:bg-gray-800 w-full max-h-full  flex-column justify-center align-top items-center text-center font-mono py-12">
+      {/* <h2 className="dark:text-gray-200 tracking-wider sm:text-3xl text-2xl font-medium text-center title-font text-gray-900">
         Coming soon {dots}
       </h2>
       <img
         src={picture}
         className=" mx-auto w-4/5 sm:w-3/4 md:w-1/2 l:w-1/2 xl:w-1/3 mt-4"
       /> */}
-			<div class="grid grid-cols-2 gap-8 p-4 lg:grid-cols-3 xl:grid-cols-3">
-				<div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
-					<div>
-						<h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
-							Files limit
-						</h6>
-						<span class="text-xl font-semibold">{filesAmount}/20</span>
-						{/* <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
+      <div className="flex justify-center p-4 ">
+        <div className="flex items-center justify-between p-4  border dark:border-none border-gray-300 shadow-sm dark:shadow-none dark:bg-white rounded-md dark:bg-darker">
+          <div className="">
+            <h6 className="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+              Files limit
+            </h6>
+            <span className="text-xl font-semibold">
+              {filesAmount}/20
+            </span>
+            {/* <span className="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
 							3.4%
 						</span> */}
-					</div>
-					<div>
-						<span className="text-blue-800 cursor-pointer">Change plan</span>
-					</div>
-				</div>
-
-				{/* <div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
+          </div>
           <div>
-            <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+            <span className="text-blue-800 cursor-pointer ml-6">
+              Change plan
+            </span>
+          </div>
+        </div>
+        {/* <div className="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
+          <div>
+            <h6 className="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
               Users
             </h6>
-            <span class="text-xl font-semibold">50,021</span>
-            <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
+            <span className="text-xl font-semibold">50,021</span>
+            <span className="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
               +2.6%
             </span>
           </div>
           <div>
             <span>
               <svg
-                class="w-12 h-12 text-gray-700 dark:text-gray-300"
+                className="w-12 h-12 text-gray-700 dark:text-gray-300"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -81,20 +89,20 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
+        <div className="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
           <div>
-            <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+            <h6 className="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
               Followers
             </h6>
-            <span class="text-xl font-semibold">45,021</span>
-            <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
+            <span className="text-xl font-semibold">45,021</span>
+            <span className="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
               +3.1%
             </span>
           </div>
           <div>
             <span>
               <svg
-                class="w-12 h-12 text-gray-700 dark:text-gray-300"
+                className="w-12 h-12 text-gray-700 dark:text-gray-300"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -111,20 +119,20 @@ export default function Dashboard() {
           </div>
         </div> */}
 
-				{/* <div class="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
+        {/* <div className="flex items-center justify-between p-4 bg-gray-300 dark:bg-white rounded-md dark:bg-darker">
           <div>
-            <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
+            <h6 className="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
               Tickets
             </h6>
-            <span class="text-xl font-semibold">20,516</span>
-            <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
+            <span className="text-xl font-semibold">20,516</span>
+            <span className="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
               +3.1%
             </span>
           </div>
           <div>
             <span>
               <svg
-                class="w-12 h-12 text-gray-300 dark:text-primary-dark"
+                className="w-12 h-12 text-gray-300 dark:text-primary-dark"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -140,9 +148,9 @@ export default function Dashboard() {
             </span>
           </div>
         </div> */}
-			</div>
-		</div>
-	);
+      </div>
+    </div>
+  );
 }
 /* 
 export default function Dashboard() {

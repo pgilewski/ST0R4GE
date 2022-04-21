@@ -4,18 +4,23 @@
  * -
  */
 
-import React, { useState, useEffect, useRef, useContext } from 'react'
-import avatar from '../assets/images/avatar-placeholder.jpg'
-import background from '../assets/images/SM-placeholder.png'
-import { useToggle } from '../hooks/useToggle'
-import { Auth, API, Storage, graphqlOperation } from 'aws-amplify'
-import { getProfile } from '../graphql/queries'
-import { createProfile, updateProfile } from '../graphql/mutations'
-import awsmobile from '../aws-exports'
-import NotyfContext from '../context/NotyfContext'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+} from 'react';
+import avatar from '../assets/images/avatar-placeholder.jpg';
+import background from '../assets/images/SM-placeholder.png';
+import { useToggle } from '../hooks/useToggle';
+import { Auth, API, Storage, graphqlOperation } from 'aws-amplify';
+import { getProfile } from '../graphql/queries';
+import { createProfile, updateProfile } from '../graphql/mutations';
+import awsmobile from '../aws-exports';
+import NotyfContext from '../context/NotyfContext';
 
 const Profile = (props) => {
-  const notyf = useContext(NotyfContext)
+  const notyf = useContext(NotyfContext);
 
   const initialState = {
     id: null,
@@ -24,261 +29,277 @@ const Profile = (props) => {
     socials: null,
     avatar: null,
     background: null,
-  }
+  };
 
-  const [profileInfo, setProfileInfo] = useState(initialState)
+  const [profileInfo, setProfileInfo] = useState(initialState);
 
   const addProfileToDB = async (profile) => {
     try {
       await API.graphql(
-        graphqlOperation(createProfile, { input: profile }),
+        graphqlOperation(createProfile, { input: profile })
       ).then((d) => {
-        setProfileInfo(d.data.createProfile)
-      })
+        setProfileInfo(d.data.createProfile);
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   async function updateProfileInDB() {
-    const creds = await Auth.currentCredentials()
+    const creds = await Auth.currentCredentials();
 
     let profileData = {
       ...profileInfo,
       ...formState,
-      socials: socialFormList,
-    }
+      // socials: socialFormList,
+    };
     const checkForUpdates = async () => {
       if (avatarPicture.data && backgroundPicture.data) {
         try {
           await Storage.put(avatarPicture.name, avatarPicture.data, {
             contentType: 'image/*',
             level: 'protected',
-          })
-          await Storage.put(backgroundPicture.name, backgroundPicture.data, {
-            contentType: 'image/*',
-            level: 'protected',
-          })
+          });
+          await Storage.put(
+            backgroundPicture.name,
+            backgroundPicture.data,
+            {
+              contentType: 'image/*',
+              level: 'protected',
+            }
+          );
         } catch (error) {
-          console.error('There occured an error when uploading files. ', error)
+          console.error(
+            'There occured an error when uploading files. ',
+            error
+          );
         }
         const profilePic = {
           bucket: awsmobile.aws_user_files_s3_bucket,
           region: awsmobile.aws_user_files_s3_bucket_region,
           key: `protected/${creds.identityId}/${avatarPicture.name}`,
-        }
+        };
         const backgroundPic = {
           bucket: awsmobile.aws_user_files_s3_bucket,
           region: awsmobile.aws_user_files_s3_bucket_region,
           key: `protected/${creds.identityId}/${backgroundPicture.name}`,
-        }
-        let profile = { ...profileData, backgroundPic, profilePic }
-        return profile
+        };
+        let profile = { ...profileData, backgroundPic, profilePic };
+        return profile;
       } else if (avatarPicture.data) {
         try {
           await Storage.put(avatarPicture.name, avatarPicture.data, {
             contentType: 'image/*',
             level: 'protected',
-          })
+          });
         } catch (error) {
           console.error(
             'There occured an error when uploading avatar file: ',
-            error,
-          )
+            error
+          );
         }
         const profilePic = {
           bucket: awsmobile.aws_user_files_s3_bucket,
           region: awsmobile.aws_user_files_s3_bucket_region,
           key: `protected/${creds.identityId}/${avatarPicture.name}`,
-        }
+        };
 
-        let profile = { ...profileData, profilePic }
-        return profile
+        let profile = { ...profileData, profilePic };
+        return profile;
       } else if (backgroundPicture.data) {
         try {
-          await Storage.put(backgroundPicture.name, backgroundPicture.data, {
-            contentType: 'image/*',
-            level: 'protected',
-          })
+          await Storage.put(
+            backgroundPicture.name,
+            backgroundPicture.data,
+            {
+              contentType: 'image/*',
+              level: 'protected',
+            }
+          );
         } catch (error) {
           console.error(
             'There occured an error when uploading background file: ',
-            error,
-          )
+            error
+          );
         }
         const backgroundPic = {
           bucket: awsmobile.aws_user_files_s3_bucket,
           region: awsmobile.aws_user_files_s3_bucket_region,
           key: `protected/${creds.identityId}/${backgroundPicture.name}`,
-        }
-        let profile = { ...profileData, backgroundPic }
-        return profile
+        };
+        let profile = { ...profileData, backgroundPic };
+        return profile;
       } else {
-        return profileData
+        return profileData;
       }
-    }
+    };
 
-    const profile = await checkForUpdates()
+    const profile = await checkForUpdates();
 
-    delete profile.createdAt
-    delete profile.updatedAt
-    delete profile.owner
+    delete profile.createdAt;
+    delete profile.updatedAt;
+    delete profile.owner;
 
-    await API.graphql(graphqlOperation(updateProfile, { input: profile }))
+    await API.graphql(
+      graphqlOperation(updateProfile, { input: profile })
+    )
       .then((d) => {
-        setProfileInfo(d.data.updateProfile)
-        notyf.success('Your profile updated successfully.')
+        setProfileInfo(d.data.updateProfile);
+        notyf.success('Your profile updated successfully.');
       })
       .catch(() => {
-        notyf.error(`We couldn't update your profile.`)
-      })
-    setEditMode(false)
-  }
-
-  const getProfileFromDB = async () => {
-    const cognitoUser = await Auth.currentAuthenticatedUser()
-    const creds = await Auth.currentCredentials()
-
-    const profile = {
-      id: cognitoUser.username,
-      email: cognitoUser.attributes.email,
-      identityId: creds.identityId,
-    }
-    const response = await API.graphql(
-      graphqlOperation(getProfile, { id: profile.id }),
-    )
-    if (response.data.getProfile === null) {
-      addProfileToDB(profile)
-    } else {
-      // check if backgroundPic is set
-      if (response.data.getProfile.backgroundPic) {
-        const backgroundPicKey = response.data.getProfile.backgroundPic.key.split(
-          '/',
-        )[2]
-        Storage.get(backgroundPicKey, {
-          level: 'protected',
-        }).then((d) => {
-          setBackgroundPicture({
-            src: d,
-            name: backgroundPicKey,
-          })
-        })
-      }
-      if (response.data.getProfile.profilePic) {
-        const profilePicKey = response.data.getProfile.profilePic.key.split(
-          '/',
-        )[2]
-        await Storage.get(profilePicKey, {
-          level: 'protected',
-        }).then((d) => {
-          setAvatarPicture({
-            src: d,
-            name: profilePicKey,
-          })
-        })
-      }
-
-      setProfileInfo(response.data.getProfile)
-    }
+        notyf.error(`We couldn't update your profile.`);
+      });
+    setEditMode(false);
   }
 
   useEffect(() => {
-    getProfileFromDB()
-  }, [])
+    const getProfileFromDB = async () => {
+      const cognitoUser = await Auth.currentAuthenticatedUser();
+      const creds = await Auth.currentCredentials();
 
-  const [socialForm, setSocialForm] = useState()
-  const [socialFormList, setSocialFormList] = useState([])
+      const profile = {
+        id: cognitoUser.username,
+        email: cognitoUser.attributes.email,
+        identityId: creds.identityId,
+      };
+      const response = await API.graphql(
+        graphqlOperation(getProfile, { id: profile.id })
+      );
+      if (response.data.getProfile === null) {
+        addProfileToDB(profile);
+      } else {
+        // check if backgroundPic is set
+        if (response.data.getProfile.backgroundPic) {
+          const backgroundPicKey =
+            response.data.getProfile.backgroundPic.key.split('/')[2];
+          Storage.get(backgroundPicKey, {
+            level: 'protected',
+          }).then((d) => {
+            setBackgroundPicture({
+              src: d,
+              name: backgroundPicKey,
+            });
+          });
+        }
+        if (response.data.getProfile.profilePic) {
+          const profilePicKey =
+            response.data.getProfile.profilePic.key.split('/')[2];
+          await Storage.get(profilePicKey, {
+            level: 'protected',
+          }).then((d) => {
+            setAvatarPicture({
+              src: d,
+              name: profilePicKey,
+            });
+          });
+        }
 
-  function onChangeSocial(e) {
-    e.persist()
-    setSocialForm(() => ({ ...socialForm, [e.target.name]: e.target.value }))
-  }
+        setProfileInfo(response.data.getProfile);
+      }
+    };
+    getProfileFromDB();
+  }, []);
 
-  const addSocial = (e) => {
-    setSocialFormList(() => [...socialFormList, socialForm])
-  }
+  // const [socialForm, setSocialForm] = useState();
+  // const [socialFormList, setSocialFormList] = useState([]);
 
-  const renderSocials = () => {
-    if (profileInfo.socials === !null) {
-      return (
-        <div>
-          {profileInfo.socials.map((social, i) => {
-            return (
-              <div key={i}>
-                <span className="mr-2 background-gray-800 inline-flex items-center  leading-sm  px-3 py-1 rounded-full bg-white text-gray-700 border">
-                  <a
-                    href={social.website}
-                    className="cursor-pointer leading-4 text-indigo-500 text-xs"
-                  >
-                    {social.name}
-                  </a>
-                  <svg
-                    className="ml-1 cursor-pointer"
-                    xmlns="http://www.w3.org/2000/svg"
-                    x="0px"
-                    y="0px"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M 4.9902344 3.9902344 A 1.0001 1.0001 0 0 0 4.2929688 5.7070312 L 10.585938 12 L 4.2929688 18.292969 A 1.0001 1.0001 0 1 0 5.7070312 19.707031 L 12 13.414062 L 18.292969 19.707031 A 1.0001 1.0001 0 1 0 19.707031 18.292969 L 13.414062 12 L 19.707031 5.7070312 A 1.0001 1.0001 0 0 0 18.980469 3.9902344 A 1.0001 1.0001 0 0 0 18.292969 4.2929688 L 12 10.585938 L 5.7070312 4.2929688 A 1.0001 1.0001 0 0 0 4.9902344 3.9902344 z"></path>
-                  </svg>
-                </span>
-              </div>
-            )
-          })}
-        </div>
-      )
-    } else {
-      return editMode ? (
-        <div className="flex mt-2">
-          {/* <div className="flex ">
-             <input
-               onChange={onChangeSocial}
-               type="text"
-               name="social"
-               className=" rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
-               placeholder="e.g facebook"
-             />
-             <input
-               onChange={onChangeSocial}
-               name="url"
-               type="text"
-               className="ml-2 rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
-               placeholder="https://facebook.com/your_account"
-             />
-           </div>
- 
-           <button
-             onClick={addSocial}
-             className="ml-1 rounded border hover:bg-gray-100 appearance-none border-gray-300 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
-           >
-             Add social
-           </button> */}
-        </div>
-      ) : null
-    }
-  }
+  // function onChangeSocial(e) {
+  //   e.persist();
+  //   setSocialForm(() => ({
+  //     ...socialForm,
+  //     [e.target.name]: e.target.value,
+  //   }));
+  // }
 
-  const [editMode, setEditMode] = useToggle()
-  const [formState, setFormState] = useState()
+  // const addSocial = (e) => {
+  //   setSocialFormList(() => [...socialFormList, socialForm]);
+  // };
+
+  // const renderSocials = () => {
+  //   if (profileInfo.socials === !null) {
+  //     return (
+  //       <div>
+  //         {profileInfo.socials.map((social, i) => {
+  //           return (
+  //             <div key={i}>
+  //               <span className="mr-2 background-gray-800 inline-flex items-center  leading-sm  px-3 py-1 rounded-full bg-white text-gray-700 border">
+  //                 <a
+  //                   href={social.website}
+  //                   className="cursor-pointer leading-4 text-indigo-500 text-xs"
+  //                 >
+  //                   {social.name}
+  //                 </a>
+  //                 <svg
+  //                   className="ml-1 cursor-pointer"
+  //                   xmlns="http://www.w3.org/2000/svg"
+  //                   x="0px"
+  //                   y="0px"
+  //                   width="12"
+  //                   height="12"
+  //                   viewBox="0 0 24 24"
+  //                 >
+  //                   <path d="M 4.9902344 3.9902344 A 1.0001 1.0001 0 0 0 4.2929688 5.7070312 L 10.585938 12 L 4.2929688 18.292969 A 1.0001 1.0001 0 1 0 5.7070312 19.707031 L 12 13.414062 L 18.292969 19.707031 A 1.0001 1.0001 0 1 0 19.707031 18.292969 L 13.414062 12 L 19.707031 5.7070312 A 1.0001 1.0001 0 0 0 18.980469 3.9902344 A 1.0001 1.0001 0 0 0 18.292969 4.2929688 L 12 10.585938 L 5.7070312 4.2929688 A 1.0001 1.0001 0 0 0 4.9902344 3.9902344 z"></path>
+  //                 </svg>
+  //               </span>
+  //             </div>
+  //           );
+  //         })}
+  //       </div>
+  //     );
+  //   } else {
+  //     return editMode ? (
+  //       <div className="flex mt-2">
+  //         {/* <div className="flex ">
+  //            <input
+  //              onChange={onChangeSocial}
+  //              type="text"
+  //              name="social"
+  //              className=" rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+  //              placeholder="e.g facebook"
+  //            />
+  //            <input
+  //              onChange={onChangeSocial}
+  //              name="url"
+  //              type="text"
+  //              className="ml-2 rounded flex-1 appearance-none border border-gray-300 w-full px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+  //              placeholder="https://facebook.com/your_account"
+  //            />
+  //          </div>
+
+  //          <button
+  //            onClick={addSocial}
+  //            className="ml-1 rounded border hover:bg-gray-100 appearance-none border-gray-300 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+  //          >
+  //            Add social
+  //          </button> */}
+  //       </div>
+  //     ) : null;
+  //   }
+  // };
+
+  const [editMode, setEditMode] = useToggle();
+  const [formState, setFormState] = useState({ name: '', bio: '' });
 
   function onChange(e) {
-    e.persist()
-    setFormState(() => ({ ...formState, [e.target.name]: e.target.value }))
+    e.persist();
+    setFormState(() => ({
+      ...formState,
+      [e.target.name]: e.target.value,
+    }));
   }
 
   const [backgroundPicture, setBackgroundPicture] = useState({
     name: '',
     src: background,
     data: null,
-  })
+  });
 
   const [avatarPicture, setAvatarPicture] = useState({
     name: '',
     src: avatar,
     data: null,
-  })
+  });
 
   async function onBackgroundChangeCapture(e) {
     if (e.target.files[0]) {
@@ -286,7 +307,7 @@ const Profile = (props) => {
         src: URL.createObjectURL(e.target.files[0]),
         name: e.target.files[0].name,
         data: e.target.files[0],
-      })
+      });
     }
   }
 
@@ -296,38 +317,41 @@ const Profile = (props) => {
         src: URL.createObjectURL(e.target.files[0]),
         name: e.target.files[0].name,
         data: e.target.files[0],
-      })
+      });
     }
   }
 
-  const backgroundInput = useRef(null)
+  const backgroundInput = useRef(null);
 
   const onBackgroundClick = () => {
-    backgroundInput.current.click()
-  }
-  const avatarInput = useRef(null)
+    backgroundInput.current.click();
+  };
+  const avatarInput = useRef(null);
 
   const onAvatarClick = () => {
-    avatarInput.current.click()
-  }
+    avatarInput.current.click();
+  };
 
   useEffect(() => {
     // storing input name
-    const color = localStorage.getItem('backgroundColor')
-    setBackgroundColor(color)
-  }, [])
+    const color = localStorage.getItem('backgroundColor');
+    setBackgroundColor(color);
+  }, []);
 
-  const [backgroundColor, setBackgroundColor] = useState()
+  const [backgroundColor, setBackgroundColor] = useState('#c4c4c4');
   const backgroundColorChange = (e) => {
-    const color = e.target.value
-    setBackgroundColor(color)
+    const color = e.target.value;
+    setBackgroundColor(color);
 
-    localStorage.setItem('backgroundColor', backgroundColor)
-  }
+    localStorage.setItem('backgroundColor', backgroundColor);
+  };
 
   return (
-    <div className="h-screen " style={{ backgroundColor: backgroundColor }}>
-      <div className=" max-w-screen-lg glass-card bg-white dark:bg-gray-800 h-full mx-auto w-full">
+    <div
+      className="h-screen "
+      style={{ backgroundColor: backgroundColor }}
+    >
+      <div className=" max-w-screen-lg  bg-white dark:bg-gray-800  h-full mx-auto w-full">
         <div className="p-4">
           <div>
             <div
@@ -395,11 +419,14 @@ const Profile = (props) => {
                 <div>
                   {editMode ? (
                     <input
-                      className="bg-gray-200 dark:bg-gray-600"
+                      className="bg-gray-200 dark:bg-gray-600 text-white"
                       onChange={onChange}
+                      value={formState.name}
                       name="name"
                       id="name"
-                      placeholder={profileInfo.name ? profileInfo.name : null}
+                      placeholder={
+                        profileInfo.name ? profileInfo.name : null
+                      }
                     />
                   ) : (
                     <h2 className="text-xl leading-6 font-bold dark:text-gray-300">
@@ -411,10 +438,13 @@ const Profile = (props) => {
                   {editMode ? (
                     <textarea
                       onChange={onChange}
+                      value={formState.bio || ''}
                       className="w-full bg-gray-200 dark:bg-gray-600 text-white "
                       name="bio"
                       id="bio"
-                      placeholder={profileInfo.bio ? profileInfo.bio : null}
+                      placeholder={
+                        profileInfo.bio ? profileInfo.bio : null
+                      }
                     />
                   ) : (
                     <p className="mb-2 text-left dark:text-gray-300">
@@ -426,7 +456,8 @@ const Profile = (props) => {
               <div className="text-left dark:text-gray-300">
                 <div>
                   {profileInfo.createdAt
-                    ? 'Created at: ' + profileInfo.createdAt.split('T')[0]
+                    ? 'Created at: ' +
+                      profileInfo.createdAt.split('T')[0]
                     : null}
                 </div>
 
@@ -453,7 +484,7 @@ const Profile = (props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

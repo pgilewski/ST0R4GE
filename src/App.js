@@ -6,28 +6,28 @@
  * -
  */
 
-import React, { useState } from 'react'
-import './App.css'
-import 'notyf/notyf.min.css'
-import { BrowserRouter as Router } from 'react-router-dom'
+import React, { useState } from 'react';
+import './App.css';
+import 'notyf/notyf.min.css';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-import Navbar from './components/Navbar'
-import Routes from './routes/Routes'
+import Navbar from './components/Navbar';
+import Routes from './routes/Routes';
 
-import { AuthProvider } from './context/authContext'
-import useDarkMode from './hooks/useDarkMode'
+import { AuthProvider } from './context/authContext';
+import useDarkMode from './hooks/useDarkMode';
 
 function App() {
-  useDarkMode()
-  const [isNavbarDown, setIsNavbarDown] = useState(false)
-  const [isProfileDown, setIsProfileDown] = useState(false)
+  useDarkMode();
+  const [isNavbarDown, setIsNavbarDown] = useState(false);
+  const [isProfileDown, setIsProfileDown] = useState(false);
 
   const bodyClick = () => {
-    setIsProfileDown(false)
-    setIsNavbarDown(false)
-  }
+    setIsProfileDown(false);
+    setIsNavbarDown(false);
+  };
 
-  const user = localStorage.getItem('user')
+  const user = localStorage.getItem('user');
   return (
     <AuthProvider user={user}>
       <Router>
@@ -38,13 +38,16 @@ function App() {
             isProfileDown={isProfileDown}
             setIsProfileDown={setIsProfileDown}
           />
-          <div onClick={bodyClick} className=" w-full justify-center ">
+          <div
+            onClick={bodyClick}
+            className=" w-full justify-center bg-white dark:bg-gray-800"
+          >
             <Routes />
           </div>
         </div>
       </Router>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;

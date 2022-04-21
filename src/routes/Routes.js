@@ -1,23 +1,21 @@
-import React, { useContext } from 'react'
-import Upload from '../components/Upload'
-import Home from '../components/Home'
-import Register from '../components/Register'
-import Login from '../components/Login'
+import React from 'react';
+import Upload from '../components/Upload';
+import Home from '../components/Home';
+import Register from '../components/Register';
+import Login from '../components/Login';
 
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom';
 
-import { useAuthContext } from '../context/authContext'
-import Dashboard from '../components/Dashboard'
-import GalleryRouter from '../components/Gallery'
-import Public from '../components/Public'
-import Profile from '../components/Profile'
-import NotyfContext from '../context/NotyfContext'
+import { useAuthContext } from '../context/authContext';
+import Dashboard from '../components/Dashboard';
+import Public from '../components/Public';
+import Profile from '../components/Profile';
+import GalleryRouter from '../components/gallery/Router';
 
 const ProtectedRoute = ({ children, ...rest }) => {
-  const { currentUser } = useAuthContext()
-  const notyf = useContext(NotyfContext)
+  const { currentUser } = useAuthContext();
 
-  const { redirect } = rest
+  const { redirect } = rest;
   return (
     <Route
       {...rest}
@@ -34,11 +32,10 @@ const ProtectedRoute = ({ children, ...rest }) => {
         )
       }
     />
-  )
-}
+  );
+};
 
 const Routes = () => {
-  const { currentUser } = useAuthContext()
   return (
     <Switch>
       <ProtectedRoute path="/upload" redirect="/login">
@@ -67,7 +64,7 @@ const Routes = () => {
         <Home className="bg-white dark:bg-gray-800 h-screen" />
       </Route>
     </Switch>
-  )
-}
+  );
+};
 
-export default Routes
+export default Routes;

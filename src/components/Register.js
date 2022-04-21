@@ -1,48 +1,53 @@
-import React from 'react'
-import { Auth } from 'aws-amplify'
-import { useState, useContext } from 'react'
-import { Link } from 'react-router-dom'
-import useAuth from '../hooks/useAuth'
-import NotyfContext from '../context/NotyfContext'
+import React from 'react';
+import { Auth } from 'aws-amplify';
+import { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import NotyfContext from '../context/NotyfContext';
 
 export default function Register() {
-  const notyf = useContext(NotyfContext)
+  const notyf = useContext(NotyfContext);
 
   const initialFormState = {
     username: '',
     password: '',
     email: '',
-  }
+  };
 
-  const [formState, updateFormState] = useState(initialFormState)
+  const [formState, updateFormState] = useState(initialFormState);
 
   function onChange(e) {
-    e.persist()
-    updateFormState(() => ({ ...formState, [e.target.name]: e.target.value }))
+    e.persist();
+    updateFormState(() => ({
+      ...formState,
+      [e.target.name]: e.target.value,
+    }));
   }
 
-  const { signInSocial } = useAuth()
+  const { signInSocial } = useAuth();
   const signUp = async (formState) => {
-    const { username, password } = formState
+    const { username, password } = formState;
     if (password === '') {
-      notyf.error("Password can't be empty.")
+      notyf.error("Password can't be empty.");
     } else if (username === '') {
-      notyf.error("Email can't be empty.")
+      notyf.error("Email can't be empty.");
     } else {
       try {
-        const user = await Auth.signUp({
+        await Auth.signUp({
           username,
           password,
         }).then(() =>
           notyf.success(
-            'You have created an account. Confirm it by going to your e-mail.',
-          ),
-        )
+            'You have created an account. Confirm it by going to your e-mail.'
+          )
+        );
       } catch (error) {
-        notyf.error('An account with the given email already exists.')
+        notyf.error(
+          'An account with the given email already exists.'
+        );
       }
     }
-  }
+  };
 
   return (
     <div className="full-height-no-navbar align-top justify-center">
@@ -141,7 +146,7 @@ export default function Register() {
           <div className="flex w-full">
             <button
               onClick={() => {
-                signUp(formState)
+                signUp(formState);
               }}
               className="py-2 px-4  bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
             >
@@ -158,5 +163,5 @@ export default function Register() {
         </div>
       </div>
     </div>
-  )
+  );
 }

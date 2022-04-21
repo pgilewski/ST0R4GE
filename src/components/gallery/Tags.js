@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-const Tags = (props) => {
-  const { editMode, labelsToState, setLabelsToState } = props
+export default function Tags(props) {
+  const { editMode, labelsToState, setLabelsToState } = props;
 
   /*   if (props.labels) {
     //tagi wyswietlane w galerii
@@ -26,35 +26,35 @@ const Tags = (props) => {
   // }, [])
 
   const deleteTag = (e) => {
-    const id = e.target.getAttribute('name')
+    const id = e.target.getAttribute('name');
     const newLabels = labelsToState.filter(
-      (item, index) => index !== parseInt(id),
-    )
-    setLabelsToState(newLabels)
-  }
+      (item, index) => index !== parseInt(id)
+    );
+    setLabelsToState(newLabels);
+  };
 
-  const [newLabel, setNewLabel] = useState('')
+  const [newLabel, setNewLabel] = useState('');
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      const newLabels = labelsToState
+      const newLabels = labelsToState;
 
-      newLabels.push(newLabel)
+      newLabels.push(newLabel);
 
-      setLabelsToState(newLabels)
+      setLabelsToState(newLabels);
 
-      setNewLabel('')
+      setNewLabel('');
     }
-  }
+  };
   const onClick = () => {
-    const newLabels = labelsToState
+    const newLabels = labelsToState;
 
-    newLabels.push(newLabel)
+    newLabels.push(newLabel);
 
-    setLabelsToState(newLabels)
+    setLabelsToState(newLabels);
 
-    setNewLabel('')
-  }
+    setNewLabel('');
+  };
   return (
     <div>
       <div>
@@ -79,7 +79,7 @@ const Tags = (props) => {
                         ) : null}
                         <div className="font-mono">{label}</div>
                       </div>
-                    )
+                    );
                   })
                 : null}
             </div>
@@ -106,7 +106,5 @@ const Tags = (props) => {
         <div className="inline-flex "></div>
       </div>
     </div>
-  )
+  );
 }
-
-export default Tags

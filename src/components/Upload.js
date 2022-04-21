@@ -1,101 +1,108 @@
-import React, { useCallback, useState, useEffect, useContext } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { useHistory } from 'react-router-dom'
-import { Auth, Storage, API, graphqlOperation } from 'aws-amplify'
-import Predictions from '@aws-amplify/predictions'
-import awsmobile from '../aws-exports'
-import { createFile } from '../graphql/mutations'
-import LoadingSpinner from './LoadingSpinner'
-import NotyfContext from '../context/NotyfContext'
-import docs_placeholder from '../assets/images/docs_placeholder.png'
-import rar_placeholder from '../assets/images/rar_placeholder.png'
-import audio_placeholder from '../assets/images/audio_placeholder.png'
-import file_placeholder from '../assets/images/file_placeholder.png'
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useContext,
+} from 'react';
+import { useDropzone } from 'react-dropzone';
+import { useHistory } from 'react-router-dom';
+import { Auth, Storage, API, graphqlOperation } from 'aws-amplify';
+import Predictions from '@aws-amplify/predictions';
+import { createFile } from '../graphql/mutations';
+import LoadingSpinner from './LoadingSpinner';
+import NotyfContext from '../context/NotyfContext';
+import docs_placeholder from '../assets/images/docs_placeholder.png';
+import rar_placeholder from '../assets/images/rar_placeholder.png';
+import audio_placeholder from '../assets/images/audio_placeholder.png';
+import file_placeholder from '../assets/images/file_placeholder.png';
 
-import Tags from './gallery/Tags'
+import Tags from './gallery/Tags';
 
 function Upload() {
-  const [files, setFiles] = useState([])
-  const [loading, setLoading] = useState('start')
-  const [showTagsInput, setShowTagsInput] = useState(false)
-  const [tags, setTags] = useState([])
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState('start');
+  const [showTagsInput, setShowTagsInput] = useState(false);
+  const [tags, setTags] = useState([]);
 
-  const notyf = useContext(NotyfContext)
+  const notyf = useContext(NotyfContext);
 
   useEffect(() => {
     files.forEach((file) => {
       if (!file.type.includes('video')) {
-        URL.revokeObjectURL(file.preview)
+        URL.revokeObjectURL(file.preview);
       }
-    })
-  }, [files])
+    });
+  }, [files]);
 
-  // i want to check if object in array has type: includes("executable")
+  // TODO: check if object in array has type: includes("executable")
   const onDrop = useCallback((acceptedFiles) => {
-    // check if files are the same
-    // const filteredLabels = acceptedFiles.filter((file) =>
-    //
-    // )
-
+    // eslint-disable-next-line
     const newFiles = acceptedFiles.map((file) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-      }),
-    )
+      })
+    );
 
-    setFiles((prev) => prev.concat(newFiles))
-  }, [])
+    setFiles((prev) => prev.concat(newFiles));
+  }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+  });
 
   const filterLabels = (labels) => {
     const filteredLabels = labels
+      // eslint-disable-next-line
       .filter((label) => {
-        if (label.metadata.confidence > 80) return label
+        if (label.metadata.confidence > 80) return label;
       })
       .map((label) => {
-        return label.name
-      })
+        return label.name;
+      });
 
-    return filteredLabels
-  }
+    return filteredLabels;
+  };
   const concatTagsAndLabels = (labels, tags) => {
-    const joinedLabels = labels.concat(tags)
-    return joinedLabels
-  }
+    const joinedLabels = labels.concat(tags);
+    return joinedLabels;
+  };
 
-  let filesListPromise = Storage.list('', { level: 'private' })
+  let filesListPromise = Storage.list('', { level: 'private' });
 
   const onSubmit = async (event) => {
-    event.preventDefault()
-    setLoading('loading')
+    event.preventDefault();
+    setLoading('loading');
 
-    let filesAmount = await Promise.resolve(filesListPromise).then((data) => {
-      return data.length
-    })
+    let filesAmount = await Promise.resolve(filesListPromise).then(
+      (data) => {
+        return data.length;
+      }
+    );
 
-    const creds = await Auth.currentCredentials()
+    const creds = await Auth.currentCredentials();
 
     for (const [index, file] of files.entries()) {
       // 1,048,576 = 1MB
       if (file.size > 20 * 1048576) {
         notyf.error(
-          "You can't upload file bigger than 20MB. Other files has been uploaded.",
-        )
-        history.push('/upload')
-        setFiles([])
+          "You can't upload file bigger than 20MB. Other files has been uploaded."
+        );
+        history.push('/upload');
+        setFiles([]);
 
-        setLoading('start')
+        setLoading('start');
       } else {
         if (filesAmount >= 20) {
-          notyf.error('You are allowed to store 20 files on trial version.')
-          setLoading('result')
+          notyf.error(
+            'You are allowed to store 20 files on trial version.'
+          );
+          setLoading('result');
         } else {
           try {
             const storagePromise = Storage.put(file.name, file, {
               level: 'private',
-            })
-            filesAmount++
+            });
+            filesAmount++;
 
             if (recognize) {
               if (
@@ -110,69 +117,65 @@ function Upload() {
                     },
                     type: 'LABELS',
                   },
-                })
-                // TODO: Rewrite file.key to get only key (but when make sure i dont need file owner there)
+                });
                 const picture = await Promise.all([
                   storagePromise,
                   labelsPromise,
                 ]).then(([storageData, labelsData]) => {
-                  let { labels } = labelsData
-                  let time = new Date()
+                  let { labels } = labelsData;
+                  let time = new Date();
                   let picture = {
                     id: `private/${creds.identityId}/${file.name}`,
                     name: file.name,
-                    labels: concatTagsAndLabels(filterLabels(labels), tags),
+                    labels: concatTagsAndLabels(
+                      filterLabels(labels),
+                      tags
+                    ),
                     type: file.type,
                     createdAt: time,
                     size: file.size,
-                    file: {
-                      bucket: awsmobile.aws_user_files_s3_bucket,
-                      region: awsmobile.aws_user_files_s3_bucket_region,
-                      key: `private/${creds.identityId}/${file.name}`,
-                    },
-                  }
-                  return picture
-                })
+                  };
+                  return picture;
+                });
                 try {
-                  const response = API.graphql(
-                    graphqlOperation(createFile, { input: picture }),
-                  )
+                  API.graphql(
+                    graphqlOperation(createFile, { input: picture })
+                  );
                 } catch (error) {
-                  console.error(error)
+                  console.error(error);
                 }
               } else {
-                notyf.error(file.type + " kind of files can't be recognized.")
-                const picture = await Promise.resolve(storagePromise).then(
-                  (storageData) => {
-                    let time = new Date()
+                notyf.error(
+                  file.type + " kind of files can't be recognized."
+                );
+                const picture = await Promise.resolve(
+                  storagePromise
+                ).then((storageData) => {
+                  let time = new Date();
 
-                    let picture = {
-                      id: `private/${creds.identityId}/${file.name}`,
-                      name: file.name,
-                      labels: tags ? tags : [],
-                      type: file.type,
-                      createdAt: time,
-                      size: file.size,
-                      file: {
-                        bucket: awsmobile.aws_user_files_s3_bucket,
-                        region: awsmobile.aws_user_files_s3_bucket_region,
-                        key: `private/${creds.identityId}/${file.name}`,
-                      },
-                    }
-                    return picture
-                  },
-                )
+                  let picture = {
+                    id: `private/${creds.identityId}/${file.name}`,
+                    name: file.name,
+                    labels: tags ? tags : [],
+                    type: file.type,
+                    createdAt: time,
+                    size: file.size,
+                  };
+                  return picture;
+                });
                 try {
-                  const response = API.graphql(
-                    graphqlOperation(createFile, { input: picture }),
-                  )
+                  API.graphql(
+                    graphqlOperation(createFile, { input: picture })
+                  );
                 } catch (error) {
-                  console.error(error)
+                  console.error(error);
                 }
               }
             } else {
-              const picture = await Promise.resolve(storagePromise).then(() => {
-                let time = new Date()
+              const picture = await Promise.resolve(
+                storagePromise
+              ).then(() => {
+                let time = new Date();
                 let picture = {
                   id: `private/${creds.identityId}/${file.name}`,
                   name: file.name,
@@ -180,36 +183,31 @@ function Upload() {
                   type: file.type,
                   createdAt: time,
                   size: file.size,
-                  file: {
-                    bucket: awsmobile.aws_user_files_s3_bucket,
-                    region: awsmobile.aws_user_files_s3_bucket_region,
-                    key: `private/${creds.identityId}/${file.name}`,
-                  },
-                }
-                return picture
-              })
+                };
+                return picture;
+              });
               try {
-                const response = await API.graphql(
-                  graphqlOperation(createFile, { input: picture }),
-                )
+                await API.graphql(
+                  graphqlOperation(createFile, { input: picture })
+                );
               } catch (error) {
-                console.error(error)
+                console.error(error);
               }
             }
-            notyf.success('Uploaded a file.')
+            notyf.success('Uploaded a file.');
             if (index === files.length - 1) {
-              setLoading('result')
+              setLoading('result');
             }
           } catch (error) {
-            console.error(error)
-            setLoading('result')
+            console.error(error);
+            setLoading('result');
           }
         }
       }
     }
-  }
+  };
   const preview = files.map((file) => {
-    let type = file.type
+    let type = file.type;
 
     if (type.includes('image')) {
       return (
@@ -219,14 +217,14 @@ function Upload() {
           className="w-2/3 md:w-full"
           key={file.name}
         />
-      )
+      );
     } else if (type.includes('video')) {
       return (
         <video controls key={file.name} className="w-2/3 md:w-full">
           <source src={file.preview} type="video/mp4" />
           Your browser does not support HTML5 video.
         </video>
-      )
+      );
     } else if (type.includes('pdf')) {
       return (
         <img
@@ -235,7 +233,7 @@ function Upload() {
           className="w-2/3 md:w-full"
           key={file.name}
         />
-      )
+      );
     } else if (type.includes('rar')) {
       return (
         <img
@@ -244,7 +242,7 @@ function Upload() {
           className="w-2/3 md:w-full"
           key={file.name}
         />
-      )
+      );
     } else if (type.includes('mpeg')) {
       return (
         <img
@@ -253,7 +251,7 @@ function Upload() {
           className="w-2/3 md:w-full"
           key={file.name}
         />
-      )
+      );
     } else {
       return (
         <img
@@ -262,14 +260,14 @@ function Upload() {
           className="w-2/3 md:w-full"
           key={file.name}
         />
-      )
+      );
     }
-  })
-  const history = useHistory()
+  });
+  const history = useHistory();
 
   const renderResult = (props) => {
     if (loading === 'result') {
-      history.push('/gallery')
+      history.push('/gallery');
 
       /*         <div>
           <h1>Uploaded {props} files.</h1>
@@ -287,18 +285,18 @@ function Upload() {
         <div>
           <LoadingSpinner />
         </div>
-      )
+      );
     }
-  }
-  const [recognize, setRecognize] = useState(false)
+  };
+  const [recognize, setRecognize] = useState(false);
   const handleToggleChange = (e) => {
-    let isChecked = e.target.checked
+    let isChecked = e.target.checked;
     if (isChecked) {
-      setRecognize(true)
+      setRecognize(true);
     } else {
-      setRecognize(true)
+      setRecognize(true);
     }
-  }
+  };
 
   const renderUpload = () => {
     return (
@@ -314,7 +312,9 @@ function Upload() {
               <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 mb-12">
                 <div
                   className={`sm: mx-2 flex flex-col items-center py-12 px-6 rounded-md border-2 border-dashed ${
-                    isDragActive ? 'border-indigo-500 ' : 'border-gray-400'
+                    isDragActive
+                      ? 'border-indigo-500 '
+                      : 'border-gray-400'
                   }`}
                 >
                   <svg
@@ -336,7 +336,9 @@ function Upload() {
                     Drop files to upload
                   </p>
 
-                  <p className="mb-2 text-gray-700 dark:text-gray-200">or</p>
+                  <p className="mb-2 text-gray-700 dark:text-gray-200">
+                    or
+                  </p>
 
                   <label className="bg-white cursor-pointer px-4 h-9 inline-flex items-center rounded border border-gray-300 shadow-sm text-sm font-medium text-gray-700 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                     Select files
@@ -406,12 +408,14 @@ function Upload() {
           </div>
         ) : null}
       </div>
-    )
-  }
+    );
+  };
   return (
     <div className="bg-white dark:bg-gray-800 h-screen">
-      {loading === 'start' ? renderUpload() : renderResult(files.length)}
+      {loading === 'start'
+        ? renderUpload()
+        : renderResult(files.length)}
     </div>
-  )
+  );
 }
-export default Upload
+export default Upload;

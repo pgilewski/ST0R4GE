@@ -5,48 +5,48 @@ export default function GalleryNavbar({
   setItemsPerPage,
   itemsPerPage,
 }) {
-  function capitalize(input) {
-    const CapitalizedWords = []
-    //jezeli inoput nie jest pusty I jeżeli nie kończy się spacja
-    if (input !== '' && input.charAt(input.length - 1) !== ' ') {
-      const words = input.split(' ')
-      words.forEach((word) => {
-        CapitalizedWords.push(
-          word[0].toUpperCase() + word.slice(1, word.length),
-        )
-      })
-      //jezeli kończy się spacją
-    } else if (input.charAt(input.length - 1) === ' ') {
-      const words = input.split(' ')
-      words.pop()
-      words.forEach((word) => {
-        CapitalizedWords.push(
-          word[0].toUpperCase() + word.slice(1, word.length),
-        )
-      })
-    } else {
-      //jeżeli jest pusty
-    }
-    return CapitalizedWords.join(' ')
-  }
-  const handleSelectChange = (e) => {
-    const sortMethod = e.target.value
-    if (sortMethod === 'name') {
-      setSortMethod(sortMethod)
-    } else if (sortMethod === 'oldest') {
-      setSortMethod(sortMethod)
-    } else if (sortMethod === 'newest') {
-      setSortMethod(sortMethod)
-    } else if (sortMethod === 'size') {
-    }
-    //setSortMethod(sortMethod)
-  }
+  // function capitalize(input) {
+  //   const CapitalizedWords = []
+  //   //jezeli inoput nie jest pusty I jeżeli nie kończy się spacja
+  //   if (input !== '' && input.charAt(input.length - 1) !== ' ') {
+  //     const words = input.split(' ')
+  //     words.forEach((word) => {
+  //       CapitalizedWords.push(
+  //         word[0].toUpperCase() + word.slice(1, word.length),
+  //       )
+  //     })
+  //     //jezeli kończy się spacją
+  //   } else if (input.charAt(input.length - 1) === ' ') {
+  //     const words = input.split(' ')
+  //     words.pop()
+  //     words.forEach((word) => {
+  //       CapitalizedWords.push(
+  //         word[0].toUpperCase() + word.slice(1, word.length),
+  //       )
+  //     })
+  //   } else {
+  //     //jeżeli jest pusty
+  //   }
+  //   return CapitalizedWords.join(' ')
+  // }
+  // const handleSelectChange = (e) => {
+  //   const sortMethod = e.target.value
+  //   if (sortMethod === 'name') {
+  //     setSortMethod(sortMethod)
+  //   } else if (sortMethod === 'oldest') {
+  //     setSortMethod(sortMethod)
+  //   } else if (sortMethod === 'newest') {
+  //     setSortMethod(sortMethod)
+  //   } else if (sortMethod === 'size') {
+  //   }
+  //   //setSortMethod(sortMethod)
+  // }
   const handleIPPChange = (event) => {
     if (isNaN(parseInt(event.target.value))) {
     } else {
-      setItemsPerPage(event.target.value)
+      setItemsPerPage(event.target.value);
     }
-  }
+  };
   return (
     <div>
       <nav className="bg-white dark:bg-gray-800 shadow py-4 ">
@@ -82,7 +82,7 @@ export default function GalleryNavbar({
           <div className="flex md:justify-between flex-col md:flex-row w-full space-x-3 ">
             <input
               onChange={(e) => {
-                setSearch(e.target.value)
+                setSearch(e.target.value);
               }}
               type="text"
               id='"form-subscribe-Search'
@@ -91,7 +91,9 @@ export default function GalleryNavbar({
             />
             <div className="flex pt-2 md:pt-0 border-t dark:border-gray-600 border-gray-300 md:border-t-0">
               <div className="flex items-center mx-2 space-x-2 justify-center align-middle ">
-                <span className="dark:text-white font-normal">Names:</span>
+                <span className="dark:text-white font-normal">
+                  Names:
+                </span>
 
                 <div className="ml-4 relative inline-block w-10 mr-2 align-middle select-none">
                   <input
@@ -153,5 +155,5 @@ export default function GalleryNavbar({
         </div>
       </nav>
     </div>
-  )
+  );
 }

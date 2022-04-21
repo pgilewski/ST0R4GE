@@ -1,16 +1,12 @@
 {
   "auth": {
-    "st0rag3d4388d28": {
+    "amplifydemocf871b3b": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false,
       "frontendAuthConfig": {
-        "socialProviders": [
-          "FACEBOOK",
-          "GOOGLE"
-        ],
-        "usernameAttributes": [
+        "loginMechanisms": [
           "EMAIL"
         ],
         "signupAttributes": [
@@ -30,8 +26,22 @@
       }
     }
   },
+  "storage": {
+    "s3cfb1d2c7": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
+    }
+  },
+  "predictions": {
+    "identifyLabels9f59b9dc": {
+      "providerPlugin": "awscloudformation",
+      "service": "Rekognition",
+      "dependsOn": [],
+      "identifyType": "identifyLabels"
+    }
+  },
   "api": {
-    "st0rag3": {
+    "amplifydemo": {
       "service": "AppSync",
       "providerPlugin": "awscloudformation",
       "output": {
@@ -39,27 +49,12 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authst0rag3d4388d28"
+              "userPoolId": "authamplifydemocf871b3b"
             }
           },
           "additionalAuthenticationProviders": []
         }
       }
-    }
-  },
-  "storage": {
-    "st0r4ge": {
-      "service": "S3",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": []
-    }
-  },
-  "predictions": {
-    "identifyLabelsSt0r4g3": {
-      "providerPlugin": "awscloudformation",
-      "service": "Rekognition",
-      "dependsOn": [],
-      "identifyType": "identifyLabels"
     }
   }
 }
