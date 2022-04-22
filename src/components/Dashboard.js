@@ -7,11 +7,9 @@ export default function Dashboard() {
   const [filesAmount, setFilesAmount] = useState(null);
   useEffect(() => {
     const getFilesNumber = async () => {
-      await Storage.list('', { level: 'private' }).then(
-        (response) => {
-          setFilesAmount(response.length);
-        }
-      );
+      await Storage.list('', { level: 'private' }).then((response) => {
+        setFilesAmount(response.length);
+      });
     };
     getFilesNumber();
   }, []);
@@ -46,9 +44,7 @@ export default function Dashboard() {
             <h6 className="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
               Files limit
             </h6>
-            <span className="text-xl font-semibold">
-              {filesAmount}/20
-            </span>
+            <span className="text-xl font-semibold">{filesAmount}/20</span>
             {/* <span className="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
 							3.4%
 						</span> */}

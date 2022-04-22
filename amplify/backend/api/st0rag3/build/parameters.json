@@ -1,0 +1,13 @@
+{
+    "AppSyncApiName": "st0rag3",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authst0rag3d4388d28",
+            "Outputs.UserPoolId"
+        ]
+    },
+    "S3DeploymentBucket": "amplify-st0rag3-dev-203311-deployment",
+    "S3DeploymentRootKey": "amplify-appsync-files/4244b07e03cbcac5bf0a0aed82fc3416850416f3"
+}

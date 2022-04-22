@@ -1,0 +1,37 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+# input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+type S3Object {
+  bucket: String!
+  region: String!
+  key: String!
+  type: String
+}
+
+type File @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
+  id: ID!
+  name: String
+  owner: String
+  labels: [String]
+  file: S3Object
+  type: String
+  createdAt: String
+  size: Int
+}
+
+type Social {
+  name: String!
+  url: String!
+}
+
+type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
+  id: ID!
+  email: String!
+  identityId: String!
+  name: String
+  profilePic: S3Object
+  backgroundPic: S3Object
+  bio: String
+  socials: [Social]
+}

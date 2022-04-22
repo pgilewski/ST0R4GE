@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "st0rag3",
+    "serviceName": "AppSync",
+    "gqlSchemaPath": "C:\\Users\\przem\\Web projects\\my-space\\amplify\\backend\\api\\st0rag3\\schema.graphql",
+    "defaultAuthType": {
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authst0rag3d4388d28"
+    },
+    "additionalAuthTypes": [],
+    "conflictResolution": {}
+  }
+}

@@ -1,120 +1,37 @@
-# React + AWS Amplify Gallery app with Rekognition, Authentication and tagging
+# 🚀 React 18 with Tailwind CSS
 
-Link to demo: [https://main.d2hjyas9gj2dki.amplifyapp.com/](https://main.d2hjyas9gj2dki.amplifyapp.com/)
+Learn how to quickly set up a `React.js` project with Tailwind CSS using the [starter kit](https://github.com/labnol/react-tailwind). The project was bootstrapped with Create React App (CRA) and it uses PurgeCSS to remove all the unused CSS classes from the production build.
 
+## Live Demo
 
-## To reproduce locally:
+The [Digital Inspiration](https://digitalinspiration.com/) website is built with the Tailwind CSS, React.js and Gatsby.
 
-Clone github repository: [https://github.com/pgilewski/my-space](https://github.com/pgilewski/my-space)
+[CodeSandbox](https://codesandbox.io/s/github/labnol/react-tailwind) | [Glitch](https://glitch.com/edit/#!/remix/react-tailwindcss) | [Vercel](https://csb-ggfl7-ipit3clvr.vercel.app/)
 
-### Prerequirements:
+### Available npm scripts
 
-- node 14.18.0
-- npm 6.14.15
+In the project directory, you can run:
 
-### `npm install -g @aws-amplify/cli`
+### `npm run start`
 
-### `amplify config`
+Runs the app in the development mode.
 
-### `amplify init`
+Open `http://localhost:3000` to view it in the browser.
 
-- Use default settings
+The page will reload if you make edits. You will also see any lint errors in the console.
 
-### `amplify add auth`
+### `npm run build`
 
-- Default configuration / default configuration with social providers (require addictional configuration)
-- Email
-- Enter your redirect signin URI (eg. http://localhost:3000/)
-- No
-- Enter your redirect signout URI (eg. http://localhost:3000/)
-- Select google and facebook using space, then enter.
-- Enter your Facebook App ID for your OAuth flow:
-- Enter your Facebook App Secret for your OAuth flow:
-- Enter your Google Web Client ID for your OAuth flow:
-- Enter your Google Web Client Secret for your OAuth flow:
+Builds the React app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
-- No, I am done.
+The build is minified and the filenames include the hashes. Your app is ready to be deployed!
 
-### `amplify add api`
+### `npm run inline`
 
-- GraphQL
-- (your_api_name)
-- Amazon Cognito User Pool
-- No, I am done
-- No
-- Single objects with fields
-- Do you want to edit the schema now? Yes
-  if file didnt pop out go to /amplify/backend/api/(your_api_name)/schema.grahpql and change existing file to following:
+This command uses `Gulp` to inline all the JavaScript and CSS files from the production build into a single minified file.
 
-```
-type S3Object {
-  bucket: String!
-  region: String!
-  key: String!
-}
+### 📧 Contact
 
-type File @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
-  id: ID!
-  name: String
-  owner: String
-  labels: [String]
-  file: S3Object
-  type: String
-  createdAt: String
-  size: Int
-}
+The React and Tailwind CSS starter is written by [Amit Agarwal](https://www.labnol.org/about). It is now updated to support Tailwind CSS v2.0.
 
-type Social {
-  name: String!
-  url: String!
-}
-
-type Profile @model @auth(rules: [{ allow: owner }]) @aws_cognito_user_pools {
-  id: ID!
-  email: String!
-  identityId: String!
-  name: String
-  profilePic: S3Object
-  backgroundPic: S3Object
-  bio: String
-  socials: [Social]
-}
-
-
-```
-
-### `amplify add storage`
-
-- Content
-- (default_category)
-- (default_bucket_name)
-- Auth users only
-- select 'create/update, read, delete' using space
-- No
-
-### `amplify add predictions`
-
-- Identify
-- Identify Labels
-- (deafult_name)
-- Default Configuration
-- Auth users only
-
-### `amplify push`
-
-- Yes
-- javascript
-- (deafult)
-- Yes
-- 2
-  To push changes.
-
-Check mutations,queries, etc. to build locally.
-
-Last changes you need to make is to go to your [AWS Console](https://eu-central-1.console.aws.amazon.com/amplify/home?region=eu-central-1#/)
-Select Cognito from services
-Manage User Pools
-Select your created user pool
-In General setting select Message Customizations
-Then set Verification type to Link.
-Save changes.
+If you have any questions or feedback, send an email at [amit@labnol.org](mailto:amit@labnol.org?subject=Tailwind+React).

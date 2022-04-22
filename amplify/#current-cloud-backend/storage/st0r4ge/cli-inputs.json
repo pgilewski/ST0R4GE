@@ -1,0 +1,14 @@
+{
+  "resourceName": "st0r4ge",
+  "policyUUID": "72f537b9",
+  "bucketName": "st0r4g3",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

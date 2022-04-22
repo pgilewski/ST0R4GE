@@ -1,0 +1,12 @@
+{
+  "AppSyncApiName": "st0rag3",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authst0rag3d4388d28",
+      "Outputs.UserPoolId"
+    ]
+  },
+  "AuthModeLastUpdated": "2022-04-20T20:22:18.976Z"
+}

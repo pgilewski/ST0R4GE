@@ -1,38 +1,31 @@
-import { useAuthContext } from '../context/authContext'
-import useDarkMode from '../hooks/useDarkMode'
-import useAuth from '../hooks/useAuth'
-import React from 'react'
-
-import { Link } from 'react-router-dom'
-
-import { ReactComponent as MenuIcon } from '../assets/icons/menu.svg'
-
-import { ReactComponent as ProfileIcon } from '../assets/icons/profile.svg'
-import { ReactComponent as ArrowUpIcon } from '../assets/icons/arrow-up.svg'
-import { ReactComponent as ArrowDownIcon } from '../assets/icons/arrow-down.svg'
-import { ReactComponent as MoonIcon } from '../assets/icons/moon.svg'
-import { ReactComponent as SunIcon } from '../assets/icons/sun.svg'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuthContext } from '../context/authContext';
+import useDarkMode from '../hooks/useDarkMode';
+import useAuth from '../hooks/useAuth';
+import { ReactComponent as MenuIcon } from '../assets/icons/menu.svg';
+import { ReactComponent as ProfileIcon } from '../assets/icons/profile.svg';
+import { ReactComponent as ArrowUpIcon } from '../assets/icons/arrow-up.svg';
+import { ReactComponent as ArrowDownIcon } from '../assets/icons/arrow-down.svg';
+import { ReactComponent as MoonIcon } from '../assets/icons/moon.svg';
+import { ReactComponent as SunIcon } from '../assets/icons/sun.svg';
 
 export default function Navbar(props) {
-  const [colorTheme, setTheme] = useDarkMode()
+  const [colorTheme, setTheme] = useDarkMode();
   // Call the hook which returns, current value and the toggler function
-  const {
-    isNavbarDown,
-    setIsNavbarDown,
-    isProfileDown,
-    setIsProfileDown,
-  } = props
+  const { isNavbarDown, setIsNavbarDown, isProfileDown, setIsProfileDown } =
+    props;
 
-  const { currentUser } = useAuthContext()
+  const { currentUser } = useAuthContext();
 
-  const { signOut } = useAuth()
+  const { signOut } = useAuth();
 
   const profileToggle = () => {
-    setIsProfileDown(isProfileDown ? false : true)
-  }
+    setIsProfileDown(isProfileDown ? false : true);
+  };
   const navbarToggle = () => {
-    setIsNavbarDown(isNavbarDown ? false : true)
-  }
+    setIsNavbarDown(isNavbarDown ? false : true);
+  };
   return (
     <div>
       <nav className="bg-white dark:bg-gray-800 shadow font-mono ">
@@ -206,5 +199,5 @@ export default function Navbar(props) {
         ) : null}
       </nav>
     </div>
-  )
+  );
 }

@@ -1,19 +1,8 @@
-import { css } from '@emotion/react'
-import BarLoader from 'react-spinners/BarLoader'
+import React from 'react';
 
-const override = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-  width: 200px;
-`
-
-export default function LoadingSpinner() {
-  return (
-    <div className="align-items-center justify-content-center ">
-      <div className="py-12">
-        <BarLoader color={'#36D7B7'} loading={true} css={override} size={150} />
-      </div>
-    </div>
-  )
-}
+const LoadingSpinner = () => {
+  <div className="align-items-center justify-content-center ">
+    <div className="py-12">LOADING</div>
+  </div>;
+};
+export default LoadingSpinner;
