@@ -57,8 +57,6 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.4",
-    "eslint": "8.13.0",
-    "eslint-config-airbnb": "^19.0.4",
     "gulp": "^4.0.2",
     "gulp-inline-source": "^4.0.0",
     "gulp-rename": "^2.0.0",
