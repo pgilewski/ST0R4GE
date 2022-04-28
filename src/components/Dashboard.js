@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Storage } from 'aws-amplify';
+import NotyfContext from '../context/NotyfContext';
 
 export default function Dashboard() {
+  const notyf = useContext(NotyfContext);
   // const [dots, setDots] = useState('');
   // const [i, setI] = useState(1);
   const [filesAmount, setFilesAmount] = useState(null);
   useEffect(() => {
     const getFilesNumber = async () => {
-      await Storage.list('', { level: 'private' }).then((response) => {
-        setFilesAmount(response.length);
-      });
+      await Storage.list('', { level: 'private' }).then(
+        (response) => {
+          setFilesAmount(response.length);
+        }
+      );
     };
     getFilesNumber();
   }, []);
@@ -44,13 +48,20 @@ export default function Dashboard() {
             <h6 className="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
               Files limit
             </h6>
-            <span className="text-xl font-semibold">{filesAmount}/20</span>
+            <span className="text-xl font-semibold">
+              {filesAmount}/20
+            </span>
             {/* <span className="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
 							3.4%
 						</span> */}
           </div>
           <div>
-            <span className="text-blue-800 cursor-pointer ml-6">
+            <span
+              onClick={() => {
+                notyf.error('Function not available.');
+              }}
+              className="text-blue-800 cursor-pointer ml-6"
+            >
               Change plan
             </span>
           </div>

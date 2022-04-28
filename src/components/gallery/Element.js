@@ -85,12 +85,10 @@ export default function GalleryElement(props) {
     >
       <div>
         <Link
-          to={{
-            pathname: `/gallery/img/${name}`,
-            state: {
-              background: location,
-              file,
-            },
+          to={`/gallery/${name}`}
+          state={{
+            background: location,
+            file,
           }}
           className="flex relative  "
         >

@@ -1,6 +1,4 @@
-/* eslint-disable global-require */
-const defaultTheme = require('tailwindcss/defaultTheme');
-const colors = require('tailwindcss/colors');
+const colors = require('tailwindcss/colors')
 
 module.exports = {
   darkMode: 'class',
@@ -9,12 +7,9 @@ module.exports = {
     locales: ['en-US'],
     defaultLocale: 'en-US',
   },
-  content: ['./src/**/*.{html,js,jsx}', './public/index.html'],
+  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-      },
       colors: {
         sky: colors.sky,
         cyan: colors.cyan,
@@ -32,12 +27,17 @@ module.exports = {
       '2xl': '1536px',
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio'),
-  ],
+
+  variants: {
+    extend: {
+      backgroundColor: ['checked'],
+      borderColor: ['checked'],
+      inset: ['checked'],
+      zIndex: ['hover', 'active'],
+    },
+  },
+  plugins: [],
   future: {
     purgeLayersByDefault: true,
   },
-};
+}

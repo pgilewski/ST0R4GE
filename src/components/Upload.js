@@ -5,7 +5,7 @@ import React, {
   useContext,
 } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Auth, Storage, API, graphqlOperation } from 'aws-amplify';
 import Predictions from '@aws-amplify/predictions';
 import { createFile } from '../graphql/mutations';
@@ -87,7 +87,7 @@ function Upload() {
         notyf.error(
           "You can't upload file bigger than 20MB. Other files has been uploaded."
         );
-        history.push('/upload');
+        navigate('/upload');
         setFiles([]);
 
         setLoading('start');
@@ -263,11 +263,12 @@ function Upload() {
       );
     }
   });
-  const history = useHistory();
+
+  const navigate = useNavigate();
 
   const renderResult = (props) => {
     if (loading === 'result') {
-      history.push('/gallery');
+      navigate('/gallery');
 
       /*         <div>
           <h1>Uploaded {props} files.</h1>
@@ -411,7 +412,7 @@ function Upload() {
     );
   };
   return (
-    <div className="bg-white dark:bg-gray-800 h-screen">
+    <div className="bg-white dark:bg-gray-800">
       {loading === 'start'
         ? renderUpload()
         : renderResult(files.length)}

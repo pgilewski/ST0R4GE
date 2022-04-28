@@ -12,7 +12,7 @@ import 'notyf/notyf.min.css';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
-import Routes from './routes/Routes';
+import AppRoutes from './routes/Routes';
 
 import { AuthProvider } from './context/authContext';
 import useDarkMode from './hooks/useDarkMode';
@@ -42,7 +42,7 @@ function App() {
             onClick={bodyClick}
             className=" w-full justify-center bg-white dark:bg-gray-800"
           >
-            <Routes />
+            <AppRoutes />
           </div>
         </div>
       </Router>

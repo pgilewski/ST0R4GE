@@ -1,97 +1,101 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useContext } from 'react'
-import { Auth, Hub } from 'aws-amplify'
-import { useAuthContext } from '../context/authContext'
-import NotyfContext from '../context/NotyfContext'
-import { useHistory } from 'react-router-dom'
+import { useEffect, useContext } from 'react';
+import { Auth, Hub } from 'aws-amplify';
+import { useAuthContext } from '../context/authContext';
+import NotyfContext from '../context/NotyfContext';
+import { useNavigate } from 'react-router-dom';
 
 const useAuth = () => {
-  const { setCurrentUser } = useAuthContext()
+  const { setCurrentUser } = useAuthContext();
 
-  const notyf = useContext(NotyfContext)
+  const notyf = useContext(NotyfContext);
 
   useEffect(() => {
-    setAuthListener()
-  }, [])
+    setAuthListener();
+  }, []);
 
   async function setAuthListener() {
     Hub.listen('auth', (data) => {
       switch (data.payload.event) {
         case 'signIn':
-          checkUser()
-          break
+          checkUser();
+          break;
         case 'signOut':
-          checkUser()
-          break
+          checkUser();
+          break;
         default:
-          break
+          break;
       }
-    })
+    });
   }
 
   // sprawdzanie aktualnego uzytkownika
   const checkUser = async () => {
     try {
-      const user = await Auth.currentAuthenticatedUser()
-      const creds = await Auth.currentCredentials()
+      const user = await Auth.currentAuthenticatedUser();
+      const creds = await Auth.currentCredentials();
       const profile = {
         username: user.username,
         identityId: creds.identityId,
         email: user.attributes.email,
-      }
-      setCurrentUser(profile)
-      localStorage.setItem('user', profile)
+      };
+      setCurrentUser(profile);
+      localStorage.setItem('user', profile);
     } catch (err) {
-      setCurrentUser(null)
-      localStorage.removeItem('user')
+      setCurrentUser(null);
+      localStorage.removeItem('user');
     }
-  }
+  };
 
   // ma zapisywać do localstorage usera za każdym razem gdy wartość się zmieni
   /*   useEffect(() => {
       localStorage.setItem('user', currentUser);
   }, [ currentUser ]) */
 
-  const history = useHistory()
+  const navigate = useNavigate();
 
   const signIn = async (formState) => {
-    const { username, password } = formState
+    const { username, password } = formState;
     if (username === '') {
-      notyf.error("Email can't be empty.")
+      notyf.error("Email can't be empty.");
     } else if (password === '') {
-      notyf.error("Password can't be empty.")
+      notyf.error("Password can't be empty.");
     } else {
       try {
         const user = await Auth.signIn({
           username,
           password,
-        })
+        });
         if (user) {
-          notyf.success('You sucessfully logged in.')
-          history.push('/')
+          notyf.success('You sucessfully logged in.');
+          navigate('/');
         } else {
-          notyf.error(`Couldn't log in. Check your username or password.`)
+          notyf.error(
+            `Couldn't log in. Check your username or password.`
+          );
         }
       } catch (error) {
-        notyf.error(`Couldn't log in. Check your username or password.`)
+        notyf.error(
+          `Couldn't log in. Check your username or password.`
+        );
       }
     }
-  }
+  };
 
   const signInSocial = async ({ provider }) => {
-    const user = await Auth.federatedSignIn({ provider })
+    const user = await Auth.federatedSignIn({ provider });
     if (user) {
-      notyf.success('You sucessfully logged in.')
+      notyf.success('You sucessfully logged in.');
     }
-  }
+  };
 
   const signOut = async () => {
-    setCurrentUser(null)
-    localStorage.removeItem('user')
-    await Auth.signOut()
-    history.push('/')
-    notyf.success('You logged out.')
-  }
+    setCurrentUser(null);
+    localStorage.removeItem('user');
+    await Auth.signOut();
+    navigate('/');
+    notyf.success('You logged out.');
+  };
 
   return {
     /*    ...state, */
@@ -99,7 +103,7 @@ const useAuth = () => {
     signInSocial,
     signOut,
     checkUser,
-  }
-}
+  };
+};
 
-export default useAuth
+export default useAuth;

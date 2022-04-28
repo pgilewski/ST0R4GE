@@ -1,4 +1,4 @@
-# ST0R4G3 - React + AWS Amplify Gallery app with Rekognition, Authentication and tagging
+# React + AWS Amplify Gallery app with Rekognition, Authentication and tagging
 
 Link to demo: [https://main.d2hjyas9gj2dki.amplifyapp.com/](https://main.d2hjyas9gj2dki.amplifyapp.com/)
 

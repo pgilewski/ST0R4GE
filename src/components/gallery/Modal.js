@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { Storage, API, graphqlOperation } from 'aws-amplify';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ReactComponent as DeleteIcon } from '../../assets/icons/delete.svg';
 import { ReactComponent as EditIcon } from '../../assets/icons/edit.svg';
 import { ReactComponent as BackIcon } from '../../assets/icons/back.svg';
@@ -92,12 +92,12 @@ export default function Modal(props) {
       setDeletedFiles([...deletedFiles, url]);
       notyf.success('Successfully deleted file.');
 
-      history.push('/gallery');
+      navigate('/gallery');
     } else {
       notyf.error('There might occur error while deleting file.');
     }
   };
-  let history = useHistory();
+  let navigate = useNavigate();
 
   // let image = IMAGES[parseInt(id, 10)]
 
@@ -115,7 +115,7 @@ export default function Modal(props) {
   };
   let back = (e) => {
     e.stopPropagation();
-    history.goBack();
+    navigate(-1);
   };
   const renderInModal = ({ type, name, url }) => {
     if (type.includes('image') && !type.includes('svg')) {

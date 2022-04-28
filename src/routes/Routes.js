@@ -4,7 +4,7 @@ import Home from '../components/Home';
 import Register from '../components/Register';
 import Login from '../components/Login';
 
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import { useAuthContext } from '../context/authContext';
 import Dashboard from '../components/Dashboard';
@@ -16,55 +16,63 @@ const ProtectedRoute = ({ children, ...rest }) => {
   const { currentUser } = useAuthContext();
 
   const { redirect } = rest;
+  return currentUser ? <Outlet /> : <Navigate to="/login" />;
+};
+
+const AppRoutes = () => {
   return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        currentUser ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: redirect ? redirect : '/',
-              state: { from: location },
-            }}
-          />
-        )
-      }
-    />
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <Home className="bg-white dark:bg-gray-800 h-screen" />
+        }
+      />
+      <Route exact path="/" element={<ProtectedRoute />}>
+        <Route
+          exact
+          path="/profile"
+          element={<Profile className="bg-white dark:bg-gray-800" />}
+        />
+        <Route
+          exact
+          path="/dashboard"
+          element={
+            <Dashboard className="bg-white dark:bg-gray-800 h-screen" />
+          }
+        />
+        <Route
+          exact
+          path="/upload"
+          element={<Upload className="bg-white dark:bg-gray-800" />}
+        />
+        <Route
+          exact
+          path="/gallery/*"
+          element={
+            <GalleryRouter className="bg-white dark:bg-gray-800 h-screen" />
+          }
+        />
+      </Route>
+
+      {/* Public routes */}
+
+      <Route
+        exact
+        path="/login"
+        element={
+          <Login className="bg-white dark:bg-gray-800 h-screen" />
+        }
+      />
+      <Route
+        exact
+        path="/register"
+        element={
+          <Register className="bg-white dark:bg-gray-800 h-screen" />
+        }
+      />
+    </Routes>
   );
 };
 
-const Routes = () => {
-  return (
-    <Switch>
-      <ProtectedRoute path="/upload" redirect="/login">
-        <Upload className="bg-white dark:bg-gray-800 " />
-      </ProtectedRoute>
-      <Route path="/register">
-        <Register className="bg-white dark:bg-gray-800 h-screen" />
-      </Route>
-      <Route path="/login">
-        <Login className="bg-white dark:bg-gray-800 h-screen" />
-      </Route>
-      <Route path="/profile">
-        <Profile className="bg-white dark:bg-gray-800 h-screen" />
-      </Route>
-      <ProtectedRoute redirect="/login" path="/dashboard">
-        <Dashboard className="bg-white dark:bg-gray-800 h-screen" />
-      </ProtectedRoute>
-      <ProtectedRoute path="/gallery" redirect="/login">
-        <GalleryRouter className="bg-white dark:bg-gray-800 h-screen" />
-      </ProtectedRoute>
-      {/* add eslint file */}
-      <Route path="/about">
-        <Public className="bg-white dark:bg-gray-800 " />
-      </Route>
-      <Route path="/">
-        <Home className="bg-white dark:bg-gray-800 h-screen" />
-      </Route>
-    </Switch>
-  );
-};
-
-export default Routes;
+export default AppRoutes;
